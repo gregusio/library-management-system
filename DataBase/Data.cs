@@ -11,7 +11,7 @@ public class Data : DbContext
     public DbSet<BookInfo> BooksInfo { get; set; }
     public DbSet<Librarian> Librarians { get; set; }
     public DbSet<BasicPersonInfo> BasicPersonInfos { get; set; }
-
+    public DbSet<BorrowedBook> BorrowedBooks { get; set; }
     public Data()
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
@@ -37,8 +37,7 @@ public class BookInfo
     public string Publisher { get; set; }
     DateTime PublishDate { get; set; }
     public ECategory Category;
-
-
+    
 }
 public class Reader : BasicPersonInfo
 {
