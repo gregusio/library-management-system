@@ -19,8 +19,47 @@ public class Data : DbContext
         
     }
     
-}    
+}
 
+public class Book
+{
+    public BookInfo info { get; set; }
+    public int Available { get; set; }
+    public int NotAvailable { get; set; }
+    public int Reserved { get; set; }
+}
+
+public class BookInfo
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public int BookId { get; set; }
+    public string Publisher { get; set; }
+    DateTime PublishDate { get; set; }
+    public ECategory Category;
+
+
+}
+public class Reader : BasicPersonInfo
+{
+    public List<BorrowedBook> BorrowedBooks { get; set; } = new List<BorrowedBook>();
+
+    public List<BookInfo> ReservedBooks { get; set; } = new List<BookInfo>();
+
+    public List<double> Fines { get; set; } = new List<double>();
+}
+
+public class BorrowedBook
+{
+    public int Id { get; set; }
+
+    public int ReaderId { get; set; }
+    public Reader Reader { get; set; }
+
+    public BookInfo Book { get; set; }
+
+    public DateTime Deadline { get; set; }
+}
 public class BasicPersonInfo
 {
     public int Id { get; set; }
@@ -45,9 +84,10 @@ public class BasicPersonInfo
     public string PasswordHash { get; set; }
 }
 
-public class Librarian
+public class Librarian : BasicPersonInfo
 {
     public double Salary { get; set; }
-    
-    
+    public EPosition Position;
+
 }
+
