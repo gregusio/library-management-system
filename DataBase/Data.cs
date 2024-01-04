@@ -19,32 +19,39 @@ public class Data : DbContext
         
     }
     
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        // Tutaj ustawiasz dostawcę bazy danych, np. SQL Server
+        optionsBuilder.UseSqlServer("connection_string_do_twojej_bazy_danych");
+    } 
 }
 
 public class Book
 {
+    [Key]
+    public int BookId { get; set; } // Key 
+
     public BookInfo info { get; set; }
     public int Available { get; set; }
     public int NotAvailable { get; set; }
     public int Reserved { get; set; }
 }
 
-public class BookInfo
+public class BookInfo : Book
 {
     public string Title { get; set; }
     public string Author { get; set; }
+    
     public int BookId { get; set; }
     public string Publisher { get; set; }
-    DateTime PublishDate { get; set; }
+    public DateTime PublishDate { get; set; }
     public ECategory Category;
     
 }
 public class Reader : BasicPersonInfo
 {
     public List<BorrowedBook> BorrowedBooks { get; set; } = new List<BorrowedBook>();
-
     public List<BookInfo> ReservedBooks { get; set; } = new List<BookInfo>();
-
     public List<double> Fines { get; set; } = new List<double>();
 }
 
@@ -68,9 +75,8 @@ public class BasicPersonInfo
 
     [Required]
     public string Surname { get; set; }
-
+    
     public string Address { get; set; }
-
     public string TelephoneNr { get; set; }
     
     [EmailAddress]
