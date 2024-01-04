@@ -1,0 +1,28 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace DataBase;
+
+public class BasicPersonInfo
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public string Name { get; set; }
+
+    [Required]
+    public string Surname { get; set; }
+    
+    public string Address { get; set; }
+    
+    public string TelephoneNr { get; set; }
+    
+    [EmailAddress]
+    public string EmailAddress { get; set; }
+
+    [Required]
+    public string Login { get; set; }
+
+    [Required]
+    public string PasswordHash { get; set; }
+}
