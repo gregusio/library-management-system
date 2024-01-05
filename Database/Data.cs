@@ -21,4 +21,15 @@ public class Data : DbContext
     {
         optionsBuilder.UseSqlite($"Data Source={DbPath}");
     } 
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<BasicPersonInfo>()
+            .HasIndex(t => t.Login)
+            .IsUnique();
+
+        modelBuilder.Entity<BasicPersonInfo>()
+            .HasIndex(t => t.PasswordHash)
+            .IsUnique();
+    }
 }
