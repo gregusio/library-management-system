@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Database;
+namespace library_management_system.Database;
 
 public class BookInfo
 {

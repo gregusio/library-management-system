@@ -1,4 +1,4 @@
-namespace Database;
+namespace library_management_system.Database;
 
 public class SearchDb
 {

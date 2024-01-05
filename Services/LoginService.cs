@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace library_managment_system.Services;
+namespace library_management_system.Services;
 
 public class LoginService
 {
