@@ -1,4 +1,4 @@
-namespace DataBase;
+namespace Database;
 
 public class Reader : BasicPersonInfo
 {

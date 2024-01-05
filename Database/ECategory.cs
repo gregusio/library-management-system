@@ -1,3 +1,4 @@
+namespace Database;
 
 public enum ECategory
 {
