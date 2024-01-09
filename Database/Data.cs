@@ -31,5 +31,21 @@ public class Data : DbContext
         modelBuilder.Entity<BasicPersonInfo>()
             .HasIndex(t => t.PasswordHash)
             .IsUnique();
+
+        modelBuilder.Entity<Librarian>()
+            .HasData(
+                new Librarian()
+                {
+                    Id = 1,
+                    Name = "Admin",
+                    Surname = "Admin",
+                    Address = "Admin",
+                    TelephoneNr = "Admin",
+                    EmailAddress = "Admin",
+                    Login = "admin",
+                    PasswordHash = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+                    Salary = 1000,
+                    Position = EPosition.Admin
+                });
     }
 }
