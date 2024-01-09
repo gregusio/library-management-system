@@ -7,8 +7,8 @@ build_property.InvariantGlobalization =
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
-build_property.RootNamespace = library-managment-system
-build_property.RootNamespace = library-managment-system
+build_property.RootNamespace = library-management-system
+build_property.RootNamespace = library-management-system
 build_property.ProjectDir = /home/gregusio/Documents/library-management-system/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
@@ -48,8 +48,8 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/home/gregusio/Documents/library-management-system/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTWFpbkxheW91dC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = b-wygsmu4osj
+build_metadata.AdditionalFiles.CssScope = b-2dmsd2qtev
 
 [/home/gregusio/Documents/library-management-system/Components/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTmF2TWVudS5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = b-bn9pmqt0qn
+build_metadata.AdditionalFiles.CssScope = b-fgy3t5npbf
