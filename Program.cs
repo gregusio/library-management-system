@@ -11,6 +11,8 @@ builder.Services.AddSingleton<DbApi>();
 
 builder.Services.AddSingleton<AuthService>();
 
+builder.Services.AddSingleton<NavigationMenuService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
