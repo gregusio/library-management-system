@@ -1,0 +1,13 @@
+@page "/logout"
+@using library_management_system.Services
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
+
+@code {
+    protected override void OnInitialized()
+    {
+        AuthService.User = null;
+        NavigationManager.NavigateTo("/");
+        base.OnInitialized();
+    }
+}
