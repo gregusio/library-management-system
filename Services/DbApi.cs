@@ -1,4 +1,5 @@
-namespace library_management_system.Database;
+using library_management_system.Database;
+namespace library_management_system.Services;
 
 public class DbApi
 {
