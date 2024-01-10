@@ -1,10 +1,13 @@
 using library_management_system.Components;
+using library_management_system.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<DbApi>();
 
 var app = builder.Build();
 
