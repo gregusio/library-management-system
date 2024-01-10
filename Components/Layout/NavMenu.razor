@@ -1,4 +1,9 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using library_management_system.Services
+@using library_management_system.Database
+@using Microsoft.EntityFrameworkCore.ChangeTracking.Internal
+@inject AuthService AuthService
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">library-management-system</a>
     </div>
@@ -8,29 +13,79 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
+        @if (AuthService.IsLibrarian())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> AAA
+                </NavLink>
+            </div>
+        }
         
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="login">
-                <span class="bi bi-login-form-nav-menu" aria-hidden="true"></span>  Login
-            </NavLink>
-        </div>
+        @if (AuthService.IsLibrarian())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="counter">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Adminnnn
+                </NavLink>
+            </div>
+        }
+        
+        
+        @if (AuthService.IsLibrarian())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="weather">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> AAAA
+                </NavLink>
+            </div>
+        }
+        
+        @if (AuthService.IsReader())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> UUU
+                </NavLink>
+            </div>
+        }
+        
+        @if (AuthService.IsReader())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="counter">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> UUUSER
+                </NavLink>
+            </div>
+        }
+        
+        
+        @if (AuthService.IsReader())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="weather">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> UUUu
+                </NavLink>
+            </div>
+        }
+        
+        @if (!AuthService.IsLoggedIn())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="login">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
+                </NavLink>
+            </div>
+        }
+        
+        @if (AuthService.IsLoggedIn())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="logout">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
+                </NavLink>
+            </div>
+        }
+     
     </nav>
 </div>
-
