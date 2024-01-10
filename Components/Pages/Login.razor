@@ -1,5 +1,9 @@
 @page "/login"
 @using System.Text.RegularExpressions
+@using library_management_system.Database
+@using library_management_system.Services
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
 <PageTitle>Login</PageTitle>
@@ -8,7 +12,7 @@
 
 <div class="form-group mb-3">
     <label for="username">Username</label>
-    <input id="username" class="form-control" @oninput="@((str) => ValidateLogin((string)str.Value))" />
+    <input id="username" class="form-control" @bind=@LoginInput @oninput="@((str) => ValidateLogin((string)str.Value))" />
 </div>
 
 @if(loginInvalid)
@@ -20,7 +24,7 @@
 
 <div class="form-group mb-3">
     <label for="password">Password</label>
-    <input id="password" type="text" class="form-control" @oninput="@((str) => ValidatePassword((string)str.Value))" />
+    <input id="password" type="text" class="form-control" @bind=@PasswordInput @oninput="@((str) => ValidatePassword((string)str.Value))" />
 </div>
 
 @if (passwordInvalid)
@@ -35,12 +39,27 @@
 @code {
     bool loginInvalid = false;
     bool passwordInvalid = false;
-    
+    string LoginInput { get; set; }
+    string PasswordInput { get; set; }
+
+
     private void HandleLogin()
     {
         // Your logic for handling login
         // For example, navigate to another page after successful login
-       
+
+        if (LoginInput == "admin")
+        {
+            var librarian = new Librarian();
+            AuthService.User = librarian;
+        }
+        else if (LoginInput == "user")
+        {
+            var reader = new Reader();
+            AuthService.User = reader;
+        }
+        
+        NavigationManager.NavigateTo("/");
     }
 
     private void ValidateLogin(string login)
