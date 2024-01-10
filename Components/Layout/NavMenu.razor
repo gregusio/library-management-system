@@ -17,54 +17,39 @@
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> AAA
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Books
                 </NavLink>
             </div>
-        }
         
-        @if (AuthService.IsLibrarian())
-        {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="counter">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Adminnnn
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Readers
                 </NavLink>
             </div>
-        }
         
-        
-        @if (AuthService.IsLibrarian())
-        {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="weather">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> AAAA
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Librarians
                 </NavLink>
             </div>
         }
-        
-        @if (AuthService.IsReader())
+        else if (AuthService.IsReader())
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> UUU
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Books
                 </NavLink>
             </div>
-        }
         
-        @if (AuthService.IsReader())
-        {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="counter">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> UUUSER
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Borrowed Books
                 </NavLink>
             </div>
-        }
         
-        
-        @if (AuthService.IsReader())
-        {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="weather">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> UUUu
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Reserved Books
                 </NavLink>
             </div>
         }
