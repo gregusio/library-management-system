@@ -1,5 +1,161 @@
 ﻿@page "/readers"
+@using library_management_system.Services
+@using library_management_system.Database
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+@inject DbApi DbApi
+@inject LoginService LoginService
 
 <PageTitle>Readers</PageTitle>
 
 <h1>Readers</h1>
+
+<Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
+        
+        <div class="container">
+            <p>Name</p>
+            <input @bind="@Name"/>
+        </div>
+
+        <div class="container">
+            <p>Surname</p>
+            <input @bind="@Surname"/>
+        </div>
+
+        <div class="container">
+            <p>Address</p>
+            <input @bind="@Address"/>
+        </div>
+
+        <div class="container">
+            <p>Phone number</p>
+            <input @bind="@PhoneNumber"/>
+        </div>
+
+        <div class="container">
+            <p>Email</p>
+            <input @bind="@Email"/>
+        </div>
+
+        <div class="container">
+            <p>Login</p>
+            <input @bind="@Login"/>
+        </div>
+
+        <div class="container">
+            <p>Password</p>
+            <input @bind="@Password"/>
+        </div>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="AddReader">Add reader</Button>
+    </FooterTemplate>
+</Modal>
+
+<Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Reader</Button>
+
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Surname</th>
+            <th scope="col">Address</th>
+            <th scope="col">Phone number</th>
+            <th scope="col">Email</th>
+            <th scope="col">Login</th>
+            <th scope="col">Password</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var reader in DbApi.GetReaders())
+        {
+            <tr>
+                <td>@reader.Name</td>
+                <td>@reader.Surname</td>
+                <td>@reader.Address</td>
+                <td>@reader.TelephoneNr</td>
+                <td>@reader.EmailAddress</td>
+                <td>@reader.Login</td>
+                <td>@reader.PasswordHash</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+    private Modal modal = default!;
+    private string Name { get; set; } 
+    private string Surname { get; set; }
+    private string Address { get; set; }
+    private string PhoneNumber { get; set; }
+    private string Email { get; set; }
+    private string Login { get; set; }
+    private string Password { get; set; }
+    
+    List<ToastMessage> messages = new List<ToastMessage>();
+
+    private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
+
+    private ToastMessage CreateToastMessage(ToastType toastType)
+    {
+        if(toastType is ToastType.Success)
+            return new ToastMessage
+            {
+                Type = toastType,
+                Title = "Success",
+                HelpText = $"{DateTime.Now}",
+                Message = $"Reader added successfully",
+            };
+        else
+            return new ToastMessage
+            {
+                Type = toastType,
+                Title = "Warning",
+                HelpText = $"{DateTime.Now}",
+                Message = $"Reader already exists",
+            };
+    }
+        
+
+    private async void AddReader()
+    {
+        try
+        {
+            DbApi.AddReader(new Reader()
+            {
+                Name = Name,
+                Surname = Surname,
+                Address = Address,
+                TelephoneNr = PhoneNumber,
+                EmailAddress = Email,
+                Login = Login,
+                PasswordHash = LoginService.HashPassword(Password)
+            });
+            
+            ShowMessage(ToastType.Success);
+        }
+        catch (DbUpdateException e)
+        {
+            ShowMessage(ToastType.Warning);
+        }
+        
+        
+    }
+    
+    private async Task OnShowModalClick()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
+    }
+}
