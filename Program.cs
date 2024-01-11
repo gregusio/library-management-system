@@ -13,7 +13,7 @@ builder.Services.AddSingleton<AuthService>();
 
 builder.Services.AddSingleton<NavigationMenuService>();
 
-builder.Services.AddBlazorBootstrap();
+builder.Services.AddSingleton<LoginService>();
 
 var app = builder.Build();
 
