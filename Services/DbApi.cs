@@ -13,6 +13,11 @@ public class DbApi
         return new SearchDb().GetReader(login);
     }
     
+    public List<Reader> GetReaders()
+    {
+        return new SearchDb().GetAllReaders();
+    }
+    
     public Librarian? GetLibrarian(int id)
     {
         return new SearchDb().GetLibrarian(id);
@@ -23,9 +28,19 @@ public class DbApi
         return new SearchDb().GetLibrarian(login);
     }
     
+    public List<Librarian> GetLibrarians()
+    {
+        return new SearchDb().GetAllLibrarians();
+    }
+    
     public List<Book> GetBooks(string title, string? author)
     {
         return new SearchDb().GetBooks(title, author);
+    }
+    
+    public List<Book> GetBooks()
+    {
+        return new SearchDb().GetAllBooks();
     }
     
     public void AddReader(Reader reader)
