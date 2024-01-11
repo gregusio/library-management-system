@@ -2,7 +2,7 @@ namespace library_management_system.Database;
 
 public class InsertDb
 {
-    private readonly Data _db = new Data();
+    private readonly Data _db = Data.GetInstance();
     
     public void AddReader(Reader reader)
     {
