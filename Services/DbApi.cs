@@ -72,4 +72,9 @@ public class DbApi
     {
         new RemoveDb().RemoveBook(id);
     }
+
+    public void SaveChanges()
+    {
+        new UpdateDb().SaveChanges();
+    }
 }

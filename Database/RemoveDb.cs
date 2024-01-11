@@ -2,7 +2,7 @@ namespace library_management_system.Database;
 
 public class RemoveDb
 {
-    private readonly Data _db = new Data();
+    private readonly Data _db = Data.GetInstance();
     
     public void RemoveReader(int id)
     {

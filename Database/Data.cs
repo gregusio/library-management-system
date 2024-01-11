@@ -4,17 +4,24 @@ namespace library_management_system.Database;
 
 public class Data : DbContext
 {
+    private static Data? _instance = null;
     public DbSet<Reader> Readers { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<Librarian> Librarians { get; set; }
     
     public string DbPath { get; private set; }
-    
-    public Data()
+
+    private Data()
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
         DbPath = System.IO.Path.Join(path, "blogging.db");
+    }
+
+    public static Data GetInstance()
+    {
+        if (_instance == null) _instance = new Data();
+        return _instance;
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
