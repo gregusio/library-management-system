@@ -13,6 +13,8 @@ builder.Services.AddSingleton<AuthService>();
 
 builder.Services.AddSingleton<NavigationMenuService>();
 
+builder.Services.AddSingleton<LoginService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
