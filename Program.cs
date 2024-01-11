@@ -15,6 +15,8 @@ builder.Services.AddSingleton<NavigationMenuService>();
 
 builder.Services.AddSingleton<LoginService>();
 
+builder.Services.AddBlazorBootstrap();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
