@@ -5,7 +5,7 @@ namespace library_management_system.Services;
 
 public class NavigationMenuService
 {
-    public INavigationMenu CreateMenuForUser(BasicPersonInfo? user)
+    public INavigationMenu CreateMenuForUser(User? user)
     {
         if (user is Librarian)
             return new LibrarianNavigationMenu();

@@ -1,6 +1,6 @@
 namespace library_management_system.Database;
 
-public class Librarian : BasicPersonInfo
+public class Librarian : User
 {
     public double Salary { get; set; }
     

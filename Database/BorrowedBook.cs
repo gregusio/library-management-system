@@ -8,8 +8,8 @@ public class BorrowedBook
     public int Id { get; set; }
     
     public Reader Reader { get; set; }
-    
-    public BookInfo Book { get; set; }
+
+    public Book Book { get; set; }
     
     public DateTime Deadline { get; set; }
 }
