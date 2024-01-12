@@ -3,11 +3,16 @@ namespace library_management_system.Services;
 
 public class AuthService
 {
-    public BasicPersonInfo? User { get; set; }
+    public User? User { get; set; }
 
     public bool IsLibrarian()
     {
         return User is Librarian;
+    }
+
+    public bool IsAdmin()
+    {
+        return User is Librarian librarian && librarian.Position == EPosition.Admin;
     }
 
     public bool IsReader()
