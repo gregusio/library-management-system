@@ -1,0 +1,80 @@
+@using library_management_system.Database
+@using library_management_system.Services
+@inject DbApi DbApi
+
+@if (!editMode)
+{
+    <Card Style="width:18rem;">
+        <CardBody>
+            <CardTitle>@User.Name @User.Surname</CardTitle>
+            <CardText>
+                <p>Address: @User.Address</p>
+                <p>Phone Number: @User.TelephoneNr</p>
+                <p>Email: @User.EmailAddress</p>
+            </CardText>
+            <Button Color="ButtonColor.Primary" @onclick="EditMode">Edit</Button>
+        </CardBody>
+    </Card>
+} 
+else
+{
+    <Card Style="width:18rem;">
+        <CardBody>
+            <CardTitle><input @bind="@User.Name"/> <input @bind="@User.Surname"/></CardTitle>
+            <CardText>
+                <p>Address: <input @bind="@User.Address"/></p>
+                <p>Phone Number: <input @bind="@User.TelephoneNr"/></p>
+                <p>Email: <input @bind="@User.EmailAddress"/></p>
+            </CardText>
+            <Button Color="ButtonColor.Primary" @onclick="CloseEditMode">Exit</Button>
+            <Button Color="ButtonColor.Primary" @onclick="CloseAndSave">Save</Button>
+        </CardBody>
+    </Card>
+}
+
+
+@code {
+    [Parameter] public User User { get; set; }
+    private bool editMode = false;
+    private string Name { get; set; }
+    private string Surname { get; set; }
+    private string Address { get; set; }
+    private string TelephoneNr { get; set; }
+    private string EmailAddress { get; set; }
+    
+    private void SaveState()
+    {
+        Name = User.Name;
+        Surname = User.Surname;
+        Address = User.Address;
+        TelephoneNr = User.TelephoneNr;
+        EmailAddress = User.EmailAddress;
+    }
+    
+    private void UndoChanges()
+    {
+        User.Name = Name;
+        User.Surname = Surname;
+        User.Address = Address;
+        User.TelephoneNr = TelephoneNr;
+        User.EmailAddress = EmailAddress;
+    }
+    
+    private void EditMode()
+    {
+        SaveState();
+        editMode = true;
+    }
+    
+    private void CloseEditMode()
+    {
+        UndoChanges();
+        editMode = false;
+    }
+    
+    private void CloseAndSave()
+    {
+        DbApi.SaveChanges();
+        editMode = false;
+    }
+}
