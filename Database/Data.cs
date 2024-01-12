@@ -31,11 +31,11 @@ public class Data : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BasicPersonInfo>()
+        modelBuilder.Entity<User>()
             .HasIndex(t => t.Login)
             .IsUnique();
 
-        modelBuilder.Entity<BasicPersonInfo>()
+        modelBuilder.Entity<User>()
             .HasIndex(t => t.PasswordHash)
             .IsUnique();
 
