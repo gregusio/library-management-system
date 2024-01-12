@@ -58,20 +58,20 @@
 
 <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Reader</Button>
 
-@for (var i = readerPerPage * (currentPageNumber - 1); i < readerPerPage * currentPageNumber && i < ReadersCount; i++)
+@for (var i = readersPerPage * (currentPageNumber - 1); i < readersPerPage * currentPageNumber && i < ReadersCount; i++)
 {
     var i1 = i;
     <UserRecord User="@AllReaders[i1]"/>
 }
 
 <Pagination ActivePageNumber="@currentPageNumber"
-            TotalPages="@(ReadersCount / readerPerPage)"
+            TotalPages="@(ReadersCount / readersPerPage)"
             PageChanged="OnPageChangedAsync"/>
 
 
 @code {
     private int currentPageNumber = 1;
-    private int readerPerPage = 4;
+    private int readersPerPage = 4;
 
     private Modal modal = default!;
     private string Name { get; set; } 
@@ -84,9 +84,9 @@
     
     List<ToastMessage> messages = new List<ToastMessage>();
 
-    private int ReadersCount => DbApi.GetReaders().Count;
+    private int ReadersCount => AllReaders.Count;
 
-    private List<Reader> AllReaders => DbApi.GetReaders();
+    private List<Reader> AllReaders => DbApi.GetAllReaders();
 
     private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
 
@@ -148,5 +148,6 @@
     private async Task OnHideModalClick()
     {
         await modal.HideAsync();
+        messages = new List<ToastMessage>();
     }
 }
