@@ -12,7 +12,7 @@
 
 <div class="form-group mb-3">
     <label for="username">Username</label>
-    <input id="username" class="form-control" @bind="@LoginInput "@oninput="@((str) => ValidateLogin((string)str.Value))"/>
+    <input id="username" class="form-control" @bind="@LoginInput" @oninput="@((str) => ValidateLogin((string)str.Value))"/>
 </div>
 
 @if (loginInvalid)
@@ -24,7 +24,7 @@
 
 <div class="form-group mb-3">
     <label for="password">Password</label>
-    <input id="password" type="text" class="form-control" @bind="@PasswordInput "@oninput="@((str) => ValidatePassword((string)str.Value))"/>
+    <input id="password" type="text" class="form-control" @bind="@PasswordInput" @oninput="@((str) => ValidatePassword((string)str.Value))"/>
 </div>
 
 @if (passwordInvalid)
