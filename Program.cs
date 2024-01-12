@@ -1,5 +1,7 @@
 using library_management_system.Components;
+using library_management_system.Database;
 using library_management_system.Services;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +14,6 @@ builder.Services.AddSingleton<DbApi>();
 builder.Services.AddSingleton<AuthService>();
 
 builder.Services.AddSingleton<NavigationMenuService>();
-
-builder.Services.AddSingleton<LoginService>();
 
 var app = builder.Build();
 
