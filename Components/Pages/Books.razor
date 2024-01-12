@@ -1,6 +1,156 @@
 ﻿@page "/books"
+@using library_management_system.Services
+@using library_management_system.Database
+@using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
+@inject DbApi DbApi
+@inject LoginService LoginService
+@inject AuthService AuthService
 
 <PageTitle>Books</PageTitle>
 
 <h1>Books</h1>
+
+@if (AuthService.IsLibrarian())
+{
+    <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+        <BodyTemplate>
+            <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+
+            <div class="container">
+                <p>Title</p>
+                <input @bind="@Title"/>
+            </div>
+
+            <div class="container">
+                <p>Author</p>
+                <input @bind="@Author"/>
+            </div>
+
+            <div class="container">
+                <p>Publisher</p>
+                <input @bind="@Publisher"/>
+            </div>
+
+            <div class="container">
+                <p>Publish Date</p>
+                <input type="date" @bind="@PublishDate"/>
+            </div>
+
+            <div class="container">
+                <p>Category</p>
+                <input @bind="@Category"/>
+            </div>
+
+            <div class="container">
+                <p>Amount</p>
+                <input type="number" @bind="@Amount"/>
+            </div>
+
+
+        </BodyTemplate>
+        <FooterTemplate>
+            <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+            <Button Color="ButtonColor.Primary" @onclick="AddBook">Add Book</Button>
+        </FooterTemplate>
+    </Modal>
+
+    <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Book</Button>
+}
+
+
+@for (var i = booksPerPage * (currentPageNumber - 1); i < booksPerPage * currentPageNumber && i < BooksCount; i++)
+{
+    var i1 = i;
+    <BookRecord Book="@AllBooks[i1]"/>
+}
+
+<Pagination ActivePageNumber="@currentPageNumber"
+            TotalPages="@(BooksCount / booksPerPage)"
+            PageChanged="OnPageChangedAsync"/>
+
+
+@code {
+    private int currentPageNumber = 1;
+    private int booksPerPage = 4;
+
+    private Modal modal = default!;
+    private string Title { get; set; }
+    private string Author { get; set; }
+    private string Publisher { get; set; }
+    private DateTime PublishDate { get; set; }
+    private ECategory Category { get; set; }
+    private int Amount { get; set; }
+
+    List<ToastMessage> messages = new();
+
+    private int BooksCount => AllBooks.Count;
+
+    private List<Book> AllBooks => DbApi.GetAllBooks();
+
+    private void ShowMessage(ToastType toastType)
+    {
+        messages.Add(CreateToastMessage(toastType));
+    }
+
+    private ToastMessage CreateToastMessage(ToastType toastType)
+    {
+        if (toastType is ToastType.Success)
+            return new ToastMessage
+            {
+                Type = toastType,
+                Title = "Success",
+                HelpText = $"{DateTime.Now}",
+                Message = $"Book added successfully"
+            };
+        else
+            return new ToastMessage
+            {
+                Type = toastType,
+                Title = "Warning",
+                HelpText = $"{DateTime.Now}",
+                Message = $"Book already exists"
+            };
+    }
+
+    private async Task OnPageChangedAsync(int newPageNumber)
+    {
+        await Task.Run(() => { currentPageNumber = newPageNumber; });
+    }
+
+    private async void AddBook()
+    {
+        try
+        {
+            DbApi.AddBook(new Book()
+            {
+                Title = Title,
+                Author = Author,
+                Publisher = Publisher,
+                PublishDate = PublishDate,
+                Category = Category,
+                Available = Amount,
+                NotAvailable = 0,
+                Reserved = 0
+            });
+
+            ShowMessage(ToastType.Success);
+        }
+        catch (DbUpdateException e)
+        {
+            ShowMessage(ToastType.Warning);
+        }
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
+        messages = new List<ToastMessage>();
+    }
+
+}
