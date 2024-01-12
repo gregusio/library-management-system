@@ -4,10 +4,12 @@
 @inject AuthService AuthService
 
 @code {
+
     protected override void OnInitialized()
     {
         AuthService.User = null;
         NavigationManager.NavigateTo("/");
         base.OnInitialized();
     }
+
 }

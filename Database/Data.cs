@@ -8,14 +8,14 @@ public class Data : DbContext
     public DbSet<Reader> Readers { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<Librarian> Librarians { get; set; }
-    
+
     public string DbPath { get; private set; }
 
     private Data()
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
-        DbPath = System.IO.Path.Join(path, "blogging.db");
+        DbPath = Path.Join(path, "blogging.db");
     }
 
     public static Data GetInstance()
@@ -23,12 +23,12 @@ public class Data : DbContext
         if (_instance == null) _instance = new Data();
         return _instance;
     }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlite($"Data Source={DbPath}");
-    } 
-    
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>()
