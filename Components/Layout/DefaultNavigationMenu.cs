@@ -6,7 +6,7 @@ public class DefaultNavigationMenu : INavigationMenu
     {
         return
         [
-            ("", "Login"),
+            ("", "Login")
         ];
     }
 }

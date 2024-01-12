@@ -12,10 +12,10 @@
 
 <div class="form-group mb-3">
     <label for="username">Username</label>
-    <input id="username" class="form-control" @bind=@LoginInput @oninput="@((str) => ValidateLogin((string)str.Value))" />
+    <input id="username" class="form-control" @bind="@LoginInput "@oninput="@((str) => ValidateLogin((string)str.Value))"/>
 </div>
 
-@if(loginInvalid)
+@if (loginInvalid)
 {
     <p>
         Invalid login format
@@ -24,7 +24,7 @@
 
 <div class="form-group mb-3">
     <label for="password">Password</label>
-    <input id="password" type="text" class="form-control" @bind=@PasswordInput @oninput="@((str) => ValidatePassword((string)str.Value))" />
+    <input id="password" type="text" class="form-control" @bind="@PasswordInput "@oninput="@((str) => ValidatePassword((string)str.Value))"/>
 </div>
 
 @if (passwordInvalid)
@@ -58,13 +58,14 @@
             var reader = new Reader();
             AuthService.User = reader;
         }
-        
+
         NavigationManager.NavigateTo("/books");
     }
 
     private void ValidateLogin(string login)
     {
-        if(ValidateLoginAndPasswordFormat(login)){
+        if (ValidateLoginAndPasswordFormat(login))
+        {
             loginInvalid = true;
         }
         else
@@ -72,10 +73,11 @@
             loginInvalid = false;
         }
     }
-    
+
     private void ValidatePassword(string login)
     {
-        if(ValidateLoginAndPasswordFormat(login)){
+        if (ValidateLoginAndPasswordFormat(login))
+        {
             passwordInvalid = true;
         }
         else
@@ -89,9 +91,10 @@
         // Your logic for validating login and password format
         // For example, check if the input is between 5 and 20 characters long
         // and contains at least one uppercase letter and one digit
-        if(input.Length is > 5 and <= 20 && Regex.IsMatch(input, @"^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]*$"))
+        if (input.Length is > 5 and <= 20 && Regex.IsMatch(input, @"^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]*$"))
             return false;
-        
+
         return true;
     }
+
 }

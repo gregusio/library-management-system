@@ -4,12 +4,11 @@ namespace library_management_system.Database;
 
 public class BorrowedBook
 {
-    [Key]
-    public int Id { get; set; }
-    
+    [Key] public int Id { get; set; }
+
     public Reader Reader { get; set; }
 
     public Book Book { get; set; }
-    
+
     public DateTime Deadline { get; set; }
 }

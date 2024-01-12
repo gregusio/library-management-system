@@ -7,5 +7,5 @@ public enum ECategory
     Comedy,
     Horror,
     Romance,
-    SciFi,
+    SciFi
 }
