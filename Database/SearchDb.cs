@@ -36,10 +36,10 @@ public class SearchDb
     
     public List<Book> GetBooks(string title, string? author)
     {
-        var books = _db.Books.Where(book => book.info.Title == title);
+        var books = _db.Books.Where(book => book.Title == title);
         if (author != null)
         {
-            books = books.Where(book => book.info.Author == author);
+            books = books.Where(book => book.Author == author);
         }
         return books.ToList();
     }
