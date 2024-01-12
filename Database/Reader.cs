@@ -1,6 +1,6 @@
 namespace library_management_system.Database;
 
-public class Reader : BasicPersonInfo
+public class Reader : User
 {
     public List<BorrowedBook> BorrowedBooks { get; set; } = new List<BorrowedBook>();
     

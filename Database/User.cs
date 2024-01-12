@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace library_management_system.Database;
 
-public class BasicPersonInfo
+public class User
 {
     [Key]
     public int Id { get; set; }
