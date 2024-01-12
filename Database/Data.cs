@@ -50,7 +50,8 @@ public class Data : DbContext
                     TelephoneNr = "Admin",
                     EmailAddress = "Admin",
                     Login = "admin",
-                    PasswordHash = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+                    PasswordHash =
+                        "AQAAAAIAAYagAAAAECbeLHmwE9pGX99AVVY93sEwpWWdp3Z+nXXA9UC1XdMxerBrounmyXxu5EGvjtCA9w==",
                     Salary = 1000,
                     Position = EPosition.Admin
                 });
