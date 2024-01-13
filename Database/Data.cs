@@ -9,13 +9,10 @@ public class Data : DbContext
     public DbSet<Book> Books { get; set; }
     public DbSet<Librarian> Librarians { get; set; }
 
-    public string DbPath { get; private set; }
+    public static string Password { get; set; }
 
     private Data()
     {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
-        DbPath = Path.Join(path, "blogging.db");
     }
 
     public static Data GetInstance()
@@ -26,7 +23,8 @@ public class Data : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite($"Data Source={DbPath}");
+        optionsBuilder.UseSqlServer(
+            $"Server=tcp:library-management-db.database.windows.net,1433;Initial Catalog=library;Persist Security Info=False;User ID=CloudSA6ee0d148;Password={Password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
