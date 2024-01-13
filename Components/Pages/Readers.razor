@@ -12,8 +12,8 @@
 
 <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
     <BodyTemplate>
-        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
-        
+        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+
         <div class="container">
             <p>Name</p>
             <input @bind="@Name"/>
@@ -74,31 +74,34 @@
     private int readersPerPage = 4;
 
     private Modal modal = default!;
-    private string Name { get; set; } 
+    private string Name { get; set; }
     private string Surname { get; set; }
     private string Address { get; set; }
     private string PhoneNumber { get; set; }
     private string Email { get; set; }
     private string Login { get; set; }
     private string Password { get; set; }
-    
-    List<ToastMessage> messages = new List<ToastMessage>();
+
+    List<ToastMessage> messages = new();
 
     private int ReadersCount => AllReaders.Count;
 
     private List<Reader> AllReaders => DbApi.GetAllReaders();
 
-    private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
+    private void ShowMessage(ToastType toastType)
+    {
+        messages.Add(CreateToastMessage(toastType));
+    }
 
     private ToastMessage CreateToastMessage(ToastType toastType)
     {
-        if(toastType is ToastType.Success)
+        if (toastType is ToastType.Success)
             return new ToastMessage
             {
                 Type = toastType,
                 Title = "Success",
                 HelpText = $"{DateTime.Now}",
-                Message = $"Reader added successfully",
+                Message = $"Reader added successfully"
             };
         else
             return new ToastMessage
@@ -106,7 +109,7 @@
                 Type = toastType,
                 Title = "Warning",
                 HelpText = $"{DateTime.Now}",
-                Message = $"Reader already exists",
+                Message = $"Reader already exists"
             };
     }
 
@@ -129,17 +132,15 @@
                 Login = Login,
                 PasswordHash = new PasswordHasher<User>().HashPassword(null!, Password)
             });
-            
+
             ShowMessage(ToastType.Success);
         }
         catch (DbUpdateException e)
         {
             ShowMessage(ToastType.Warning);
         }
-        
-        
     }
-    
+
     private async Task OnShowModalClick()
     {
         await modal.ShowAsync();
@@ -150,4 +151,5 @@
         await modal.HideAsync();
         messages = new List<ToastMessage>();
     }
+
 }
