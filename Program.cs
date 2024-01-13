@@ -1,7 +1,7 @@
 using library_management_system.Components;
 using library_management_system.Database;
 using library_management_system.Services;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +19,10 @@ builder.Services.AddBlazorBootstrap();
 
 var pass = builder.Configuration["password"]!;
 
-Data.Password = pass;
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!.Replace("{password}", pass);
+
+builder.Services.AddDbContext<Data>(options =>
+    options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
