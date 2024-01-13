@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components.Routing;
-
 namespace library_management_system.Components.Layout;
 
 public class LibrarianNavigationMenu : INavigationMenu
@@ -10,6 +8,7 @@ public class LibrarianNavigationMenu : INavigationMenu
         [
             ("books", "Books"),
             ("readers", "Readers"),
+            ("borrow-book", "Borrow book"),
             ("librarians", "Librarians"),
             ("logout", "Logout")
         ];
