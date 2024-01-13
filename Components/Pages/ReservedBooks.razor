@@ -1,7 +1,39 @@
 @page "/reserved-books"
+@using library_management_system.Database
+@using library_management_system.Services
+@rendermode InteractiveServer
+@inject AuthService AuthService
+@inject DbApi DbApi
 
-<h3>ReservedBooks</h3>
+<h3>Reserved books</h3>
+
+@foreach (var reservedBook in AllReservedBooks)
+{
+    var book = DbApi.GetBook(reservedBook.BookId)!;
+    <Card Style="width:18rem;">
+        <CardBody>
+            <CardTitle>@book.Title</CardTitle>
+            <CardText>
+                <p>Author: @book.Author</p>
+                <p>Publisher: @book.Publisher</p>
+                <p>Publish Date: @book.PublishDate</p>
+                <p>Category: @book.Category</p>
+                <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="@(() => Delete(reservedBook))"> Delete </Button>
+
+
+            </CardText>
+        </CardBody>
+    </Card>
+}
+
 
 @code {
+    private Reader? Reader => AuthService.User as Reader;
+    private List<ReservedBook> AllReservedBooks => DbApi.GetReservedBooks(Reader);
+
+    private void Delete(ReservedBook reservedBook)
+    {
+        DbApi.RemoveReservedBook(reservedBook);
+    }
 
 }
