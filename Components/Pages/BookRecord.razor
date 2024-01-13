@@ -22,6 +22,10 @@
             {
                 <Button Color="ButtonColor.Primary" @onclick="EditMode">Edit</Button>
             }
+            else
+            {
+                <Button Color="ButtonColor.Primary" @onclick="Reserve">Reserve</Button>
+            }
 
         </CardBody>
     </Card>
@@ -49,6 +53,7 @@ else
 
 @code {
     [Parameter] public Book Book { get; set; }
+    private Reader Reader => AuthService.User as Reader;
     private bool editMode = false;
     private string Title { get; set; }
     private string Author { get; set; }
@@ -93,6 +98,20 @@ else
     {
         DbApi.SaveChanges();
         editMode = false;
+    }
+
+    private void Reserve()
+    {
+        if (Book.Available > 0)
+        {
+            Book.Available--;
+            Book.Reserved++;
+            DbApi.AddReservedBook(new ReservedBook()
+            {
+                BookId = Book.BookId,
+                ReaderId = Reader.Id
+            });
+        }
     }
 
 }
