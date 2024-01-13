@@ -2,30 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Database;
 
-public class Data : DbContext
+public class Data(DbContextOptions<Data> options) : DbContext(options)
 {
-    private static Data? _instance = null;
-    public DbSet<Reader> Readers { get; set; }
-    public DbSet<Book> Books { get; set; }
-    public DbSet<Librarian> Librarians { get; set; }
-
-    public static string Password { get; set; }
-
-    private Data()
-    {
-    }
-
-    public static Data GetInstance()
-    {
-        if (_instance == null) _instance = new Data();
-        return _instance;
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer(
-            $"Server=tcp:library-management-db.database.windows.net,1433;Initial Catalog=library;Persist Security Info=False;User ID=CloudSA6ee0d148;Password={Password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
-    }
+    public required DbSet<Reader> Readers { get; set; }
+    public required DbSet<Book> Books { get; set; }
+    public required DbSet<Librarian> Librarians { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
