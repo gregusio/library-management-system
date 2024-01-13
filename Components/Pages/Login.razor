@@ -14,12 +14,12 @@
 
 <div class="form-group mb-3">
     <label for="username">Username</label>
-    <input id="username" class="form-control" @bind="@LoginInput" />
+    <input id="username" class="form-control" @bind="@LoginInput"/>
 </div>
 
 <div class="form-group mb-3">
     <label for="password">Password</label>
-    <input id="password" type="password" class="form-control" @bind="@PasswordInput" />
+    <input id="password" type="password" class="form-control" @bind="@PasswordInput"/>
 </div>
 
 <button @onclick="HandleLogin" class="btn btn-primary">Login</button>
@@ -28,11 +28,12 @@
 {
     <p class="text-danger">@ErrorMessage</p>
 }
+
 @code {
     string LoginInput { get; set; }
     string PasswordInput { get; set; }
     string ErrorMessage;
-    
+
     private void HandleLogin()
     {
         var user = DbApi.GetReader(LoginInput);
@@ -59,8 +60,8 @@
             }
         }
     }
-    
-    
+
+
     private bool VerifyPassword(string hashedPassword, string providedPassword)
     {
         // Your logic for hashing and verifying the password

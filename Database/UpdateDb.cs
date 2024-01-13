@@ -1,11 +1,9 @@
 namespace library_management_system.Database;
 
-public class UpdateDb
+public class UpdateDb(Data db)
 {
-    private readonly Data _db = Data.GetInstance();
-
     public void SaveChanges()
     {
-        _db.SaveChanges();
+        db.SaveChanges();
     }
 }
