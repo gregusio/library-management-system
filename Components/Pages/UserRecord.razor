@@ -15,12 +15,14 @@
             <Button Color="ButtonColor.Primary" @onclick="EditMode">Edit</Button>
         </CardBody>
     </Card>
-} 
+}
 else
 {
     <Card Style="width:18rem;">
         <CardBody>
-            <CardTitle><input @bind="@User.Name"/> <input @bind="@User.Surname"/></CardTitle>
+            <CardTitle>
+                <input @bind="@User.Name"/> <input @bind="@User.Surname"/>
+            </CardTitle>
             <CardText>
                 <p>Address: <input @bind="@User.Address"/></p>
                 <p>Phone Number: <input @bind="@User.TelephoneNr"/></p>
@@ -41,7 +43,7 @@ else
     private string Address { get; set; }
     private string TelephoneNr { get; set; }
     private string EmailAddress { get; set; }
-    
+
     private void SaveState()
     {
         Name = User.Name;
@@ -50,7 +52,7 @@ else
         TelephoneNr = User.TelephoneNr;
         EmailAddress = User.EmailAddress;
     }
-    
+
     private void UndoChanges()
     {
         User.Name = Name;
@@ -59,22 +61,23 @@ else
         User.TelephoneNr = TelephoneNr;
         User.EmailAddress = EmailAddress;
     }
-    
+
     private void EditMode()
     {
         SaveState();
         editMode = true;
     }
-    
+
     private void CloseEditMode()
     {
         UndoChanges();
         editMode = false;
     }
-    
+
     private void CloseAndSave()
     {
         DbApi.SaveChanges();
         editMode = false;
     }
+
 }

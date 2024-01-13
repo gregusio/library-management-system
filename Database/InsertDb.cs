@@ -1,24 +1,22 @@
 namespace library_management_system.Database;
 
-public class InsertDb
+public class InsertDb(Data db)
 {
-    private readonly Data _db = Data.GetInstance();
-
     public void AddReader(Reader reader)
     {
-        _db.Readers.Add(reader);
-        _db.SaveChanges();
+        db.Readers.Add(reader);
+        db.SaveChanges();
     }
 
     public void AddLibrarian(Librarian librarian)
     {
-        _db.Librarians.Add(librarian);
-        _db.SaveChanges();
+        db.Librarians.Add(librarian);
+        db.SaveChanges();
     }
 
     public void AddBook(Book book)
     {
-        _db.Books.Add(book);
-        _db.SaveChanges();
+        db.Books.Add(book);
+        db.SaveChanges();
     }
 }
