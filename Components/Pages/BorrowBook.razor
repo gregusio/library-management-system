@@ -1,0 +1,97 @@
+@page "/borrow-book"
+@using library_management_system.Database
+@using library_management_system.Services
+@rendermode InteractiveServer
+@inject DbApi DbApi
+
+<h3>BorrowBook</h3>
+
+<BlazoredTypeahead SearchMethod="GetReadersLocal"
+                   TItem="Reader"
+                   TValue="Reader"
+                   @bind-Value="SelectedPerson"
+                   placeholder="Search by first name...">
+    <SelectedTemplate Context="personId">
+        @{
+            var selectedPerson = SelectedPerson;
+
+            <text>@selectedPerson?.Name @selectedPerson?.Surname</text>
+        }
+    </SelectedTemplate>
+    <ResultTemplate Context="person">
+        @person.Name @person.Surname (Id: @person.Id)
+    </ResultTemplate>
+</BlazoredTypeahead>
+
+<BlazoredTypeahead SearchMethod="GetBooksLocal"
+                   TItem="Book"
+                   TValue="Book"
+                   @bind-Value="SelectedBook"
+                   placeholder="Search by title...">
+    <SelectedTemplate Context="personId">
+        @{
+            var selectedBook = SelectedBook;
+
+            <text>@selectedBook?.Title @selectedBook?.Author</text>
+        }
+    </SelectedTemplate>
+    <ResultTemplate Context="book">
+        @book.Title @book.Author (Id: @book.BookId)
+    </ResultTemplate>
+</BlazoredTypeahead>
+
+<Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="TryBorrowBook"> Borrow Book </Button>
+
+@code {
+    private List<Reader> AllReaders => DbApi.GetAllReaders();
+    private Reader? SelectedPerson { get; set; }
+    private List<Book> AllBooks => DbApi.GetAllBooks();
+    private Book? SelectedBook { get; set; }
+
+    private async Task<IEnumerable<Reader>> GetReadersLocal(string searchText)
+    {
+        return await Task.FromResult(AllReaders.Where(reader => reader.Name.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+    private async Task<IEnumerable<Book>> GetBooksLocal(string searchText)
+    {
+        return await Task.FromResult(AllBooks.Where(book => book.Title.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+    private void TryBorrowBook()
+    {
+        if (SelectedPerson == null || SelectedBook == null)
+        {
+            return;
+        }
+
+        if (SelectedBook.Available > 0)
+        {
+            SelectedBook.Available -= 1;
+            SelectedBook.NotAvailable += 1;
+            DbApi.AddBorrowedBook(new BorrowedBook()
+            {
+                Reader = SelectedPerson,
+                Book = SelectedBook,
+                Deadline = DateTime.Now.AddDays(30)
+            });
+        }
+        else if (DbApi.GetReservedBooks(SelectedPerson).Contains(SelectedBook))
+        {
+            SelectedBook.Available -= 1;
+            SelectedBook.Reserved -= 1;
+            DbApi.AddBorrowedBook(new BorrowedBook()
+            {
+                Reader = SelectedPerson,
+                Book = SelectedBook,
+                Deadline = DateTime.Now.AddDays(30)
+            });
+            DbApi.SaveChanges();
+        }
+        else
+        {
+            Console.WriteLine("Book not available");
+        }
+    }
+
+}
