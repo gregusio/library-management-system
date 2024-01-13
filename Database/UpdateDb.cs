@@ -6,4 +6,10 @@ public class UpdateDb(Data db)
     {
         db.SaveChanges();
     }
+
+    public void PostponeBorrowedBook(BorrowedBook borrowedBook)
+    {
+        borrowedBook.Deadline = borrowedBook.Deadline.AddDays(7);
+        db.SaveChanges();
+    }
 }

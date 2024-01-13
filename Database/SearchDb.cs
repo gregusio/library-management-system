@@ -44,15 +44,24 @@ public class SearchDb(Data db)
         return db.Books.ToList();
     }
 
-    public List<Tuple<Book, DateTime>> GetBorrowedBooks(Reader reader)
+    public Book? GetBook(int id)
     {
-        return db.BorrowedBooks.Where(borrowedBook => borrowedBook.Reader == reader).Select(borrowedBook =>
-            new Tuple<Book, DateTime>(borrowedBook.Book, borrowedBook.Deadline)).ToList();
+        return db.Books.FirstOrDefault(book => book.BookId == id);
     }
 
-    public List<Book> GetReservedBooks(Reader reader)
+    public List<BorrowedBook> GetBorrowedBooks(Reader reader)
     {
-        return db.ReservedBooks.Where(reservedBook => reservedBook.Reader == reader)
-            .Select(reservedBook => reservedBook.Book).ToList();
+        return db.BorrowedBooks.Where(borrowedBook => borrowedBook.ReaderId == reader.Id).ToList();
+    }
+
+    public List<ReservedBook> GetReservedBooks(Reader reader)
+    {
+        return db.ReservedBooks.Where(reservedBook => reservedBook.ReaderId == reader.Id).ToList();
+    }
+
+    public ReservedBook? GetReservedBook(Reader reader, Book book)
+    {
+        return db.ReservedBooks.FirstOrDefault(reservedBook =>
+            reservedBook.ReaderId == reader.Id && reservedBook.BookId == book.BookId);
     }
 }
