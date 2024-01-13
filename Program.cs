@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddSingleton<DbApi>();
+builder.Services.AddTransient<DbApi>();
 
 builder.Services.AddSingleton<AuthService>();
 
