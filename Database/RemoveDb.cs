@@ -31,4 +31,23 @@ public class RemoveDb(Data db)
             db.SaveChanges();
         }
     }
+
+    public void RemoveBorrowedBook(BorrowedBook borrowedBook)
+    {
+        db.BorrowedBooks.Remove(borrowedBook);
+        db.SaveChanges();
+    }
+
+    public void RemoveReservedBook(ReservedBook reservedBook)
+    {
+        var book = db.Books.FirstOrDefault(book => book.BookId == reservedBook.BookId);
+        if (book != null)
+        {
+            book.Available += 1;
+            book.Reserved -= 1;
+        }
+
+        db.ReservedBooks.Remove(reservedBook);
+        db.SaveChanges();
+    }
 }
