@@ -9,6 +9,7 @@ public class LibrarianNavigationMenu : INavigationMenu
             ("books", "Books"),
             ("readers", "Readers"),
             ("borrow-book", "Borrow book"),
+            ("return-book", "Return book"),
             ("librarians", "Librarians"),
             ("logout", "Logout")
         ];
