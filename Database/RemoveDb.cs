@@ -34,6 +34,13 @@ public class RemoveDb(Data db)
 
     public void RemoveBorrowedBook(BorrowedBook borrowedBook)
     {
+        var book = db.Books.FirstOrDefault(book => book.BookId == borrowedBook.BookId);
+        if (book != null)
+        {
+            book.Available += 1;
+            book.NotAvailable -= 1;
+        }
+
         db.BorrowedBooks.Remove(borrowedBook);
         db.SaveChanges();
     }
