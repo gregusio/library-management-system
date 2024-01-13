@@ -34,6 +34,11 @@ public class DbApi(Data db)
         return new SearchDb(db).GetAllLibrarians();
     }
 
+    public Book? GetBook(int id)
+    {
+        return new SearchDb(db).GetBook(id);
+    }
+
     public List<Book> GetBooks(string title, string? author)
     {
         return new SearchDb(db).GetBooks(title, author);
@@ -44,14 +49,19 @@ public class DbApi(Data db)
         return new SearchDb(db).GetAllBooks();
     }
 
-    public List<Tuple<Book, DateTime>> GetBorrowedBooks(Reader reader)
+    public List<BorrowedBook> GetBorrowedBooks(Reader reader)
     {
         return new SearchDb(db).GetBorrowedBooks(reader);
     }
 
-    public List<Book> GetReservedBooks(Reader reader)
+    public List<ReservedBook> GetReservedBooks(Reader reader)
     {
         return new SearchDb(db).GetReservedBooks(reader);
+    }
+
+    public ReservedBook? GetReservedBook(Reader reader, Book book)
+    {
+        return new SearchDb(db).GetReservedBook(reader, book);
     }
 
     public void AddReader(Reader reader)
@@ -74,6 +84,11 @@ public class DbApi(Data db)
         new InsertDb(db).AddBorrowedBook(borrowedBook);
     }
 
+    public void AddReservedBook(ReservedBook reservedBook)
+    {
+        new InsertDb(db).AddReservedBook(reservedBook);
+    }
+
     public void RemoveReader(int id)
     {
         new RemoveDb(db).RemoveReader(id);
@@ -89,8 +104,23 @@ public class DbApi(Data db)
         new RemoveDb(db).RemoveBook(id);
     }
 
+    public void RemoveBorrowedBook(BorrowedBook borrowedBook)
+    {
+        new RemoveDb(db).RemoveBorrowedBook(borrowedBook);
+    }
+
+    public void RemoveReservedBook(ReservedBook reservedBook)
+    {
+        new RemoveDb(db).RemoveReservedBook(reservedBook);
+    }
+
     public void SaveChanges()
     {
         new UpdateDb(db).SaveChanges();
+    }
+
+    public void PostponeBorrowedBook(BorrowedBook borrowedBook)
+    {
+        new UpdateDb(db).PostponeBorrowedBook(borrowedBook);
     }
 }
