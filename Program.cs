@@ -17,6 +17,10 @@ builder.Services.AddSingleton<NavigationMenuService>();
 
 builder.Services.AddBlazorBootstrap();
 
+var pass = builder.Configuration["password"]!;
+
+Data.Password = pass;
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
