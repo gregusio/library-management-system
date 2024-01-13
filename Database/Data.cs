@@ -7,6 +7,8 @@ public class Data(DbContextOptions<Data> options) : DbContext(options)
     public required DbSet<Reader> Readers { get; set; }
     public required DbSet<Book> Books { get; set; }
     public required DbSet<Librarian> Librarians { get; set; }
+    public required DbSet<BorrowedBook> BorrowedBooks { get; set; }
+    public required DbSet<ReservedBook> ReservedBooks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

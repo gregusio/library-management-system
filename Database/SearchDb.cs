@@ -43,4 +43,16 @@ public class SearchDb(Data db)
     {
         return db.Books.ToList();
     }
+
+    public List<Tuple<Book, DateTime>> GetBorrowedBooks(Reader reader)
+    {
+        return db.BorrowedBooks.Where(borrowedBook => borrowedBook.Reader == reader).Select(borrowedBook =>
+            new Tuple<Book, DateTime>(borrowedBook.Book, borrowedBook.Deadline)).ToList();
+    }
+
+    public List<Book> GetReservedBooks(Reader reader)
+    {
+        return db.ReservedBooks.Where(reservedBook => reservedBook.Reader == reader)
+            .Select(reservedBook => reservedBook.Book).ToList();
+    }
 }

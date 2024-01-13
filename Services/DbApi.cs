@@ -44,6 +44,16 @@ public class DbApi(Data db)
         return new SearchDb(db).GetAllBooks();
     }
 
+    public List<Tuple<Book, DateTime>> GetBorrowedBooks(Reader reader)
+    {
+        return new SearchDb(db).GetBorrowedBooks(reader);
+    }
+
+    public List<Book> GetReservedBooks(Reader reader)
+    {
+        return new SearchDb(db).GetReservedBooks(reader);
+    }
+
     public void AddReader(Reader reader)
     {
         new InsertDb(db).AddReader(reader);
@@ -57,6 +67,11 @@ public class DbApi(Data db)
     public void AddBook(Book book)
     {
         new InsertDb(db).AddBook(book);
+    }
+
+    public void AddBorrowedBook(BorrowedBook borrowedBook)
+    {
+        new InsertDb(db).AddBorrowedBook(borrowedBook);
     }
 
     public void RemoveReader(int id)
