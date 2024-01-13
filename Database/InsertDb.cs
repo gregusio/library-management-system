@@ -19,4 +19,10 @@ public class InsertDb(Data db)
         db.Books.Add(book);
         db.SaveChanges();
     }
+
+    public void AddBorrowedBook(BorrowedBook borrowedBook)
+    {
+        db.BorrowedBooks.Add(borrowedBook);
+        db.SaveChanges();
+    }
 }
