@@ -17,12 +17,19 @@ builder.Services.AddSingleton<NavigationMenuService>();
 
 builder.Services.AddBlazorBootstrap();
 
-var pass = builder.Configuration["password"]!;
+// var pass = builder.Configuration["password"]!;
+//
+// var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!.Replace("{password}", pass);
+//
+// builder.Services.AddDbContext<Data>(options =>
+//     options.UseSqlServer(connectionString));
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!.Replace("{password}", pass);
+var folder = Environment.SpecialFolder.LocalApplicationData;
+var path = Environment.GetFolderPath(folder);
+var dbPath = System.IO.Path.Join(path, "library.db");
 
 builder.Services.AddDbContext<Data>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlite($"Data Source={dbPath}"));
 
 var app = builder.Build();
 
