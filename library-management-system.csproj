@@ -10,13 +10,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazor.Bootstrap" Version="1.10.5"/>
-        <PackageReference Include="Blazored.Typeahead" Version="4.7.0"/>
+        <PackageReference Include="Blazor.Bootstrap" Version="1.10.5" />
+        <PackageReference Include="Blazored.Typeahead" Version="4.7.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     </ItemGroup>
 
 </Project>
