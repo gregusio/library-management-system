@@ -28,11 +28,41 @@ dotnet ef database update
 ```
 dotnet watch
 ```
+## Features
+
+- **Book Management:**
+  - Add, edit, and delete book information.
+  - Categorize and index resources.
+  - Assign unique identifiers to each resource.
+
+- **Reader Management:**
+  - User registration and authentication.
+  - Add, edit, and delete reader information.
+  - Keep track of borrowing and returning history for each reader.
+  - Monitor reader activity.
+
+- **Borrowing and Returning Resources:**
+  - Create borrowings and reservations.
+  - Handle the resource return process.
 
 ## Technologies used
 - .NET 8.0
 - Blazor
 - Entity Framework Core
+
+- **Database:**
+  - SQLite
+  - Entity Framework Core
+
+- **Backend:**
+  - ASP.NET Core
+  - C# (język programowania)
+
+
+- **Others:**
+  - Git
+  - Rider
+
 
 ## Authors
 - Grzegorz Dynak [gregusio](https://github.com/gregusio)
@@ -40,3 +70,5 @@ dotnet watch
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+
