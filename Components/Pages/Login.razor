@@ -62,8 +62,12 @@
     }
 
 
-    private bool VerifyPassword(string? hashedPassword, string providedPassword)
+    private bool VerifyPassword(string? hashedPassword, string? providedPassword)
     {
+        if (providedPassword == null)
+        {
+            return false;
+        }
         // Your logic for hashing and verifying the password
         // For example, using ASP.NET Core Identity's PasswordHasher
         var passwordHasher = new PasswordHasher<User>();
