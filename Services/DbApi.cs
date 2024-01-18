@@ -63,6 +63,16 @@ public class DbApi(Data db)
     {
         return new SearchDb(db).GetReservedBook(reader, book);
     }
+    
+    public bool LoginAlreadyUsed(string login)
+    {
+        return new SearchDb(db).LoginAlreadyUsed(login);
+    }
+    
+    public bool PasswordAlreadyUsed(string password)
+    {
+        return new SearchDb(db).PasswordAlreadyUsed(password);
+    }
 
     public void AddReader(Reader reader)
     {

@@ -7,7 +7,7 @@ It is a simple system that allows you to manage a library, keep all the books, r
 - [.NET 8.0](https://dotnet.microsoft.com/en-us/download)
 - dotnet ef
 ```
-dotnet tool install --global dotnet-ef
+dotnet tool install --global --version 8.0.0 dotnet-ef
 ```
 
 ### Installing
