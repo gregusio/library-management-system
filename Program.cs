@@ -15,6 +15,8 @@ builder.Services.AddSingleton<AuthService>();
 
 builder.Services.AddSingleton<NavigationMenuService>();
 
+builder.Services.AddTransient<AlertService>();
+
 builder.Services.AddBlazorBootstrap();
 
 // var pass = builder.Configuration["password"]!;

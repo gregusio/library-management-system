@@ -5,6 +5,7 @@
 @using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
 @inject DbApi DbApi
+@inject AlertService AlertService
 
 <PageTitle>Readers</PageTitle>
 
@@ -12,7 +13,7 @@
 
 <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
     <BodyTemplate>
-        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
         <div class="container">
             <p>Name</p>
@@ -84,8 +85,6 @@
     private string Login { get; set; }
     private string Password { get; set; }
 
-    List<ToastMessage> messages = new();
-
     private int TotalPages => (ReadersCount - 1) / readersPerPage + 1;
 
     private int ReadersCount => SelectedReaders.Count;
@@ -93,31 +92,6 @@
     private List<Reader> AllReaders => DbApi.GetAllReaders();
 
     private List<Reader> SelectedReaders = new();
-
-    private void ShowMessage(ToastType toastType)
-    {
-        messages.Add(CreateToastMessage(toastType));
-    }
-
-    private ToastMessage CreateToastMessage(ToastType toastType)
-    {
-        if (toastType is ToastType.Success)
-            return new ToastMessage
-            {
-                Type = toastType,
-                Title = "Success",
-                HelpText = $"{DateTime.Now}",
-                Message = $"Reader added successfully"
-            };
-        else
-            return new ToastMessage
-            {
-                Type = toastType,
-                Title = "Warning",
-                HelpText = $"{DateTime.Now}",
-                Message = $"Reader already exists"
-            };
-    }
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
@@ -141,11 +115,11 @@
 
             SelectedReaders = AllReaders;
 
-            ShowMessage(ToastType.Success);
+            AlertService.ShowSuccess("Reader added successfully!");
         }
         catch (DbUpdateException e)
         {
-            ShowMessage(ToastType.Warning);
+            AlertService.ShowWarning("Something went wrong!");
         }
     }
 
@@ -157,7 +131,7 @@
     private async Task OnHideModalClick()
     {
         await modal.HideAsync();
-        messages = new List<ToastMessage>();
+        AlertService.ClearMessages();
     }
 
     protected override void OnInitialized()
@@ -170,6 +144,4 @@
     {
         SelectedReaders = AllReaders.Where(reader => reader.Name.ToLower().Contains(search.ToLower())).ToList();
     }
-
-
 }

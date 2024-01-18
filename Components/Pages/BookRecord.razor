@@ -2,6 +2,7 @@
 @using library_management_system.Services
 @inject DbApi DbApi
 @inject AuthService AuthService
+@inject AlertService AlertService
 
 @if (!_editMode)
 {
@@ -50,6 +51,8 @@ else
     </Card>
 }
 
+<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
 
 @code {
     [Parameter] public required Book Book { get; set; }
@@ -97,6 +100,7 @@ else
     private void CloseAndSave()
     {
         DbApi.SaveChanges();
+        AlertService.ShowSuccess("Changes saved");
         _editMode = false;
     }
 
@@ -111,7 +115,11 @@ else
                 BookId = Book.BookId,
                 ReaderId = Reader!.Id
             });
+            AlertService.ShowSuccess("Book reserved");
+        }
+        else
+        {
+            AlertService.ShowInfo("Book not available");
         }
     }
-
 }
