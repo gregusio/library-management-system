@@ -3,6 +3,7 @@
 @using library_management_system.Services
 @rendermode InteractiveServer
 @inject DbApi DbApi
+@inject AlertService AlertService
 
 <h3>BorrowBook</h3>
 
@@ -42,6 +43,8 @@
 
 <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="TryBorrowBook"> Borrow Book </Button>
 
+<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
 @code {
     private List<Reader> AllReaders => DbApi.GetAllReaders();
     private Reader? SelectedPerson { get; set; }
@@ -62,6 +65,7 @@
     {
         if (SelectedPerson == null || SelectedBook == null)
         {
+            AlertService.ShowInfo("Please select a person and a book");
             return;
         }
 
@@ -76,6 +80,8 @@
                 BookId = SelectedBook.BookId,
                 Deadline = DateTime.Now.AddDays(30)
             });
+            
+            AlertService.ShowSuccess("Book borrowed");
 
             return;
         }
@@ -88,11 +94,13 @@
                 BookId = SelectedBook.BookId,
                 Deadline = DateTime.Now.AddDays(30)
             });
+            
+            AlertService.ShowSuccess("Book borrowed");
 
             return;
         }
-
-        Console.WriteLine("Book not available");
+        
+        AlertService.ShowWarning("Book not available");
     }
 
 }
