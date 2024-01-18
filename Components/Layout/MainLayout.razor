@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using library_management_system.Services
+@inherits LayoutComponentBase
+@inject AuthService AuthService
 
 <div class="page">
     <div class="sidebar">
@@ -7,7 +9,12 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            @if(AuthService.IsLoggedIn())
+            {
+                var user = AuthService.User;
+                <a>Logged as @(user!.Name) @(user!.Surname)</a>
+                <a href="account" class="ml-md-auto">Account</a>
+            }
         </div>
 
         <article class="content px-4">
