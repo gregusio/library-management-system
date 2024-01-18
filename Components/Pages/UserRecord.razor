@@ -2,6 +2,7 @@
 @using library_management_system.Services
 @inject AuthService AuthService
 @inject DbApi DbApi
+@inject AlertService AlertService
 
 @if (!editMode)
 {
@@ -93,6 +94,8 @@ else
     </FooterTemplate>
 </Modal>
 
+<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
 
 @code {
     [Parameter] public User User { get; set; }
@@ -143,6 +146,7 @@ else
     private void CloseAndSave()
     {
         DbApi.SaveChanges();
+        AlertService.ShowSuccess("Changes saved!");
         editMode = false;
     }
 
@@ -160,6 +164,7 @@ else
     {
         await modal1.HideAsync();
         await modal2.HideAsync();
+        AlertService.ClearMessages();
     }
 
 }

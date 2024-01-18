@@ -4,6 +4,7 @@
 @using library_management_system.Database
 @using Microsoft.AspNetCore.Identity
 @inject AuthService AuthService
+@inject AlertService AlertService
 @inject DbApi DbApi
 
 <h3>Account</h3>
@@ -17,7 +18,7 @@
 
 <Modal @ref="_loginModal" title="Change login" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
     <BodyTemplate>
-        <Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight"/>
+        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
         
         <p>Current login: <input @bind="@_currentLogin"/></p>
         <p>New login: <input @bind="@_newLogin"/></p>
@@ -31,7 +32,7 @@
 
 <Modal @ref="_passwordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
     <BodyTemplate>
-        <Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight"/>
+        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
         
         <p>Current password: <input type="password" @bind="@_currentPassword"/></p>
         <p>New password: <input type="password" @bind="@_newPassword"/></p>
@@ -53,7 +54,6 @@
     private string _currentPassword = default!;
     private string _newPassword = default!;
     private string _confirmNewPassword = default!;
-    private readonly List<ToastMessage> _messages = new List<ToastMessage>();
     
     private async Task OnShowChangeLoginClick()
     {
@@ -68,15 +68,14 @@
     private async Task OnHideModalClick()
     {
         await _loginModal.HideAsync();
-        _messages.Clear();
+        AlertService.ClearMessages();
     }
     
     private void TryChangePassword()
     {
         if (_newPassword != _confirmNewPassword)
         {
-            Console.WriteLine("New password and confirm new password are not the same");
-            ShowMessage(ToastType.Info, "New password and confirm new password are not the same");
+            AlertService.ShowInfo("New password and confirm new password are not the same");
             return;
         }
         
@@ -85,70 +84,44 @@
 
         if (result != PasswordVerificationResult.Success)
         {
-            Console.WriteLine("Current password is not correct");
-            ShowMessage(ToastType.Warning, "Current password is not correct");
+            AlertService.ShowWarning("Current password is not correct");
+            return;
+        }
+        
+        if(DbApi.PasswordAlreadyUsed(_newPassword))
+        {
+            AlertService.ShowWarning("Password already used");
             return;
         }
 
-        User.PasswordHash = passwordHasher.HashPassword(null!, _newPassword);
+        var passwordHash = passwordHasher.HashPassword(null!, _newPassword);
+        User.PasswordHash = passwordHash;
         DbApi.SaveChanges();
-        ShowMessage(ToastType.Success, "Password changed successfully");
+        AlertService.ShowSuccess("Password changed successfully");
     }
     
     private void TryChangeLogin()
     {
         if (_newLogin != _confirmNewLogin)
         {
-            Console.WriteLine("New login and confirm new login are not the same");
-            ShowMessage(ToastType.Info, "New login and confirm new login are not the same");
+            AlertService.ShowInfo("New login and confirm new login are not the same");
             return;
         }
 
         if (_currentLogin != User!.Login)
         {
-            Console.WriteLine("Current login is not correct");
-            ShowMessage(ToastType.Warning, "Current login is not correct");
+            AlertService.ShowWarning("Current login is not correct");
+            return;
+        }
+        
+        if(DbApi.LoginAlreadyUsed(_newLogin))
+        {
+            AlertService.ShowWarning("Login already used");
             return;
         }
 
         User.Login = _newLogin;
         DbApi.SaveChanges();
-        ShowMessage(ToastType.Success, "Login changed successfully");
-    }
-    
-    private void ShowMessage(ToastType toastType, string message)
-    {
-        _messages.Add(CreateToastMessage(toastType, message));
-    }
-    
-    private ToastMessage CreateToastMessage(ToastType toastType, string message)
-    {
-        switch (toastType)
-        {
-            case ToastType.Info:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Info",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-            case ToastType.Success:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Success",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-            default:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Warning",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-        }
+        AlertService.ShowSuccess("Login changed successfully");
     }
 }

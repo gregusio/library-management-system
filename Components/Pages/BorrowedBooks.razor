@@ -3,6 +3,7 @@
 @using library_management_system.Services
 @inject AuthService AuthService
 @inject DbApi DbApi
+@inject AlertService AlertService
 
 <h3>Borrowed books</h3>
 
@@ -29,6 +30,8 @@
     </Card>
 }
 
+<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
 
 @code {
     private Reader? Reader => AuthService.User as Reader;
@@ -37,6 +40,7 @@
     private void Postpone(BorrowedBook borrowedBook)
     {
         DbApi.PostponeBorrowedBook(borrowedBook);
+        AlertService.ShowSuccess("Postponed successfully!");
     }
 
 }
