@@ -6,11 +6,14 @@ public class Book
 {
     [Key] public int BookId { get; set; } // Key 
 
-    public string Title { get; set; }
+    [StringLength(30)]
+    public string? Title { get; set; }
 
-    public string Author { get; set; }
+    [StringLength(30)]
+    public string? Author { get; set; }
 
-    public string Publisher { get; set; }
+    [StringLength(30)]
+    public string? Publisher { get; set; }
 
     public DateTime PublishDate { get; set; }
 
