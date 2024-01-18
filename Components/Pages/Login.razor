@@ -62,9 +62,9 @@
     }
 
 
-    private bool VerifyPassword(string? hashedPassword, string providedPassword)
+    private bool VerifyPassword(string? hashedPassword, string? providedPassword)
     {
-        if (hashedPassword == null)
+        if (providedPassword == null)
         {
             return false;
         }
