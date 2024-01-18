@@ -3,7 +3,7 @@
 @inject DbApi DbApi
 @inject AuthService AuthService
 
-@if (!editMode)
+@if (!_editMode)
 {
     <Card Style="width:18rem;">
         <CardBody>
@@ -52,12 +52,12 @@ else
 
 
 @code {
-    [Parameter] public Book Book { get; set; }
-    private Reader Reader => AuthService.User as Reader;
-    private bool editMode = false;
-    private string Title { get; set; }
-    private string Author { get; set; }
-    private string Publisher { get; set; }
+    [Parameter] public required Book Book { get; set; }
+    private Reader? Reader => AuthService.User as Reader;
+    private bool _editMode = false;
+    private string? Title { get; set; }
+    private string? Author { get; set; }
+    private string? Publisher { get; set; }
     private DateTime PublishDate { get; set; }
     private ECategory Category { get; set; }
     private int Available { get; set; }
@@ -85,19 +85,19 @@ else
     private void EditMode()
     {
         SaveState();
-        editMode = true;
+        _editMode = true;
     }
 
     private void CloseEditMode()
     {
         UndoChanges();
-        editMode = false;
+        _editMode = false;
     }
 
     private void CloseAndSave()
     {
         DbApi.SaveChanges();
-        editMode = false;
+        _editMode = false;
     }
 
     private void Reserve()
@@ -109,7 +109,7 @@ else
             DbApi.AddReservedBook(new ReservedBook()
             {
                 BookId = Book.BookId,
-                ReaderId = Reader.Id
+                ReaderId = Reader!.Id
             });
         }
     }

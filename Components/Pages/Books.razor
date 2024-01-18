@@ -12,7 +12,7 @@
 
 @if (AuthService.IsLibrarian())
 {
-    <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+    <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
         <BodyTemplate>
             <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
 
@@ -114,7 +114,7 @@
                 Type = toastType,
                 Title = "Warning",
                 HelpText = $"{DateTime.Now}",
-                Message = $"Book already exists"
+                Message = $"Something went wrong"
             };
     }
 

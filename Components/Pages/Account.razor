@@ -15,13 +15,13 @@
 <Button Color="ButtonColor.Primary" Size="Size.Medium" Style="margin-top: 10px" @onclick="OnShowChangePasswordClick">Change password</Button>
 
 
-<Modal @ref="LoginModal" title="Change login" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
+<Modal @ref="_loginModal" title="Change login" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
     <BodyTemplate>
-        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+        <Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight"/>
         
-        <p>Current login: <input @bind="@CurrentLogin"/></p>
-        <p>New login: <input @bind="@NewLogin"/></p>
-        <p>Confirm new login: <input @bind="@ConfirmNewLogin"/></p>
+        <p>Current login: <input @bind="@_currentLogin"/></p>
+        <p>New login: <input @bind="@_newLogin"/></p>
+        <p>Confirm new login: <input @bind="@_confirmNewLogin"/></p>
 
     </BodyTemplate>
     <FooterTemplate>
@@ -29,13 +29,13 @@
     </FooterTemplate>
 </Modal>
 
-<Modal @ref="PasswordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
+<Modal @ref="_passwordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
     <BodyTemplate>
-        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+        <Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight"/>
         
-        <p>Current password: <input type="password" @bind="@CurrentPassword"/></p>
-        <p>New password: <input type="password" @bind="@NewPassword"/></p>
-        <p>Confirm new password: <input type="password" @bind="@ConfirmNewPassword"/></p>
+        <p>Current password: <input type="password" @bind="@_currentPassword"/></p>
+        <p>New password: <input type="password" @bind="@_newPassword"/></p>
+        <p>Confirm new password: <input type="password" @bind="@_confirmNewPassword"/></p>
 
     </BodyTemplate>
     <FooterTemplate>
@@ -44,36 +44,36 @@
 </Modal>
 
 @code {
-    private Modal LoginModal = default!;
-    private Modal PasswordModal = default!;
-    private User User => AuthService.User;
-    private string CurrentLogin = default!;
-    private string NewLogin = default!;
-    private string ConfirmNewLogin = default!;
-    private string CurrentPassword = default!;
-    private string NewPassword = default!;
-    private string ConfirmNewPassword = default!;
-    private List<ToastMessage> messages = new List<ToastMessage>();
+    private Modal _loginModal = default!;
+    private Modal _passwordModal = default!;
+    private User? User => AuthService.User;
+    private string _currentLogin = default!;
+    private string _newLogin = default!;
+    private string _confirmNewLogin = default!;
+    private string _currentPassword = default!;
+    private string _newPassword = default!;
+    private string _confirmNewPassword = default!;
+    private readonly List<ToastMessage> _messages = new List<ToastMessage>();
     
     private async Task OnShowChangeLoginClick()
     {
-        await LoginModal.ShowAsync();
+        await _loginModal.ShowAsync();
     }
     
     private async Task OnShowChangePasswordClick()
     {
-        await PasswordModal.ShowAsync();
+        await _passwordModal.ShowAsync();
     }
 
     private async Task OnHideModalClick()
     {
-        await LoginModal.HideAsync();
-        messages.Clear();
+        await _loginModal.HideAsync();
+        _messages.Clear();
     }
     
     private void TryChangePassword()
     {
-        if (NewPassword != ConfirmNewPassword)
+        if (_newPassword != _confirmNewPassword)
         {
             Console.WriteLine("New password and confirm new password are not the same");
             ShowMessage(ToastType.Info, "New password and confirm new password are not the same");
@@ -81,7 +81,7 @@
         }
         
         var passwordHasher = new PasswordHasher<User>();
-        var result = passwordHasher.VerifyHashedPassword(null, User.PasswordHash, CurrentPassword);
+        var result = passwordHasher.VerifyHashedPassword(null!, User!.PasswordHash!, _currentPassword);
 
         if (result != PasswordVerificationResult.Success)
         {
@@ -90,35 +90,35 @@
             return;
         }
 
-        User.PasswordHash = passwordHasher.HashPassword(null, NewPassword);
+        User.PasswordHash = passwordHasher.HashPassword(null!, _newPassword);
         DbApi.SaveChanges();
         ShowMessage(ToastType.Success, "Password changed successfully");
     }
     
     private void TryChangeLogin()
     {
-        if (NewLogin != ConfirmNewLogin)
+        if (_newLogin != _confirmNewLogin)
         {
             Console.WriteLine("New login and confirm new login are not the same");
             ShowMessage(ToastType.Info, "New login and confirm new login are not the same");
             return;
         }
 
-        if (CurrentLogin != User.Login)
+        if (_currentLogin != User!.Login)
         {
             Console.WriteLine("Current login is not correct");
             ShowMessage(ToastType.Warning, "Current login is not correct");
             return;
         }
 
-        User.Login = NewLogin;
+        User.Login = _newLogin;
         DbApi.SaveChanges();
         ShowMessage(ToastType.Success, "Login changed successfully");
     }
     
     private void ShowMessage(ToastType toastType, string message)
     {
-        messages.Add(CreateToastMessage(toastType, message));
+        _messages.Add(CreateToastMessage(toastType, message));
     }
     
     private ToastMessage CreateToastMessage(ToastType toastType, string message)
