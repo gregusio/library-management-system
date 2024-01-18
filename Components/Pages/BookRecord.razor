@@ -2,6 +2,7 @@
 @using library_management_system.Services
 @inject DbApi DbApi
 @inject AuthService AuthService
+@inject AlertService AlertService
 
 @if (!_editMode)
 {
@@ -49,6 +50,8 @@ else
         </CardBody>
     </Card>
 }
+
+<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
 
 @code {
@@ -113,5 +116,14 @@ else
             });
         }
     }
+    
+    private async void ShowAlert()
+    {
+        AlertService.ShowSuccess("Success, book reserved");
+        Thread.Sleep(2000);
+        AlertService.ClearMessages();
+    }
+    
+    //TODO add reserved alert
 
 }
