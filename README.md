@@ -11,7 +11,6 @@ It is a simple system that allows you to manage a library, keep all the books, r
 - **Reader Management:**
   - User registration and authentication.
   - Add, edit, and delete reader information.
-  - Keep track of borrowing and returning history for each reader.
   - Monitor reader activity.
 
 - **Borrowing and Returning Resources:**
