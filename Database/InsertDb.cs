@@ -4,20 +4,41 @@ public class InsertDb(Data db)
 {
     public void AddReader(Reader reader)
     {
-        db.Readers.Add(reader);
-        db.SaveChanges();
+        
+        try
+        {
+            db.Readers.Add(reader);
+            db.SaveChanges();
+        }
+        catch (Exception e)
+        {
+            db.Readers.Remove(reader);
+            throw;
+        }
     }
 
     public void AddLibrarian(Librarian librarian)
     {
-        db.Librarians.Add(librarian);
-        db.SaveChanges();
+        try {
+            db.Librarians.Add(librarian);
+            db.SaveChanges();
+        }
+        catch (Exception e) {
+            db.Librarians.Remove(librarian);
+            throw;
+        }
     }
 
     public void AddBook(Book book)
     {
-        db.Books.Add(book);
-        db.SaveChanges();
+        try {
+            db.Books.Add(book);
+            db.SaveChanges();
+        } 
+        catch (Exception e) {
+            db.Books.Remove(book);
+            throw;
+        }
     }
 
     public void AddBorrowedBook(BorrowedBook borrowedBook)
