@@ -94,17 +94,14 @@ else
 </Modal>
 
 
-}
-
-
 @code {
     [Parameter] public User User { get; set; }
     private bool editMode = false;
-    private string Name { get; set; }
-    private string Surname { get; set; }
-    private string Address { get; set; }
-    private string TelephoneNr { get; set; }
-    private string EmailAddress { get; set; }
+    private string? Name { get; set; }
+    private string? Surname { get; set; }
+    private string? Address { get; set; }
+    private string? TelephoneNr { get; set; }
+    private string? EmailAddress { get; set; }
 
     private Modal modal1 = default!;
     private Modal modal2 = default!;

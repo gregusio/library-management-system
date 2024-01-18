@@ -12,8 +12,8 @@
             @if(AuthService.IsLoggedIn())
             {
                 var user = AuthService.User;
-                <a>Logged as @(user!.Name) @(user!.Surname)</a>
-                <a href="account" class="ml-md-auto">Account</a>
+                <a>Logged as @(user!.Name) @(user.Surname)</a>
+                <a href="/account" class="ml-md-auto">Account</a>
             }
         </div>
 
