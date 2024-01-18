@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace library_management_system.Database;
 
 public class SearchDb(Data db)
@@ -63,5 +65,18 @@ public class SearchDb(Data db)
     {
         return db.ReservedBooks.FirstOrDefault(reservedBook =>
             reservedBook.ReaderId == reader.Id && reservedBook.BookId == book.BookId);
+    }
+    
+    public bool LoginAlreadyUsed(string login)
+    {
+        return db.Readers.Any(r => r.Login == login) || db.Librarians.Any(l => l.Login == login);
+    }
+    
+    public bool PasswordAlreadyUsed(string password)
+    {
+        var passwordHasher = new PasswordHasher<User>();
+        var passwordHash = passwordHasher.HashPassword(null!, password);
+        return db.Readers.Any(r => r.PasswordHash == passwordHash)
+               || db.Librarians.Any(l => l.PasswordHash == passwordHash);
     }
 }
