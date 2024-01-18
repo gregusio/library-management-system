@@ -1,0 +1,154 @@
+@page "/account"
+@rendermode InteractiveServer
+@using library_management_system.Services
+@using library_management_system.Database
+@using Microsoft.AspNetCore.Identity
+@inject AuthService AuthService
+@inject DbApi DbApi
+
+<h3>Account</h3>
+
+<UserRecord User="@(AuthService.User)"></UserRecord>
+
+<Button Color="ButtonColor.Primary" Size="Size.Medium" Style="margin-top: 10px" @onclick="OnShowChangeLoginClick">Change login</Button>
+
+<Button Color="ButtonColor.Primary" Size="Size.Medium" Style="margin-top: 10px" @onclick="OnShowChangePasswordClick">Change password</Button>
+
+
+<Modal @ref="LoginModal" title="Change login" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+        
+        <p>Current login: <input @bind="@CurrentLogin"/></p>
+        <p>New login: <input @bind="@NewLogin"/></p>
+        <p>Confirm new login: <input @bind="@ConfirmNewLogin"/></p>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" Size="Size.Medium" @onclick="TryChangeLogin">Change login</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="PasswordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+        
+        <p>Current password: <input type="password" @bind="@CurrentPassword"/></p>
+        <p>New password: <input type="password" @bind="@NewPassword"/></p>
+        <p>Confirm new password: <input type="password" @bind="@ConfirmNewPassword"/></p>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" Size="Size.Medium" @onclick="TryChangePassword">Change login</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private Modal LoginModal = default!;
+    private Modal PasswordModal = default!;
+    private User User => AuthService.User;
+    private string CurrentLogin = default!;
+    private string NewLogin = default!;
+    private string ConfirmNewLogin = default!;
+    private string CurrentPassword = default!;
+    private string NewPassword = default!;
+    private string ConfirmNewPassword = default!;
+    private List<ToastMessage> messages = new List<ToastMessage>();
+    
+    private async Task OnShowChangeLoginClick()
+    {
+        await LoginModal.ShowAsync();
+    }
+    
+    private async Task OnShowChangePasswordClick()
+    {
+        await PasswordModal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await LoginModal.HideAsync();
+        messages.Clear();
+    }
+    
+    private void TryChangePassword()
+    {
+        if (NewPassword != ConfirmNewPassword)
+        {
+            Console.WriteLine("New password and confirm new password are not the same");
+            ShowMessage(ToastType.Info, "New password and confirm new password are not the same");
+            return;
+        }
+        
+        var passwordHasher = new PasswordHasher<User>();
+        var result = passwordHasher.VerifyHashedPassword(null, User.PasswordHash, CurrentPassword);
+
+        if (result != PasswordVerificationResult.Success)
+        {
+            Console.WriteLine("Current password is not correct");
+            ShowMessage(ToastType.Warning, "Current password is not correct");
+            return;
+        }
+
+        User.PasswordHash = passwordHasher.HashPassword(null, NewPassword);
+        DbApi.SaveChanges();
+        ShowMessage(ToastType.Success, "Password changed successfully");
+    }
+    
+    private void TryChangeLogin()
+    {
+        if (NewLogin != ConfirmNewLogin)
+        {
+            Console.WriteLine("New login and confirm new login are not the same");
+            ShowMessage(ToastType.Info, "New login and confirm new login are not the same");
+            return;
+        }
+
+        if (CurrentLogin != User.Login)
+        {
+            Console.WriteLine("Current login is not correct");
+            ShowMessage(ToastType.Warning, "Current login is not correct");
+            return;
+        }
+
+        User.Login = NewLogin;
+        DbApi.SaveChanges();
+        ShowMessage(ToastType.Success, "Login changed successfully");
+    }
+    
+    private void ShowMessage(ToastType toastType, string message)
+    {
+        messages.Add(CreateToastMessage(toastType, message));
+    }
+    
+    private ToastMessage CreateToastMessage(ToastType toastType, string message)
+    {
+        switch (toastType)
+        {
+            case ToastType.Info:
+                return new ToastMessage
+                {
+                    Type = toastType,
+                    Title = "Info",
+                    HelpText = $"{DateTime.Now}",
+                    Message = message
+                };
+            case ToastType.Success:
+                return new ToastMessage
+                {
+                    Type = toastType,
+                    Title = "Success",
+                    HelpText = $"{DateTime.Now}",
+                    Message = message
+                };
+            default:
+                return new ToastMessage
+                {
+                    Type = toastType,
+                    Title = "Warning",
+                    HelpText = $"{DateTime.Now}",
+                    Message = message
+                };
+        }
+    }
+}
