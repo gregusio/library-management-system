@@ -6,6 +6,7 @@
 @rendermode InteractiveServer
 @inject DbApi DbApi
 @inject AuthService AuthService
+@inject AlertService AlertService
 
 <PageTitle>Librarians</PageTitle>
 
@@ -15,7 +16,7 @@
 {
     <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
         <BodyTemplate>
-            <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+            <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
             <div class="container">
                 <p>Name</p>
@@ -102,36 +103,9 @@
     private double Salary { get; set; }
     private string Position { get; set; }
 
-    List<ToastMessage> messages = new();
-
     private int LibrariansCount => AllLibrarians.Count;
 
     private List<Librarian> AllLibrarians => DbApi.GetAllLibrarians();
-
-    private void ShowMessage(ToastType toastType)
-    {
-        messages.Add(CreateToastMessage(toastType));
-    }
-
-    private ToastMessage CreateToastMessage(ToastType toastType)
-    {
-        if (toastType is ToastType.Success)
-            return new ToastMessage
-            {
-                Type = toastType,
-                Title = "Success",
-                HelpText = $"{DateTime.Now}",
-                Message = $"Librarian added successfully"
-            };
-        else
-            return new ToastMessage
-            {
-                Type = toastType,
-                Title = "Warning",
-                HelpText = $"{DateTime.Now}",
-                Message = $"Librarian already exists"
-            };
-    }
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
@@ -155,11 +129,11 @@
                 Position = EPosition.Librarian
             });
 
-            ShowMessage(ToastType.Success);
+            AlertService.ShowSuccess("Librarian added successfully!");
         }
         catch (DbUpdateException e)
         {
-            ShowMessage(ToastType.Warning);
+            AlertService.ShowWarning("Something went wrong!");
         }
     }
 
@@ -171,7 +145,7 @@
     private async Task OnHideModalClick()
     {
         await modal.HideAsync();
-        messages = new List<ToastMessage>();
+        AlertService.ClearMessages();
     }
 
 }
