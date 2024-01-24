@@ -12,9 +12,11 @@ public class LoginTest : TestContext
     public void TestNoLoginNoPassword()
     {
         Services.AddTransient<DbApi>();
-        Services.AddDbContext<Data>(
-            options => options.UseSqlite($"Data Source=library.db"));
+        var dbPath = "../library.db";
+        Services.AddDbContext<Data>(options =>
+            options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
+        
         
         var cut = RenderComponent<Login>();
         cut.Find("button").Click();
@@ -26,8 +28,9 @@ public class LoginTest : TestContext
     public void TestLoginNoPassword()
     {
         Services.AddTransient<DbApi>();
-        Services.AddDbContext<Data>(
-            options => options.UseSqlite($"Data Source=library.db"));
+        var dbPath = "../library.db";
+        Services.AddDbContext<Data>(options =>
+            options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         
         var cut = RenderComponent<Login>();
@@ -42,8 +45,9 @@ public class LoginTest : TestContext
     public void TestNoLoginPassword()
     {
         Services.AddTransient<DbApi>();
-        Services.AddDbContext<Data>(
-            options => options.UseSqlite($"Data Source=/library.db"));
+        var dbPath = "../library.db";
+        Services.AddDbContext<Data>(options =>
+            options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         
         var cut = RenderComponent<Login>();
@@ -61,8 +65,9 @@ public class LoginTest : TestContext
     public void TestLoginPassword()
     {
         Services.AddTransient<DbApi>();
-        Services.AddDbContext<Data>(
-            options => options.UseSqlite($"Data Source=library.db"));
+        var dbPath = "../library.db";
+        Services.AddDbContext<Data>(options =>
+            options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         
         var cut = RenderComponent<Login>();
