@@ -1,9 +1,0 @@
-.container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 kolumny z jednakowym udziałem */
-    grid-gap: 10px; /* Odstęp między elementami */
-}
-
-.element {
-    /* Dodatkowe style dla elementów */
-}
