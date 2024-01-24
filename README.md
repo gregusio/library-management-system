@@ -39,13 +39,19 @@ cd library-management-system
 
 #### Setting up local database
 ```
-dotnet ef migrations add InitialCreate
-dotnet ef database update
+dotnet ef --project library-management-system migrations add InitialCreate
+dotnet ef --project library-management-system database update
 ```
 
 ### Running project
 ```
-dotnet watch
+dotnet watch --project library-management-system
+```
+
+### Running tests
+To run all tests in project library-management-system.test just type
+```
+dotnet test
 ```
 
 ## Technologies used
