@@ -1,0 +1,77 @@
+@page "/return-book"
+@using library_management_system.Database
+@using library_management_system.Services
+@rendermode InteractiveServer
+@inject DbApi DbApi
+@inject AlertService AlertService
+
+<h3>Return book</h3>
+
+<BlazoredTypeahead SearchMethod="GetReadersLocal"
+                   TItem="Reader"
+                   TValue="Reader"
+                   @bind-Value="SelectedPerson"
+                   placeholder="Search by first name...">
+    <SelectedTemplate Context="reader">
+        @{
+            var selectedPerson = reader;
+
+            <text>@selectedPerson?.Name @selectedPerson?.Surname</text>
+        }
+    </SelectedTemplate>
+    <ResultTemplate Context="person">
+        @person.Name @person.Surname (Id: @person.Id)
+    </ResultTemplate>
+</BlazoredTypeahead>
+
+<BlazoredTypeahead SearchMethod="GetBooksLocal"
+                   TItem="BorrowedBook"
+                   TValue="BorrowedBook"
+                   @bind-Value="SelectedBook"
+                   placeholder="Search by title...">
+    <SelectedTemplate Context="borrowedBook">
+        @{
+            var selectedBook = DbApi.GetBook(borrowedBook.BookId);
+
+            <text>@selectedBook?.Title @selectedBook?.Author</text>
+        }
+    </SelectedTemplate>
+    <ResultTemplate Context="borrowedBook">
+        @(DbApi.GetBook(borrowedBook.BookId).Title) @(DbApi.GetBook(borrowedBook.BookId).Author) (Id: @(DbApi.GetBook(borrowedBook.BookId).BookId) )
+    </ResultTemplate>
+</BlazoredTypeahead>
+
+<Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="TryReturnBook"> Return book </Button>
+
+<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+@code {
+    private List<Reader> AllReaders => DbApi.GetAllReaders();
+    private Reader? SelectedPerson { get; set; }
+    private List<BorrowedBook> BorrowedBooks => DbApi.GetBorrowedBooks(SelectedPerson);
+    private BorrowedBook? SelectedBook { get; set; }
+
+    private async Task<IEnumerable<Reader>> GetReadersLocal(string searchText)
+    {
+        return await Task.FromResult(AllReaders.Where(reader => reader.Name.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+    private async Task<IEnumerable<BorrowedBook>> GetBooksLocal(string searchText)
+    {
+        return await Task.FromResult(BorrowedBooks.Where(borrowedBook => DbApi.GetBook(borrowedBook.BookId)!.Title.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+    private void TryReturnBook()
+    {
+        if (SelectedBook != null)
+        {
+            DbApi.RemoveBorrowedBook(SelectedBook);
+            AlertService.ShowSuccess("Book returned successfully");
+        }
+        else
+        {
+            AlertService.ShowInfo("Please select a book");
+        }
+    }
+
+}

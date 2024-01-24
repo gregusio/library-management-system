@@ -1,0 +1,125 @@
+@using library_management_system.Database
+@using library_management_system.Services
+@inject DbApi DbApi
+@inject AuthService AuthService
+@inject AlertService AlertService
+
+@if (!_editMode)
+{
+    <Card Style="width:18rem;">
+        <CardBody>
+            <CardTitle>@Book.Title</CardTitle>
+            <CardText>
+                <p>Author: @Book.Author</p>
+                <p>Publisher: @Book.Publisher</p>
+                <p>Publish Date: @Book.PublishDate</p>
+                <p>Category: @Book.Category</p>
+                <p>Available: @Book.Available</p>
+                <p>Reserved: @Book.Reserved</p>
+                <p>Borrowed: @Book.NotAvailable</p>
+
+            </CardText>
+            @if (AuthService.IsLibrarian())
+            {
+                <Button Color="ButtonColor.Primary" @onclick="EditMode">Edit</Button>
+            }
+            else
+            {
+                <Button Color="ButtonColor.Primary" @onclick="Reserve">Reserve</Button>
+            }
+
+        </CardBody>
+    </Card>
+}
+else
+{
+    <Card Style="width:18rem;">
+        <CardBody>
+            <CardTitle>
+                <input @bind="@Book.Title"/>
+            </CardTitle>
+            <CardText>
+                <p>Author: <input @bind="@Book.Author"/></p>
+                <p>Publisher: <input @bind="@Book.Publisher"/></p>
+                <p>Publish Date: <input @bind="@Book.PublishDate"/></p>
+                <p>Category: <input @bind="@Book.Category"/></p>
+                <p>Available: <input @bind="@Book.Available"/></p>
+            </CardText>
+            <Button Color="ButtonColor.Primary" @onclick="CloseEditMode">Exit</Button>
+            <Button Color="ButtonColor.Primary" @onclick="CloseAndSave">Save</Button>
+        </CardBody>
+    </Card>
+}
+
+<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+
+@code {
+    [Parameter] public required Book Book { get; set; }
+    private Reader? Reader => AuthService.User as Reader;
+    private bool _editMode = false;
+    private string? Title { get; set; }
+    private string? Author { get; set; }
+    private string? Publisher { get; set; }
+    private DateTime PublishDate { get; set; }
+    private ECategory Category { get; set; }
+    private int Available { get; set; }
+
+    private void SaveState()
+    {
+        Title = Book.Title;
+        Author = Book.Author;
+        Publisher = Book.Publisher;
+        PublishDate = Book.PublishDate;
+        Category = Book.Category;
+        Available = Book.Available;
+    }
+
+    private void UndoChanges()
+    {
+        Book.Title = Title;
+        Book.Author = Author;
+        Book.Publisher = Publisher;
+        Book.PublishDate = PublishDate;
+        Book.Category = Category;
+        Book.Available = Available;
+    }
+
+    private void EditMode()
+    {
+        SaveState();
+        _editMode = true;
+    }
+
+    private void CloseEditMode()
+    {
+        UndoChanges();
+        _editMode = false;
+    }
+
+    private void CloseAndSave()
+    {
+        DbApi.SaveChanges();
+        AlertService.ShowSuccess("Changes saved");
+        _editMode = false;
+    }
+
+    private void Reserve()
+    {
+        if (Book.Available > 0)
+        {
+            Book.Available--;
+            Book.Reserved++;
+            DbApi.AddReservedBook(new ReservedBook()
+            {
+                BookId = Book.BookId,
+                ReaderId = Reader!.Id
+            });
+            AlertService.ShowSuccess("Book reserved");
+        }
+        else
+        {
+            AlertService.ShowInfo("Book not available");
+        }
+    }
+}

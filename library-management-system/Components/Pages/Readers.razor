@@ -1,0 +1,147 @@
+﻿@page "/readers"
+@using library_management_system.Database
+@using library_management_system.Services
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+@inject DbApi DbApi
+@inject AlertService AlertService
+
+<PageTitle>Readers</PageTitle>
+
+<h1>Readers</h1>
+
+<Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+        <div class="container">
+            <p>Name</p>
+            <input @bind="@Name"/>
+        </div>
+
+        <div class="container">
+            <p>Surname</p>
+            <input @bind="@Surname"/>
+        </div>
+
+        <div class="container">
+            <p>Address</p>
+            <input @bind="@Address"/>
+        </div>
+
+        <div class="container">
+            <p>Phone number</p>
+            <input @bind="@PhoneNumber"/>
+        </div>
+
+        <div class="container">
+            <p>Email</p>
+            <input @bind="@Email"/>
+        </div>
+
+        <div class="container">
+            <p>Login</p>
+            <input @bind="@Login"/>
+        </div>
+
+        <div class="container">
+            <p>Password</p>
+            <input @bind="@Password"/>
+        </div>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="AddReader">Add reader</Button>
+    </FooterTemplate>
+</Modal>
+
+<input @oninput="@((str) => Search((string)str.Value))"/>
+
+<Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Reader</Button>
+
+@for (var i = readersPerPage * (currentPageNumber - 1); i < readersPerPage * currentPageNumber && i < ReadersCount; i++)
+{
+    var i1 = i;
+    <UserRecord User="@SelectedReaders[i1]"/>
+}
+
+<Pagination ActivePageNumber="@currentPageNumber"
+            TotalPages="@TotalPages"
+            PageChanged="OnPageChangedAsync"/>
+
+
+@code {
+    private int currentPageNumber = 1;
+    private int readersPerPage = 4;
+
+    private Modal modal = default!;
+    private string Name { get; set; }
+    private string Surname { get; set; }
+    private string Address { get; set; }
+    private string PhoneNumber { get; set; }
+    private string Email { get; set; }
+    private string Login { get; set; }
+    private string Password { get; set; }
+
+    private int TotalPages => (ReadersCount - 1) / readersPerPage + 1;
+
+    private int ReadersCount => SelectedReaders.Count;
+
+    private List<Reader> AllReaders => DbApi.GetAllReaders();
+
+    private List<Reader> SelectedReaders = new();
+
+    private async Task OnPageChangedAsync(int newPageNumber)
+    {
+        await Task.Run(() => { currentPageNumber = newPageNumber; });
+    }
+
+    private async void AddReader()
+    {
+        try
+        {
+            DbApi.AddReader(new Reader()
+            {
+                Name = Name,
+                Surname = Surname,
+                Address = Address,
+                TelephoneNr = PhoneNumber,
+                EmailAddress = Email,
+                Login = Login,
+                PasswordHash = new PasswordHasher<User>().HashPassword(null!, Password)
+            });
+
+            SelectedReaders = AllReaders;
+
+            AlertService.ShowSuccess("Reader added successfully!");
+        }
+        catch (DbUpdateException e)
+        {
+            AlertService.ShowWarning("Something went wrong!");
+        }
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
+        AlertService.ClearMessages();
+    }
+
+    protected override void OnInitialized()
+    {
+        SelectedReaders = AllReaders;
+        base.OnInitialized();
+    }
+
+    private async void Search(string search)
+    {
+        SelectedReaders = AllReaders.Where(reader => reader.Name.ToLower().Contains(search.ToLower())).ToList();
+    }
+}
