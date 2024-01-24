@@ -13,7 +13,7 @@ public class LoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         Services.AddDbContext<Data>(
-            options => options.UseSqlite($"Data Source=/home/gregusio/.local/share/library.db"));
+            options => options.UseSqlite($"Data Source=library.db"));
         Services.AddSingleton<AuthService>();
         
         var cut = RenderComponent<Login>();
@@ -27,7 +27,7 @@ public class LoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         Services.AddDbContext<Data>(
-            options => options.UseSqlite($"Data Source=/home/gregusio/.local/share/library.db"));
+            options => options.UseSqlite($"Data Source=library.db"));
         Services.AddSingleton<AuthService>();
         
         var cut = RenderComponent<Login>();
@@ -43,7 +43,7 @@ public class LoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         Services.AddDbContext<Data>(
-            options => options.UseSqlite($"Data Source=/home/gregusio/.local/share/library.db"));
+            options => options.UseSqlite($"Data Source=/library.db"));
         Services.AddSingleton<AuthService>();
         
         var cut = RenderComponent<Login>();
@@ -62,7 +62,7 @@ public class LoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         Services.AddDbContext<Data>(
-            options => options.UseSqlite($"Data Source=/home/gregusio/.local/share/library.db"));
+            options => options.UseSqlite($"Data Source=library.db"));
         Services.AddSingleton<AuthService>();
         
         var cut = RenderComponent<Login>();
