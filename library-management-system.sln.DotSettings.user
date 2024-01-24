@@ -3,5 +3,9 @@
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::EC2FF116-4E3C-4849-9ABD-584AA5C626F6::net8.0::library_management_system.test.LoginTest&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::EC2FF116-4E3C-4849-9ABD-584AA5C626F6::net8.0::library_management_system.test.AccountTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::EC2FF116-4E3C-4849-9ABD-584AA5C626F6::net8.0::library_management_system.test.NoLoginTest.NoLoginBooksSite&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::EC2FF116-4E3C-4849-9ABD-584AA5C626F6::net8.0::library_management_system.test.NoLoginTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::EC2FF116-4E3C-4849-9ABD-584AA5C626F6::net8.0::library_management_system.test.AlertServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::EC2FF116-4E3C-4849-9ABD-584AA5C626F6::net8.0::library_management_system.test.NavigationMenuServiceTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
