@@ -7,20 +7,32 @@ namespace library_management_system.test;
 public class NavigationMenuServiceTest
 {
     [Fact]
-    public void TestCreateMenuForUser()
+    public void TestCreateMenuForReader()
     {
         var navigationMenuService = new NavigationMenuService();
-        var user = new User();
-        user = new Librarian();
+        var user = new Reader();
         var menu = navigationMenuService.CreateMenuForUser(user);
-        Assert.IsType<LibrarianNavigationMenu>(menu);
         
-        user = new Reader();
-        menu = navigationMenuService.CreateMenuForUser(user);
         Assert.IsType<ReaderNavigationMenu>(menu);
+    }
+    
+    [Fact]
+    public void TestCreateMenuForLibrarian()
+    {
+        var navigationMenuService = new NavigationMenuService();
+        var user = new Librarian();
+        var menu = navigationMenuService.CreateMenuForUser(user);
         
-        user = null;
-        menu = navigationMenuService.CreateMenuForUser(user);
+        Assert.IsType<LibrarianNavigationMenu>(menu);
+    }
+    
+    [Fact]
+    public void TestCreateDefaultMenu()
+    {
+        var navigationMenuService = new NavigationMenuService();
+        User? user = null;
+        var menu = navigationMenuService.CreateMenuForUser(user);
+        
         Assert.IsType<DefaultNavigationMenu>(menu);
     }
 }
