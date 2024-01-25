@@ -26,9 +26,9 @@ builder.Services.AddBlazorBootstrap();
 // builder.Services.AddDbContext<Data>(options =>
 //     options.UseSqlServer(connectionString));
 
-var folder = Environment.SpecialFolder.LocalApplicationData;
-var path = Environment.GetFolderPath(folder);
-var dbPath = System.IO.Path.Join(path, "library.db");
+// var folder = Environment.SpecialFolder.LocalApplicationData;
+// var path = Environment.GetFolderPath(folder);
+var dbPath = "../library.db";
 
 builder.Services.AddDbContext<Data>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
