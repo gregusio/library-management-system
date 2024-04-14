@@ -1,5 +1,5 @@
 ﻿@using library_management_system.Services
-@using library_management_system.Database
+@using library_management_system.Data
 @using Microsoft.EntityFrameworkCore.ChangeTracking.Internal
 @inject AuthService AuthService
 @inject NavigationMenuService NavigationMenuService
@@ -15,6 +15,24 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
 
+        <AuthorizeView>
+
+            @foreach (var (href, buttonName, iconName) in _librarianNavigationMenu!.GetItems())
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href=@href>
+                        <div class="me-3">
+                            <span class="bi" aria-hidden="true"></span>
+                            <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
+                        </div>
+
+                    </NavLink>
+                </div>
+            }
+
+
+        </AuthorizeView>
+
         @foreach (var (href, buttonName, iconName) in _navMenu!.GetItems())
         {
             <div class="nav-item px-3">
@@ -23,16 +41,30 @@
                         <span class="bi" aria-hidden="true"></span>
                         <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
                     </div>
-                    
+
                 </NavLink>
             </div>
         }
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="auth">
+                <div class="me-3">
+                    <span class="bi" aria-hidden="true"></span>
+                    <Icon Style="margin-right: 5px" Name="IconName.Amazon"></Icon>Login
+                </div>
+
+            </NavLink>
+        </div>
+
 
     </nav>
 </div>
 
 @code {
     private INavigationMenu? _navMenu;
+
+    private ReaderNavigationMenu _readerNavigationMenu = new();
+    private LibrarianNavigationMenu _librarianNavigationMenu = new();
 
     protected override Task OnInitializedAsync()
     {
