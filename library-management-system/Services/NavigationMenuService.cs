@@ -1,4 +1,4 @@
-using library_management_system.Database;
+using library_management_system.Data;
 using library_management_system.Components.Layout;
 
 namespace library_management_system.Services;

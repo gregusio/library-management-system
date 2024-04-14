@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace library_management_system.Database;
+namespace library_management_system.Data;
 
-public class Data(DbContextOptions<Data> options) : DbContext(options)
+public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(options)
 {
     public required DbSet<Reader> Readers { get; set; }
     public required DbSet<Book> Books { get; set; }
@@ -17,7 +17,7 @@ public class Data(DbContextOptions<Data> options) : DbContext(options)
             .IsUnique();
 
         modelBuilder.Entity<User>()
-            .HasIndex(t => t.PasswordHash)
+            .HasIndex(t => t.Hash)
             .IsUnique();
 
         modelBuilder.Entity<Librarian>()
@@ -31,7 +31,7 @@ public class Data(DbContextOptions<Data> options) : DbContext(options)
                     TelephoneNr = "Admin",
                     EmailAddress = "Admin",
                     Login = "admin",
-                    PasswordHash =
+                    Hash =
                         "AQAAAAIAAYagAAAAECbeLHmwE9pGX99AVVY93sEwpWWdp3Z+nXXA9UC1XdMxerBrounmyXxu5EGvjtCA9w==",
                     Salary = 1000,
                     Position = EPosition.Admin

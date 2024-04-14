@@ -1,6 +1,6 @@
-namespace library_management_system.Database;
+namespace library_management_system.Data;
 
-public class RemoveDb(Data db)
+public class RemoveDb(DataDbContext db)
 {
     public void RemoveReader(int id)
     {

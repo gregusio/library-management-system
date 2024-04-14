@@ -1,7 +1,6 @@
 using library_management_system.Components;
 using library_management_system.Components.Account;
-using library_management_system.Application;
-using library_management_system.Database;
+using library_management_system.Data;
 using library_management_system.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -32,19 +31,18 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
+var sndDbPath = "../pass.db";
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlite($"Data Source={sndDbPath}"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<Librarian>()
-    .AddRoles<Reader>()
+builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 // var pass = builder.Configuration["password"]!;
 //
@@ -57,7 +55,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 // var path = Environment.GetFolderPath(folder);
 var dbPath = "../library.db";
 
-builder.Services.AddDbContext<Data>(options =>
+builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
 
 var app = builder.Build();

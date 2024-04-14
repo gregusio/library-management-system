@@ -1,6 +1,6 @@
-namespace library_management_system.Database;
+namespace library_management_system.Data;
 
-public class UpdateDb(Data db)
+public class UpdateDb(DataDbContext db)
 {
     public void SaveChanges()
     {

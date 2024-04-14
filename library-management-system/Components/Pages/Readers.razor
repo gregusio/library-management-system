@@ -1,5 +1,5 @@
 ﻿@page "/readers"
-@using library_management_system.Database
+@using library_management_system.Data
 @using library_management_system.Services
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
@@ -110,7 +110,7 @@
                 TelephoneNr = PhoneNumber,
                 EmailAddress = Email,
                 Login = Login,
-                PasswordHash = new PasswordHasher<User>().HashPassword(null!, Password)
+                Hash = new PasswordHasher<User>().HashPassword(null!, Password)
             });
 
             SelectedReaders = AllReaders;

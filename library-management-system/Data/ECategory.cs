@@ -1,4 +1,4 @@
-namespace library_management_system.Database;
+namespace library_management_system.Data;
 
 public enum ECategory
 {

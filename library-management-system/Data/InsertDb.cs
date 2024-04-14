@@ -1,6 +1,6 @@
-namespace library_management_system.Database;
+namespace library_management_system.Data;
 
-public class InsertDb(Data db)
+public class InsertDb(DataDbContext db)
 {
     public void AddReader(Reader reader)
     {

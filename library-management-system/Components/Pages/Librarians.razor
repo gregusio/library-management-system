@@ -1,6 +1,6 @@
 ﻿@page "/librarians"
 @using library_management_system.Services
-@using library_management_system.Database
+@using library_management_system.Data
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
@@ -124,7 +124,7 @@
                 TelephoneNr = PhoneNumber,
                 EmailAddress = Email,
                 Login = Login,
-                PasswordHash = new PasswordHasher<User>().HashPassword(null!, Password),
+                Hash = new PasswordHasher<User>().HashPassword(null!, Password),
                 Salary = Salary,
                 Position = EPosition.Librarian
             });

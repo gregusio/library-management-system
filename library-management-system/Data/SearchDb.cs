@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace library_management_system.Database;
+namespace library_management_system.Data;
 
-public class SearchDb(Data db)
+public class SearchDb(DataDbContext db)
 {
     public Reader? GetReader(int id)
     {
@@ -76,7 +76,7 @@ public class SearchDb(Data db)
     {
         var passwordHasher = new PasswordHasher<User>();
         var passwordHash = passwordHasher.HashPassword(null!, password);
-        return db.Readers.Any(r => r.PasswordHash == passwordHash)
-               || db.Librarians.Any(l => l.PasswordHash == passwordHash);
+        return db.Readers.Any(r => r.Hash == passwordHash)
+               || db.Librarians.Any(l => l.Hash == passwordHash);
     }
 }

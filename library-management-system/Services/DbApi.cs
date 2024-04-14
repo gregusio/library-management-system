@@ -1,8 +1,8 @@
-using library_management_system.Database;
+using library_management_system.Data;
 
 namespace library_management_system.Services;
 
-public class DbApi(Data db)
+public class DbApi(DataDbContext db)
 {
     public Reader? GetReader(int id)
     {

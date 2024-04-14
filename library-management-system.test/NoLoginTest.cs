@@ -1,6 +1,6 @@
 using Bunit.Extensions;
 using library_management_system.Components.Pages;
-using library_management_system.Database;
+using library_management_system.Data;
 using library_management_system.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +14,7 @@ public class NoLoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         var dbPath = "../../../../library.db";
-        Services.AddDbContext<Data>(options =>
+        Services.AddDbContext<DataDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         Services.AddBlazorBootstrap();
@@ -29,7 +29,7 @@ public class NoLoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         var dbPath = "../../../../library.db";
-        Services.AddDbContext<Data>(options =>
+        Services.AddDbContext<DataDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         Services.AddBlazorBootstrap();
@@ -45,7 +45,7 @@ public class NoLoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         var dbPath = "../../../../library.db";
-        Services.AddDbContext<Data>(options =>
+        Services.AddDbContext<DataDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         Services.AddBlazorBootstrap();
@@ -61,7 +61,7 @@ public class NoLoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         var dbPath = "../../../../library.db";
-        Services.AddDbContext<Data>(options =>
+        Services.AddDbContext<DataDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         Services.AddBlazorBootstrap();
@@ -77,7 +77,7 @@ public class NoLoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         var dbPath = "../../../../library.db";
-        Services.AddDbContext<Data>(options =>
+        Services.AddDbContext<DataDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         Services.AddBlazorBootstrap();
@@ -93,7 +93,7 @@ public class NoLoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         var dbPath = "../../../../library.db";
-        Services.AddDbContext<Data>(options =>
+        Services.AddDbContext<DataDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         Services.AddBlazorBootstrap();
@@ -109,7 +109,7 @@ public class NoLoginTest : TestContext
     {
         Services.AddTransient<DbApi>();
         var dbPath = "../../../../library.db";
-        Services.AddDbContext<Data>(options =>
+        Services.AddDbContext<DataDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         Services.AddSingleton<AuthService>();
         Services.AddBlazorBootstrap();

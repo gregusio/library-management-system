@@ -1,7 +1,7 @@
 @page "/account"
 @rendermode InteractiveServer
 @using library_management_system.Services
-@using library_management_system.Database
+@using library_management_system.Data
 @using Microsoft.AspNetCore.Identity
 @inject AuthService AuthService
 @inject AlertService AlertService
@@ -80,7 +80,7 @@
         }
         
         var passwordHasher = new PasswordHasher<User>();
-        var result = passwordHasher.VerifyHashedPassword(null!, User!.PasswordHash!, _currentPassword);
+        var result = passwordHasher.VerifyHashedPassword(null!, User!.Hash!, _currentPassword);
 
         if (result != PasswordVerificationResult.Success)
         {
@@ -95,7 +95,7 @@
         }
 
         var passwordHash = passwordHasher.HashPassword(null!, _newPassword);
-        User.PasswordHash = passwordHash;
+        User.Hash = passwordHash;
         DbApi.SaveChanges();
         AlertService.ShowSuccess("Password changed successfully");
     }
