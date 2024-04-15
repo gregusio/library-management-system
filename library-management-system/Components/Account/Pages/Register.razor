@@ -14,6 +14,7 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject RoleManager<IdentityRole> RoleManager
 
 <PageTitle>Register</PageTitle>
 
@@ -79,6 +80,15 @@
             identityErrors = result.Errors;
             return;
         }
+
+        var role = await RoleManager.FindByNameAsync("Librarian");
+        if (role is null)
+        {
+            role = new IdentityRole("Librarian");
+            await RoleManager.CreateAsync(role);
+        }
+
+        await UserManager.AddToRoleAsync(user, role.Name);
 
         Logger.LogInformation("User created a new account with password.");
 
