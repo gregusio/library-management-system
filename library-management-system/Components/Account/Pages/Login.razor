@@ -95,7 +95,8 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            @* RedirectManager.RedirectTo(ReturnUrl); *@
+            NavigationManager.NavigateTo("/books");
         }
         else if (result.RequiresTwoFactor)
         {
