@@ -1,6 +1,8 @@
 ﻿@using library_management_system.Services
 @using library_management_system.Data
 @using Microsoft.EntityFrameworkCore.ChangeTracking.Internal
+@using Microsoft.AspNetCore.Components.Authorization
+
 @inject AuthService AuthService
 @inject NavigationMenuService NavigationMenuService
 @inject NavigationManager NavigationManager
@@ -16,7 +18,7 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
 
-        <AuthorizeView>
+        <AuthorizeView Roles="Librarian">
 
             @foreach (var (href, buttonName, iconName) in _librarianNavigationMenu!.GetItems())
             {
@@ -31,7 +33,12 @@
                 </div>
             }
 
-            <div class="nav-item px-3">
+            
+
+
+        </AuthorizeView>
+
+        <div class="nav-item px-3">
                 <form action="Account/Logout" method="post">
                     <AntiforgeryToken />
                     <input type="hidden" name="ReturnUrl" value="@currentUrl" />
@@ -40,9 +47,6 @@
                     </button>
                 </form>
             </div>
-
-
-        </AuthorizeView>
 
         @foreach (var (href, buttonName, iconName) in _navMenu!.GetItems())
         {
