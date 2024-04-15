@@ -37,7 +37,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite($"Data Source={sndDbPath}"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
