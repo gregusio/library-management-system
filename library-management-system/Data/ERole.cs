@@ -1,8 +1,8 @@
 namespace library_management_system.Data;
 
-public enum EPosition
+public enum ERole
 {
     Admin,
     Librarian,
-    Activist
+    Reader
 }
