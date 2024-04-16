@@ -86,14 +86,6 @@
 </div>
 
 @code {
-    private INavigationMenu? _navMenu;
-
     private ReaderNavigationMenu _readerNavigationMenu = new();
     private LibrarianNavigationMenu _librarianNavigationMenu = new();
-
-    protected override Task OnInitializedAsync()
-    {
-        _navMenu = NavigationMenuService.CreateMenuForUser(AuthService.User);
-        return base.OnInitializedAsync();
-    }
 }
