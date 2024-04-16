@@ -93,43 +93,6 @@
             </EditForm>
         </div>
 
-
-        @* <div class="container">
-        <p>Name</p>
-        <input @bind="@Name"/>
-        </div>
-
-        <div class="container">
-        <p>Surname</p>
-        <input @bind="@Surname"/>
-        </div>
-
-        <div class="container">
-        <p>Address</p>
-        <input @bind="@Address"/>
-        </div>
-
-        <div class="container">
-        <p>Phone number</p>
-        <input @bind="@PhoneNumber"/>
-        </div>
-
-        <div class="container">
-        <p>Email</p>
-        <input @bind="@Email"/>
-        </div>
-
-        <div class="container">
-        <p>Login</p>
-    using Humanizer;
-        <input @bind="@Login"/>
-        </div>
-
-        <div class="container">
-        <p>Password</p>
-        <input @bind="@Password"/>
-        </div> *@
-
     </BodyTemplate>
     <FooterTemplate>
         <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
@@ -258,49 +221,25 @@
 
         Logger.LogInformation("User created a new account with password.");
 
-        @* var userId = await UserManager.GetUserIdAsync(user); 
-        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-            NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-            new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
+        AlertService.ShowSuccess("User created a new account with password.");
 
-        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl)); *@
+        Input = new InputModel();
 
-        @* if (UserManager.Options.SignIn.RequireConfirmedAccount)
-        {
-            RedirectManager.RedirectTo(
-                "Account/RegisterConfirmation",
-                new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
-        } *@
-
-        @* await SignInManager.SignInAsync(user, isPersistent: false); *@
-        @* RedirectManager.RedirectTo(ReturnUrl); *@
+        SelectedReaders = AllReaders;
     }
 
     private User CreateUser()
     {
         try
         {
-            DbApi.AddReader(new User()
-            {
-                Name = Input.Name,
-                Surname = Input.Surname,
-                Address = Input.Address,
-                TelephoneNr = Input.PhoneNumber,
-            });
-
-            SelectedReaders = AllReaders;
-
-
             return new User()
             {
                 Name = Input.Name,
                 Surname = Input.Surname,
                 Address = Input.Address,
                 TelephoneNr = Input.PhoneNumber,
+                Role = ERole.Reader,
             };
-            // return Activator.CreateInstance(typeof(User), 10, "Test", "test", "test", "test", "test", "test", "s") as User ?? throw new InvalidOperationException("Can't create an instance of 'User'.");
         }
         catch
         {
