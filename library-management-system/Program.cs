@@ -31,15 +31,11 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var sndDbPath = "../pass.db";
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite($"Data Source={sndDbPath}"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<DataDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
@@ -54,12 +50,23 @@ builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 // var folder = Environment.SpecialFolder.LocalApplicationData;
 // var path = Environment.GetFolderPath(folder);
+
 var dbPath = "../library.db";
 
 builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
 
+
+builder.Services.AddScoped<DbInitializer>();
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbInitializer = services.GetRequiredService<DbInitializer>();
+    dbInitializer.Initialize().Wait();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
