@@ -17,7 +17,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddTransient<DbApi>();
-builder.Services.AddSingleton<AuthService>();
+builder.Services.AddTransient<AuthService>();
 builder.Services.AddSingleton<NavigationMenuService>();
 builder.Services.AddTransient<AlertService>();
 builder.Services.AddSingleton<NavigationMenuService>();
