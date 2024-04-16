@@ -1,6 +1,8 @@
 ﻿@using library_management_system.Services
 @inherits LayoutComponentBase
+
 @inject AuthService AuthService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="page">
     <div class="sidebar">
@@ -9,12 +11,12 @@
 
     <main>
         <div class="top-row px-4">
-            @if(AuthService.IsLoggedIn())
-            {
-                var user = AuthService.User;
-                <a>Logged as @(user!.Name) @(user.Surname)</a>
-                <a href="/account" class="ml-md-auto">Account</a>
-            }
+            <AuthorizeView>
+                <Authorized>
+                    <a>Logged as @UserName @UserSurname</a>
+                    <a href="/account" class="ml-md-auto">Account</a>
+                </Authorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -28,3 +30,20 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    private string? UserName { get; set; } = string.Empty;
+    private string? UserSurname { get; set; } = string.Empty;
+
+    protected override Task OnInitializedAsync()
+    {
+        var user = AuthService.GetUser(AuthenticationStateProvider).Result;
+        if (user != null)
+        {
+            UserName = user.Name;
+            UserSurname = user.Surname;
+        }
+
+        return base.OnInitializedAsync();
+    }
+}

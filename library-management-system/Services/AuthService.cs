@@ -1,28 +1,18 @@
+using System.Security.Claims;
 using library_management_system.Data;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace library_management_system.Services;
 
-public class AuthService
+public class AuthService(UserManager<User> userManager)
 {
-    public User? User { get; set; }
-
-    public bool IsLibrarian()
+    public async Task<User?> GetUser(AuthenticationStateProvider authenticationStateProvider)
     {
-        return true;
-    }
-
-    public bool IsAdmin()
-    {
-        return true;
-    }
-
-    public bool IsReader()
-    {
-        return true;
-    }
-
-    public bool IsLoggedIn()
-    {
-        return User != null;
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (!user.Identity!.IsAuthenticated) return null;
+        
+        return await userManager.GetUserAsync(user);
     }
 }

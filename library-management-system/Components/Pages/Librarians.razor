@@ -12,8 +12,10 @@
 
 <h1>Librarians</h1>
 
-@if (AuthService.IsAdmin())
-{
+<AuthorizeView Roles="admin,librarian">
+    <Authorized>
+        
+
     <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
         <BodyTemplate>
             <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
@@ -75,6 +77,9 @@
 
     <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Librarian</Button>
 }
+
+</Authorized>
+</AuthorizeView>
 
 
 @for (var i = librariansPerPage * (currentPageNumber - 1); i < librariansPerPage * currentPageNumber && i < LibrariansCount; i++)

@@ -15,11 +15,13 @@
                 <p>Email: @User.Email</p>
             </CardText>
             <Button Color="ButtonColor.Primary" @onclick="EditMode">Edit</Button>
-            @if (AuthService.IsLibrarian())
-            {
-                <Button Color="ButtonColor.Primary" @onclick="OnShowReservedBooksClick">Show reserved books</Button>
+            <AuthorizeView Roles="admin,librarian">
+                <Authorized>
+                   <Button Color="ButtonColor.Primary" @onclick="OnShowReservedBooksClick">Show reserved books</Button>
                 <Button Color="ButtonColor.Primary" @onclick="OnShowBorrowedBooksClick">Show borrowed books</Button>
-            }
+            
+                </Authorized>
+            </AuthorizeView>
         </CardBody>
     </Card>
 }
@@ -33,7 +35,7 @@ else
             <CardText>
                 <p>Address: <input @bind="@User.Address"/></p>
                 <p>Phone Number: <input @bind="@User.TelephoneNr"/></p>
-                <p>Email: <input @bind="@User.Email"/></p>
+                <p>Email: @User.Email</p>
             </CardText>
             <Button Color="ButtonColor.Primary" @onclick="CloseEditMode">Exit</Button>
             <Button Color="ButtonColor.Primary" @onclick="CloseAndSave">Save</Button>
