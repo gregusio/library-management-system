@@ -1,35 +1,35 @@
-using library_management_system.Database;
+using library_management_system.Data;
 
 namespace library_management_system.Services;
 
-public class DbApi(Data db)
+public class DbApi(DataDbContext db)
 {
-    public Reader? GetReader(int id)
+    public User? GetReader(int id)
     {
         return new SearchDb(db).GetReader(id);
     }
 
-    public Reader? GetReader(string login)
+    public User? GetReader(string login)
     {
         return new SearchDb(db).GetReader(login);
     }
 
-    public List<Reader> GetAllReaders()
+    public List<User> GetAllReaders()
     {
         return new SearchDb(db).GetAllReaders();
     }
 
-    public Librarian? GetLibrarian(int id)
+    public User? GetLibrarian(int id)
     {
         return new SearchDb(db).GetLibrarian(id);
     }
 
-    public Librarian? GetLibrarian(string login)
+    public User? GetLibrarian(string login)
     {
         return new SearchDb(db).GetLibrarian(login);
     }
 
-    public List<Librarian> GetAllLibrarians()
+    public List<User> GetAllLibrarians()
     {
         return new SearchDb(db).GetAllLibrarians();
     }
@@ -49,17 +49,17 @@ public class DbApi(Data db)
         return new SearchDb(db).GetAllBooks();
     }
 
-    public List<BorrowedBook> GetBorrowedBooks(Reader reader)
+    public List<BorrowedBook> GetBorrowedBooks(User reader)
     {
         return new SearchDb(db).GetBorrowedBooks(reader);
     }
 
-    public List<ReservedBook> GetReservedBooks(Reader reader)
+    public List<ReservedBook> GetReservedBooks(User reader)
     {
         return new SearchDb(db).GetReservedBooks(reader);
     }
 
-    public ReservedBook? GetReservedBook(Reader reader, Book book)
+    public ReservedBook? GetReservedBook(User reader, Book book)
     {
         return new SearchDb(db).GetReservedBook(reader, book);
     }
@@ -74,12 +74,12 @@ public class DbApi(Data db)
         return new SearchDb(db).PasswordAlreadyUsed(password);
     }
 
-    public void AddReader(Reader reader)
+    public void AddReader(User reader)
     {
         new InsertDb(db).AddReader(reader);
     }
 
-    public void AddLibrarian(Librarian librarian)
+    public void AddLibrarian(User librarian)
     {
         new InsertDb(db).AddLibrarian(librarian);
     }

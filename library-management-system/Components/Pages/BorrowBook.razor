@@ -1,5 +1,5 @@
 @page "/borrow-book"
-@using library_management_system.Database
+@using library_management_system.Data
 @using library_management_system.Services
 @rendermode InteractiveServer
 @inject DbApi DbApi
@@ -8,8 +8,8 @@
 <h3>BorrowBook</h3>
 
 <BlazoredTypeahead SearchMethod="GetReadersLocal"
-                   TItem="Reader"
-                   TValue="Reader"
+                   TItem="User"
+                   TValue="User"
                    @bind-Value="SelectedPerson"
                    placeholder="Search by first name...">
     <SelectedTemplate Context="personId">
@@ -46,12 +46,12 @@
 <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
 @code {
-    private List<Reader> AllReaders => DbApi.GetAllReaders();
-    private Reader? SelectedPerson { get; set; }
+    private List<User> AllReaders => DbApi.GetAllReaders();
+    private User? SelectedPerson { get; set; }
     private List<Book> AllBooks => DbApi.GetAllBooks();
     private Book? SelectedBook { get; set; }
 
-    private async Task<IEnumerable<Reader>> GetReadersLocal(string searchText)
+    private async Task<IEnumerable<User>> GetReadersLocal(string searchText)
     {
         return await Task.FromResult(AllReaders.Where(reader => reader.Name.ToLower().Contains(searchText.ToLower())).ToList());
     }
