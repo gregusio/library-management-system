@@ -4,34 +4,38 @@ namespace library_management_system.Data;
 
 public class SearchDb(DataDbContext db)
 {
-    public Reader? GetReader(int id)
+    public User? GetReader(int id)
     {
-        return db.Readers.FirstOrDefault(reader => reader.Id == id);
+        // return db.Users.FirstOrDefault(reader => reader.Id == id);
+        return null;
     }
 
-    public Reader? GetReader(string login)
+    public User? GetReader(string login)
     {
-        return db.Readers.FirstOrDefault(reader => reader.Login == login);
+        // return db.Users.FirstOrDefault(reader => reader.Login == login);
+        return null;
     }
 
-    public List<Reader> GetAllReaders()
+    public List<User> GetAllReaders()
     {
-        return db.Readers.ToList();
+        return db.Users.ToList();
     }
 
-    public Librarian? GetLibrarian(int id)
+    public User? GetLibrarian(int id)
     {
-        return db.Librarians.FirstOrDefault(librarian => librarian.Id == id);
+        // return db.Users.FirstOrDefault(librarian => librarian.Id == id);
+        return null;
     }
 
-    public Librarian? GetLibrarian(string login)
+    public User? GetLibrarian(string login)
     {
-        return db.Librarians.FirstOrDefault(librarian => librarian.Login == login);
+        // return db.Users.FirstOrDefault(librarian => librarian.Login == login);
+        return null;
     }
 
-    public List<Librarian> GetAllLibrarians()
+    public List<User> GetAllLibrarians()
     {
-        return db.Librarians.ToList();
+        return db.Users.ToList();
     }
 
     public List<Book> GetBooks(string title, string? author)
@@ -51,17 +55,17 @@ public class SearchDb(DataDbContext db)
         return db.Books.FirstOrDefault(book => book.BookId == id);
     }
 
-    public List<BorrowedBook> GetBorrowedBooks(Reader reader)
+    public List<BorrowedBook> GetBorrowedBooks(User reader)
     {
         return db.BorrowedBooks.Where(borrowedBook => borrowedBook.ReaderId == reader.Id).ToList();
     }
 
-    public List<ReservedBook> GetReservedBooks(Reader reader)
+    public List<ReservedBook> GetReservedBooks(User reader)
     {
         return db.ReservedBooks.Where(reservedBook => reservedBook.ReaderId == reader.Id).ToList();
     }
 
-    public ReservedBook? GetReservedBook(Reader reader, Book book)
+    public ReservedBook? GetReservedBook(User reader, Book book)
     {
         return db.ReservedBooks.FirstOrDefault(reservedBook =>
             reservedBook.ReaderId == reader.Id && reservedBook.BookId == book.BookId);
@@ -69,14 +73,16 @@ public class SearchDb(DataDbContext db)
     
     public bool LoginAlreadyUsed(string login)
     {
-        return db.Readers.Any(r => r.Login == login) || db.Librarians.Any(l => l.Login == login);
+        // return db.Users.Any(r => r.Login == login) || db.Users.Any(l => l.Login == login);
+        return true;
     }
     
     public bool PasswordAlreadyUsed(string password)
     {
-        var passwordHasher = new PasswordHasher<User>();
-        var passwordHash = passwordHasher.HashPassword(null!, password);
-        return db.Readers.Any(r => r.Hash == passwordHash)
-               || db.Librarians.Any(l => l.Hash == passwordHash);
+        // var passwordHasher = new PasswordHasher<User>();
+        // var passwordHash = passwordHasher.HashPassword(null!, password);
+        // return db.Users.Any(r => r.Hash == passwordHash)
+        //        || db.Users.Any(l => l.Hash == passwordHash);
+        return true;
     }
 }

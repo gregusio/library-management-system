@@ -7,7 +7,7 @@ public class BorrowedBook
 {
     [Key] public int Id { get; set; }
 
-    [ForeignKey("Reader")] public int ReaderId { get; set; }
+    [ForeignKey("User")] public string? ReaderId { get; set; }
 
     [ForeignKey("Book")] public int BookId { get; set; }
 

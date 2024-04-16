@@ -7,10 +7,15 @@ public class NavigationMenuService
 {
     public INavigationMenu? CreateMenuForUser(User? user)
     {
-        if (user is Librarian)
+        if (user == null)
+            return new DefaultNavigationMenu();
+
+        if(user.Role == "Librarian")
             return new LibrarianNavigationMenu();
-        if (user is Reader)
+
+        if(user.Role == "Reader")
             return new ReaderNavigationMenu();
-        return new DefaultNavigationMenu();
+
+        return null;
     }
 }

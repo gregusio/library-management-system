@@ -73,7 +73,7 @@
     
     private void TryChangePassword()
     {
-        if (_newPassword != _confirmNewPassword)
+        @* if (_newPassword != _confirmNewPassword)
         {
             AlertService.ShowInfo("New password and confirm new password are not the same");
             return;
@@ -97,12 +97,12 @@
         var passwordHash = passwordHasher.HashPassword(null!, _newPassword);
         User.Hash = passwordHash;
         DbApi.SaveChanges();
-        AlertService.ShowSuccess("Password changed successfully");
+        AlertService.ShowSuccess("Password changed successfully"); *@
     }
     
     private void TryChangeLogin()
     {
-        if (_newLogin != _confirmNewLogin)
+        @* if (_newLogin != _confirmNewLogin)
         {
             AlertService.ShowInfo("New login and confirm new login are not the same");
             return;
@@ -122,6 +122,6 @@
 
         User.Login = _newLogin;
         DbApi.SaveChanges();
-        AlertService.ShowSuccess("Login changed successfully");
+        AlertService.ShowSuccess("Login changed successfully"); *@
     }
 }

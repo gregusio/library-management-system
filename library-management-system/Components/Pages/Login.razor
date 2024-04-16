@@ -36,7 +36,7 @@
 
     private void HandleLogin()
     {
-        var user = DbApi.GetReader(LoginInput);
+        @* var user = DbApi.GetReader(LoginInput);
 
         if (user != null && VerifyPassword(user.Hash, PasswordInput))
         {
@@ -58,7 +58,7 @@
             {
                 ErrorMessage = "Invalid login or password";
             }
-        }
+        } *@
     }
 
 

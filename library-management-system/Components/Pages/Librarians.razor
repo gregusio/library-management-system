@@ -105,7 +105,7 @@
 
     private int LibrariansCount => AllLibrarians.Count;
 
-    private List<Librarian> AllLibrarians => DbApi.GetAllLibrarians();
+    private List<User> AllLibrarians => DbApi.GetAllLibrarians();
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
@@ -116,17 +116,12 @@
     {
         try
         {
-            DbApi.AddLibrarian(new Librarian()
+            DbApi.AddLibrarian(new User()
             {
                 Name = Name,
                 Surname = Surname,
                 Address = Address,
                 TelephoneNr = PhoneNumber,
-                EmailAddress = Email,
-                Login = Login,
-                Hash = new PasswordHasher<User>().HashPassword(null!, Password),
-                Salary = Salary,
-                Position = EPosition.Librarian
             });
 
             AlertService.ShowSuccess("Librarian added successfully!");

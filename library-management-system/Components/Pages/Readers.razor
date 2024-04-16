@@ -167,9 +167,9 @@
 
     private int ReadersCount => SelectedReaders.Count;
 
-    private List<Reader> AllReaders => DbApi.GetAllReaders();
+    private List<User> AllReaders => DbApi.GetAllReaders();
 
-    private List<Reader> SelectedReaders = new();
+    private List<User> SelectedReaders = new();
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
@@ -180,15 +180,12 @@
     {
         try
         {
-            DbApi.AddReader(new Reader()
+            DbApi.AddReader(new User()
                 {
                     Name = Name,
                     Surname = Surname,
                     Address = Address,
                     TelephoneNr = PhoneNumber,
-                    EmailAddress = Email,
-                    Login = Login,
-                    Hash = new PasswordHasher<User>().HashPassword(null!, Password)
                 });
 
             SelectedReaders = AllReaders;
@@ -285,15 +282,12 @@
     {
         try
         {
-            DbApi.AddReader(new Reader()
+            DbApi.AddReader(new User()
             {
                 Name = Input.Name,
                 Surname = Input.Surname,
                 Address = Input.Address,
                 TelephoneNr = Input.PhoneNumber,
-                EmailAddress = Input.Email,
-                Login = Input.Login,
-                Hash = new PasswordHasher<User>().HashPassword(null!, Input.Password)
             });
 
             SelectedReaders = AllReaders;
@@ -301,15 +295,10 @@
 
             return new User()
             {
-                Id = DbApi.GetReader(Input.Login).Id,
                 Name = Input.Name,
                 Surname = Input.Surname,
                 Address = Input.Address,
                 TelephoneNr = Input.PhoneNumber,
-                EmailAddress = Input.Email,
-                Hash = "s",
-                Login = Input.Login
-            
             };
             // return Activator.CreateInstance(typeof(User), 10, "Test", "test", "test", "test", "test", "test", "s") as User ?? throw new InvalidOperationException("Can't create an instance of 'User'.");
         }

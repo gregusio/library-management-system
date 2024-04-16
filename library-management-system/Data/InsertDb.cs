@@ -2,29 +2,29 @@ namespace library_management_system.Data;
 
 public class InsertDb(DataDbContext db)
 {
-    public void AddReader(Reader reader)
+    public void AddReader(User reader)
     {
         
         try
         {
-            db.Readers.Add(reader);
+            db.Users.Add(reader);
             db.SaveChanges();
         }
         catch (Exception e)
         {
-            db.Readers.Remove(reader);
+            db.Users.Remove(reader);
             throw;
         }
     }
 
-    public void AddLibrarian(Librarian librarian)
+    public void AddLibrarian(User librarian)
     {
         try {
-            db.Librarians.Add(librarian);
+            db.Users.Add(librarian);
             db.SaveChanges();
         }
         catch (Exception e) {
-            db.Librarians.Remove(librarian);
+            db.Users.Remove(librarian);
             throw;
         }
     }

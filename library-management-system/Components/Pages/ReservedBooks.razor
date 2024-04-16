@@ -30,7 +30,7 @@
 <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
 @code {
-    private Reader? Reader => AuthService.User as Reader;
+    private User? Reader => AuthService.User;
     private List<ReservedBook> AllReservedBooks => DbApi.GetReservedBooks(Reader);
 
     private void Delete(ReservedBook reservedBook)

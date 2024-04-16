@@ -56,7 +56,7 @@ else
 
 @code {
     [Parameter] public required Book Book { get; set; }
-    private Reader? Reader => AuthService.User as Reader;
+    private User? Reader => AuthService.User;
     private bool _editMode = false;
     private string? Title { get; set; }
     private string? Author { get; set; }

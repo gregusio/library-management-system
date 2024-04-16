@@ -34,7 +34,7 @@
 
 
 @code {
-    private Reader? Reader => AuthService.User as Reader;
+    private User? Reader => AuthService.User;
     private List<BorrowedBook> AllBorrowedBooks => DbApi.GetBorrowedBooks(Reader);
 
     private void Postpone(BorrowedBook borrowedBook)
