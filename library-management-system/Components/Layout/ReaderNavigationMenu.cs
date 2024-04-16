@@ -2,7 +2,7 @@ using BlazorBootstrap;
 
 namespace library_management_system.Components.Layout;
 
-public class ReaderNavigationMenu : INavigationMenu
+public class ReaderNavigationMenu
 {
     public List<(string, string, IconName)> GetItems()
     {
@@ -11,7 +11,6 @@ public class ReaderNavigationMenu : INavigationMenu
             ("books", "Books", IconName.Book),
             ("reserved-books", "Reserved Books", IconName.Bookmark),
             ("borrowed-books", "Borrowed Books", IconName.Book),
-            ("logout", "Logout", IconName.ArrowLeftSquareFill)
         ];
     }
 }

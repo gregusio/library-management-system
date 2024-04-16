@@ -1,5 +1,5 @@
 using library_management_system.Components.Pages;
-using library_management_system.Database;
+using library_management_system.Data;
 using library_management_system.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

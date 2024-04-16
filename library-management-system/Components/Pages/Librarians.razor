@@ -1,6 +1,6 @@
 ﻿@page "/librarians"
 @using library_management_system.Services
-@using library_management_system.Database
+@using library_management_system.Data
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
@@ -12,8 +12,10 @@
 
 <h1>Librarians</h1>
 
-@if (AuthService.IsAdmin())
-{
+<AuthorizeView Roles="admin,librarian">
+    <Authorized>
+        
+
     <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
         <BodyTemplate>
             <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
@@ -76,6 +78,9 @@
     <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Librarian</Button>
 }
 
+</Authorized>
+</AuthorizeView>
+
 
 @for (var i = librariansPerPage * (currentPageNumber - 1); i < librariansPerPage * currentPageNumber && i < LibrariansCount; i++)
 {
@@ -105,7 +110,7 @@
 
     private int LibrariansCount => AllLibrarians.Count;
 
-    private List<Librarian> AllLibrarians => DbApi.GetAllLibrarians();
+    private List<User> AllLibrarians => DbApi.GetAllLibrarians();
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
@@ -116,17 +121,12 @@
     {
         try
         {
-            DbApi.AddLibrarian(new Librarian()
+            DbApi.AddLibrarian(new User()
             {
                 Name = Name,
                 Surname = Surname,
                 Address = Address,
                 TelephoneNr = PhoneNumber,
-                EmailAddress = Email,
-                Login = Login,
-                PasswordHash = new PasswordHasher<User>().HashPassword(null!, Password),
-                Salary = Salary,
-                Position = EPosition.Librarian
             });
 
             AlertService.ShowSuccess("Librarian added successfully!");

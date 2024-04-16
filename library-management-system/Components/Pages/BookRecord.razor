@@ -1,8 +1,10 @@
-@using library_management_system.Database
+@using library_management_system.Data
 @using library_management_system.Services
+
 @inject DbApi DbApi
 @inject AuthService AuthService
 @inject AlertService AlertService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 @if (!_editMode)
 {
@@ -19,14 +21,18 @@
                 <p>Borrowed: @Book.NotAvailable</p>
 
             </CardText>
-            @if (AuthService.IsLibrarian())
-            {
-                <Button Color="ButtonColor.Primary" @onclick="EditMode">Edit</Button>
-            }
-            else
-            {
-                <Button Color="ButtonColor.Primary" @onclick="Reserve">Reserve</Button>
-            }
+
+            <AuthorizeView Roles="admin,librarian">
+                <Authorized>
+                    <Button Color="ButtonColor.Primary" @onclick="EditMode">Edit</Button>
+                </Authorized>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="reader">
+                <Authorized>
+                    <Button Color="ButtonColor.Primary" @onclick="Reserve">Reserve</Button>
+                </Authorized>   
+            </AuthorizeView>
 
         </CardBody>
     </Card>
@@ -56,7 +62,7 @@ else
 
 @code {
     [Parameter] public required Book Book { get; set; }
-    private Reader? Reader => AuthService.User as Reader;
+    private User? User { get; set; }
     private bool _editMode = false;
     private string? Title { get; set; }
     private string? Author { get; set; }
@@ -64,6 +70,13 @@ else
     private DateTime PublishDate { get; set; }
     private ECategory Category { get; set; }
     private int Available { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        User = AuthService.GetUser(AuthenticationStateProvider).Result;
+
+        return base.OnInitializedAsync();
+    }
 
     private void SaveState()
     {
@@ -113,7 +126,7 @@ else
             DbApi.AddReservedBook(new ReservedBook()
             {
                 BookId = Book.BookId,
-                ReaderId = Reader!.Id
+                ReaderId = User!.Id
             });
             AlertService.ShowSuccess("Book reserved");
         }

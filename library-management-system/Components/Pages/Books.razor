@@ -1,5 +1,5 @@
 ﻿@page "/books"
-@using library_management_system.Database
+@using library_management_system.Data
 @using library_management_system.Services
 @using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
@@ -10,8 +10,9 @@
 
 <h1>Books</h1>
 
-@if (AuthService.IsLibrarian())
-{
+<AuthorizeView Roles="admin,librarian">
+    <Authorized>
+        
     <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
         <BodyTemplate>
             <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
@@ -55,7 +56,10 @@
     </Modal>
 
     <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Book</Button>
-}
+
+
+</Authorized>
+</AuthorizeView>
 
 <input @oninput="@((str) => Search((string)str.Value))"/>
 
