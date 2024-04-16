@@ -13,7 +13,6 @@ public class LibrarianNavigationMenu : INavigationMenu
             ("borrow-book", "Borrow book", IconName.Book),
             ("return-book", "Return book", IconName.Book),
             ("librarians", "Librarians", IconName.People),
-            ("logout", "Logout", IconName.ArrowLeftSquareFill)
         ];
     }
 }

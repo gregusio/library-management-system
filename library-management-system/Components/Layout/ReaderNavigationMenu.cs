@@ -11,7 +11,6 @@ public class ReaderNavigationMenu : INavigationMenu
             ("books", "Books", IconName.Book),
             ("reserved-books", "Reserved Books", IconName.Bookmark),
             ("borrowed-books", "Borrowed Books", IconName.Book),
-            ("logout", "Logout", IconName.ArrowLeftSquareFill)
         ];
     }
 }
