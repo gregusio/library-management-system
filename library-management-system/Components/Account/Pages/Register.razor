@@ -81,10 +81,10 @@
             return;
         }
 
-        var role = await RoleManager.FindByNameAsync("Librarian");
+        var role = await RoleManager.FindByNameAsync("reader");
         if (role is null)
         {
-            role = new IdentityRole("Librarian");
+            role = new IdentityRole("reader");
             await RoleManager.CreateAsync(role);
         }
 
@@ -122,8 +122,7 @@
                 Surname = "Test",
                 Address = "test",
                 TelephoneNr = "test",
-                Role = "Admin",
-            
+                Role = ERole.Reader,
             };
             // return Activator.CreateInstance(typeof(User), 10, "Test", "test", "test", "test", "test", "test", "s") as User ?? throw new InvalidOperationException("Can't create an instance of 'User'.");
         }

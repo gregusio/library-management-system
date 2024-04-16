@@ -29,7 +29,7 @@ public class DbInitializer
                 Surname = "admin",
                 Address = "admin",
                 TelephoneNr = "admin",
-                Role = "admin", 
+                Role = ERole.Admin, 
                 Email = adminEmail, 
                 UserName = adminEmail 
             };

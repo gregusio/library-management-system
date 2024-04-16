@@ -16,13 +16,13 @@ public class User : IdentityUser
     public string? TelephoneNr { get; set; }
 
     [Required, StringLength(30)]
-    public string? Role { get; set; }
+    public ERole Role { get; set; }
     
     public User()
     {
     }
 
-    public User(string name, string surname, string address, string telephoneNr, string role)
+    public User(string name, string surname, string address, string telephoneNr, ERole role)
     {
         Name = name;
         Surname = surname;
