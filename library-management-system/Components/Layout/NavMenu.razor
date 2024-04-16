@@ -18,75 +18,69 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
 
-        <AuthorizeView Roles="Librarian,Admin">
+        <AuthorizeView Roles="admin,librarian">
+            <Authorized>
+                @foreach (var (href, buttonName, iconName) in _librarianNavigationMenu!.GetItems())
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href=@href>
+                            <div class="me-3">
+                                <span class="bi" aria-hidden="true"></span>
+                                <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
+                            </div>
 
-            @foreach (var (href, buttonName, iconName) in _librarianNavigationMenu!.GetItems())
-            {
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href=@href>
-                        <div class="me-3">
-                            <span class="bi" aria-hidden="true"></span>
-                            <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
-                        </div>
-
-                    </NavLink>
-                </div>
-            }
-
+                        </NavLink>
+                    </div>
+                }
+            </Authorized>
         </AuthorizeView>
 
-        <AuthorizeView Roles="Reader">
-            @foreach (var (href, buttonName, iconName) in _readerNavigationMenu!.GetItems())
-            {
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href=@href>
-                        <div class="me-3">
-                            <span class="bi" aria-hidden="true"></span>
-                            <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
-                        </div>
+        <AuthorizeView Roles="reader">
+            <Authorized>
+                @foreach (var (href, buttonName, iconName) in _readerNavigationMenu!.GetItems())
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href=@href>
+                            <div class="me-3">
+                                <span class="bi" aria-hidden="true"></span>
+                                <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
+                            </div>
 
-                    </NavLink>
-                </div>
-            }
+                        </NavLink>
+                    </div>
+                }
+
+
+            </Authorized>
+
         </AuthorizeView>
 
         <AuthorizeView>
-            <div class="nav-item px-3">
-                <form action="Account/Logout" method="post">
-                    <AntiforgeryToken />
-                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                    <button type="submit" class="nav-link">
-                        <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                    </button>
-                </form>
-            </div>
-        </AuthorizeView>
-
-
-
-        @* @foreach (var (href, buttonName, iconName) in _navMenu!.GetItems())
-        {
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href=@href>
-                    <div class="me-3">
-                        <span class="bi" aria-hidden="true"></span>
-                        <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
-                    </div>
-
-                </NavLink>
-            </div>
-        } *@
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auth">
-                <div class="me-3">
-                    <span class="bi" aria-hidden="true"></span>
-                    <Icon Style="margin-right: 5px" Name="IconName.Amazon"></Icon>Login
+            <Authorized>
+                <div class="nav-item px-3">
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <button type="submit" class="nav-link">
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                        </button>
+                    </form>
                 </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="auth">
+                        <div class="me-3">
+                            <span class="bi" aria-hidden="true"></span>
+                            <Icon Style="margin-right: 5px" Name="IconName.Airplane"></Icon>Login
+                        </div>
 
-            </NavLink>
-        </div>
+                    </NavLink>
+                </div>
+            </NotAuthorized>
 
+
+        </AuthorizeView>
 
     </nav>
 </div>
