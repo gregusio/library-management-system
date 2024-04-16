@@ -2,7 +2,7 @@ using BlazorBootstrap;
 
 namespace library_management_system.Components.Layout;
 
-public class ReaderNavigationMenu : INavigationMenu
+public class ReaderNavigationMenu
 {
     public List<(string, string, IconName)> GetItems()
     {
