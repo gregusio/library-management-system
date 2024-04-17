@@ -141,7 +141,7 @@
 
     private async void AddReader()
     {
-        try
+        @* try
         {
             DbApi.AddReader(new User()
                 {
@@ -158,7 +158,7 @@
         catch (DbUpdateException e)
         {
             AlertService.ShowWarning("Something went wrong!");
-        }
+        } *@
     }
 
     private async Task OnShowModalClick()

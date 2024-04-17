@@ -4,29 +4,9 @@ namespace library_management_system.Services;
 
 public class DbApi(DataDbContext db)
 {
-    public User? GetReader(int id)
-    {
-        return new SearchDb(db).GetReader(id);
-    }
-
-    public User? GetReader(string login)
-    {
-        return new SearchDb(db).GetReader(login);
-    }
-
     public List<User> GetAllReaders()
     {
         return new SearchDb(db).GetAllReaders();
-    }
-
-    public User? GetLibrarian(int id)
-    {
-        return new SearchDb(db).GetLibrarian(id);
-    }
-
-    public User? GetLibrarian(string login)
-    {
-        return new SearchDb(db).GetLibrarian(login);
     }
 
     public List<User> GetAllLibrarians()
@@ -37,11 +17,6 @@ public class DbApi(DataDbContext db)
     public Book? GetBook(int id)
     {
         return new SearchDb(db).GetBook(id);
-    }
-
-    public List<Book> GetBooks(string title, string? author)
-    {
-        return new SearchDb(db).GetBooks(title, author);
     }
 
     public List<Book> GetAllBooks()
@@ -63,26 +38,6 @@ public class DbApi(DataDbContext db)
     {
         return new SearchDb(db).GetReservedBook(reader, book);
     }
-    
-    public bool LoginAlreadyUsed(string login)
-    {
-        return new SearchDb(db).LoginAlreadyUsed(login);
-    }
-    
-    public bool PasswordAlreadyUsed(string password)
-    {
-        return new SearchDb(db).PasswordAlreadyUsed(password);
-    }
-
-    public void AddReader(User reader)
-    {
-        new InsertDb(db).AddReader(reader);
-    }
-
-    public void AddLibrarian(User librarian)
-    {
-        new InsertDb(db).AddLibrarian(librarian);
-    }
 
     public void AddBook(Book book)
     {
@@ -99,14 +54,9 @@ public class DbApi(DataDbContext db)
         new InsertDb(db).AddReservedBook(reservedBook);
     }
 
-    public void RemoveReader(int id)
+    public void RemoveUser(string id)
     {
-        new RemoveDb(db).RemoveReader(id);
-    }
-
-    public void RemoveLibrarian(int id)
-    {
-        new RemoveDb(db).RemoveLibrarian(id);
+        new RemoveDb(db).RemoveUser(id);
     }
 
     public void RemoveBook(int id)

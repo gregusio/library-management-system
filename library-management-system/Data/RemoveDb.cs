@@ -2,24 +2,14 @@ namespace library_management_system.Data;
 
 public class RemoveDb(DataDbContext db)
 {
-    public void RemoveReader(int id)
+    public void RemoveUser(string id)
     {
-        // var reader = db.Users.FirstOrDefault(reader => reader.Id == id);
-        // if (reader != null)
-        // {
-        //     db.Users.Remove(reader);
-        //     db.SaveChanges();
-        // }
-    }
-
-    public void RemoveLibrarian(int id)
-    {
-        // var librarian = db.Users.FirstOrDefault(librarian => librarian.Id == id);
-        // if (librarian != null)
-        // {
-        //     db.Users.Remove(librarian);
-        //     db.SaveChanges();
-        // }
+        var user = db.Users.FirstOrDefault(user => user.Id == id);
+        if (user != null)
+        {
+            db.Users.Remove(user);
+            db.SaveChanges();
+        }
     }
 
     public void RemoveBook(int id)
