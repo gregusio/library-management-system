@@ -119,7 +119,7 @@
 
     private async void AddLibrarian()
     {
-        try
+        @* try
         {
             DbApi.AddLibrarian(new User()
             {
@@ -134,7 +134,7 @@
         catch (DbUpdateException e)
         {
             AlertService.ShowWarning("Something went wrong!");
-        }
+        } *@
     }
 
     private async Task OnShowModalClick()
