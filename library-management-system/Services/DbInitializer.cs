@@ -24,14 +24,15 @@ public class DbInitializer
 
         if (await _userManager.FindByEmailAsync(adminEmail) == null)
         {
-            var admin = new User {
+            var admin = new User
+            {
                 Name = "admin",
                 Surname = "admin",
                 Address = "admin",
                 TelephoneNr = "admin",
-                Role = ERole.Admin, 
-                Email = adminEmail, 
-                UserName = adminEmail 
+                Role = ERole.Admin,
+                Email = adminEmail,
+                UserName = adminEmail
             };
 
             IdentityResult result = await _userManager.CreateAsync(admin, adminPassword);

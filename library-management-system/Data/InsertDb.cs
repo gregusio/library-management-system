@@ -4,11 +4,13 @@ public class InsertDb(DataDbContext db)
 {
     public void AddBook(Book book)
     {
-        try {
+        try
+        {
             db.Books.Add(book);
             db.SaveChanges();
-        } 
-        catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             db.Books.Remove(book);
             throw;
         }
