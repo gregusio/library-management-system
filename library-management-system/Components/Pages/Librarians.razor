@@ -10,77 +10,74 @@
 
 <PageTitle>Librarians</PageTitle>
 
-<h1>Librarians</h1>
-
-<AuthorizeView Roles="admin,librarian">
+<AuthorizeView Roles="admin">
     <Authorized>
+
+        <h1>Librarians</h1>
+
+
         
 
-    <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
-        <BodyTemplate>
-            <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+        <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+            <BodyTemplate>
+                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
-            <div class="container">
-                <p>Name</p>
-                <input @bind="@Name"/>
-            </div>
+                <div class="container">
+                    <p>Name</p>
+                    <input @bind="@Name"/>
+                </div>
 
-            <div class="container">
-                <p>Surname</p>
-                <input @bind="@Surname"/>
-            </div>
+                <div class="container">
+                    <p>Surname</p>
+                    <input @bind="@Surname"/>
+                </div>
 
-            <div class="container">
-                <p>Address</p>
-                <input @bind="@Address"/>
-            </div>
+                <div class="container">
+                    <p>Address</p>
+                    <input @bind="@Address"/>
+                </div>
 
-            <div class="container">
-                <p>Phone number</p>
-                <input @bind="@PhoneNumber"/>
-            </div>
+                <div class="container">
+                    <p>Phone number</p>
+                    <input @bind="@PhoneNumber"/>
+                </div>
 
-            <div class="container">
-                <p>Email</p>
-                <input @bind="@Email"/>
-            </div>
+                <div class="container">
+                    <p>Email</p>
+                    <input @bind="@Email"/>
+                </div>
 
-            <div class="container">
-                <p>Login</p>
-                <input @bind="@Login"/>
-            </div>
+                <div class="container">
+                    <p>Login</p>
+                    <input @bind="@Login"/>
+                </div>
 
-            <div class="container">
-                <p>Password</p>
-                <input @bind="@Password"/>
-            </div>
+                <div class="container">
+                    <p>Password</p>
+                    <input @bind="@Password"/>
+                </div>
 
-            <div class="container">
-                <p>Salary</p>
-                <input type="number" @bind="@Salary"/>
-            </div>
-
-
-            <div class="container">
-                <p>Position</p>
-                <input @bind="@Position"/>
-            </div>
+                <div class="container">
+                    <p>Salary</p>
+                    <input type="number" @bind="@Salary"/>
+                </div>
 
 
-        </BodyTemplate>
-        <FooterTemplate>
-            <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
-            <Button Color="ButtonColor.Primary" @onclick="AddLibrarian">Add Librarian</Button>
-        </FooterTemplate>
-    </Modal>
+                <div class="container">
+                    <p>Position</p>
+                    <input @bind="@Position"/>
+                </div>
 
 
-    <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Librarian</Button>
-}
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+                <Button Color="ButtonColor.Primary" @onclick="AddLibrarian">Add Librarian</Button>
+            </FooterTemplate>
+        </Modal>
 
-</Authorized>
-</AuthorizeView>
 
+        <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Librarian</Button>
 
 @for (var i = librariansPerPage * (currentPageNumber - 1); i < librariansPerPage * currentPageNumber && i < LibrariansCount; i++)
 {
@@ -92,6 +89,11 @@
             TotalPages="@(LibrariansCount / librariansPerPage)"
             PageChanged="OnPageChangedAsync"/>
 
+    </Authorized>
+    <NotAuthorized>
+        <h1>Not authorized</h1>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private int currentPageNumber = 1;
