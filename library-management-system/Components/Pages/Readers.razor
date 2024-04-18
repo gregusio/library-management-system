@@ -26,91 +26,99 @@
 
 <PageTitle>Readers</PageTitle>
 
-<h1>Readers</h1>
+<AuthorizeView Roles="admin,librarian">
+    <Authorized Context="wholePage">
 
-<Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
-    <BodyTemplate>
-        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight" />
+        <h1>Readers</h1>
 
-        <div class="col-md-4">
-            <StatusMessage Message="@Message" />
-            <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
-                FormName="register">
-                <DataAnnotationsValidator />
-                <h2>Create a new account.</h2>
-                <hr />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Name" class="form-control"
-                        aria-required="true" />
-                    <label for="name">Name</label>
-                    <ValidationMessage For="() => Input.Name" class="text-danger" />
+        <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+            <BodyTemplate>
+                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+                <div class="col-md-4">
+                    <StatusMessage Message="@Message"/>
+                    <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
+                              FormName="register">
+                        <DataAnnotationsValidator/>
+                        <h2>Create a new account.</h2>
+                        <hr/>
+                        <ValidationSummary class="text-danger" role="alert"/>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="Input.Name" class="form-control"
+                                       aria-required="true"/>
+                            <label for="name">Name</label>
+                            <ValidationMessage For="() => Input.Name" class="text-danger"/>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="Input.Surname" class="form-control"
+                                       aria-required="true"/>
+                            <label for="surname">Surname</label>
+                            <ValidationMessage For="() => Input.Surname" class="text-danger"/>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="Input.Address" class="form-control"
+                                       aria-required="true"/>
+                            <label for="address">Address</label>
+                            <ValidationMessage For="() => Input.Address" class="text-danger"/>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="Input.PhoneNumber" class="form-control"
+                                       aria-required="true"/>
+                            <label for="phoneNumber">Phone Number</label>
+                            <ValidationMessage For="() => Input.PhoneNumber" class="text-danger"/>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="Input.Login" class="form-control"
+                                       aria-required="true"/>
+                            <label for="login">Login</label>
+                            <ValidationMessage For="() => Input.Login" class="text-danger"/>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username"
+                                       aria-required="true" placeholder="name@example.com"/>
+                            <label for="email">Email</label>
+                            <ValidationMessage For="() => Input.Email" class="text-danger"/>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.Password" class="form-control"
+                                       autocomplete="new-password" aria-required="true" placeholder="password"/>
+                            <label for="password">Password</label>
+                            <ValidationMessage For="() => Input.Password" class="text-danger"/>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control"
+                                       autocomplete="new-password" aria-required="true" placeholder="password"/>
+                            <label for="confirm-password">Confirm Password</label>
+                            <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
+                        </div>
+
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+                    </EditForm>
                 </div>
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Surname" class="form-control"
-                        aria-required="true" />
-                    <label for="surname">Surname</label>
-                    <ValidationMessage For="() => Input.Surname" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Address" class="form-control"
-                        aria-required="true" />
-                    <label for="address">Address</label>
-                    <ValidationMessage For="() => Input.Address" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.PhoneNumber" class="form-control"
-                        aria-required="true" />
-                    <label for="phoneNumber">Phone Number</label>
-                    <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Login" class="form-control"
-                        aria-required="true" />
-                    <label for="login">Login</label>
-                    <ValidationMessage For="() => Input.Login" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username"
-                        aria-required="true" placeholder="name@example.com" />
-                    <label for="email">Email</label>
-                    <ValidationMessage For="() => Input.Email" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" class="form-control"
-                        autocomplete="new-password" aria-required="true" placeholder="password" />
-                    <label for="password">Password</label>
-                    <ValidationMessage For="() => Input.Password" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control"
-                        autocomplete="new-password" aria-required="true" placeholder="password" />
-                    <label for="confirm-password">Confirm Password</label>
-                    <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-                </div>
 
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-            </EditForm>
-        </div>
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+            </FooterTemplate>
+        </Modal>
 
-    </BodyTemplate>
-    <FooterTemplate>
-        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
-    </FooterTemplate>
-</Modal>
+        <input @oninput="@((str) => Search((string)str.Value))"/>
 
-<input @oninput="@((str) => Search((string)str.Value))" />
+        <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Reader</Button>
 
-<Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Reader</Button>
+        @for (var i = readersPerPage * (currentPageNumber - 1); i < readersPerPage * currentPageNumber && i < ReadersCount; i++)
+        {
+            var i1 = i;
+            <UserRecord User="@(SelectedReaders[i1])"/>
+        }
 
-@for (var i = readersPerPage * (currentPageNumber - 1); i < readersPerPage * currentPageNumber && i < ReadersCount; i++)
-{
-    var i1 = i;
-    <UserRecord User="@(SelectedReaders[i1])" />
-}
+        <Pagination ActivePageNumber="@currentPageNumber" TotalPages="@TotalPages" PageChanged="OnPageChangedAsync"/>
 
-<Pagination ActivePageNumber="@currentPageNumber" TotalPages="@TotalPages" PageChanged="OnPageChangedAsync" />
-
+    </Authorized>
+    <NotAuthorized>
+        <h1>Not authorized</h1>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private int currentPageNumber = 1;

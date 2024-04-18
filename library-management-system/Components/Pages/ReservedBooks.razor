@@ -9,28 +9,39 @@
 @inject AlertService AlertService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<h3>Reserved books</h3>
+<PageTitle>Reserved books</PageTitle>
 
-@foreach (var reservedBook in AllReservedBooks)
-{
-    var book = DbApi.GetBook(reservedBook.BookId)!;
-    <Card Style="width:18rem;">
-        <CardBody>
-            <CardTitle>@book.Title</CardTitle>
-            <CardText>
-                <p>Author: @book.Author</p>
-                <p>Publisher: @book.Publisher</p>
-                <p>Publish Date: @book.PublishDate</p>
-                <p>Category: @book.Category</p>
-                <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="@(() => Delete(reservedBook))"> Delete </Button>
+<AuthorizeView>
+    <Authorized>
+
+        <h3>Reserved books</h3>
+
+        @foreach (var reservedBook in AllReservedBooks)
+        {
+            var book = DbApi.GetBook(reservedBook.BookId)!;
+            <Card Style="width:18rem;">
+                <CardBody>
+                    <CardTitle>@book.Title</CardTitle>
+                    <CardText>
+                        <p>Author: @book.Author</p>
+                        <p>Publisher: @book.Publisher</p>
+                        <p>Publish Date: @book.PublishDate</p>
+                        <p>Category: @book.Category</p>
+                        <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="@(() => Delete(reservedBook))"> Delete </Button>
 
 
-            </CardText>
-        </CardBody>
-    </Card>
-}
+                    </CardText>
+                </CardBody>
+            </Card>
+        }
 
-<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+    </Authorized>
+    <NotAuthorized>
+        <h1>Not authorized</h1>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private List<ReservedBook> AllReservedBooks { get; set; } = new List<ReservedBook>();

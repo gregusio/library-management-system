@@ -14,47 +14,58 @@
 @inject SignInManager<User> SignInManager
 @inject ILogger<Account> Logger
 
-<h3>Account</h3>
+<PageTitle>Account</PageTitle>
 
-<UserRecord User="@User"></UserRecord>
+<AuthorizeView>
+    <Authorized Context="wholePage">
 
-<Button Color="ButtonColor.Primary" Size="Size.Medium" Style="margin-top: 10px" @onclick="OnShowChangePasswordClick">Change password</Button>
+        <h3>Account</h3>
 
-<Modal @ref="_passwordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
-    <BodyTemplate>
-        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+        <UserRecord User="@User"></UserRecord>
+
+        <Button Color="ButtonColor.Primary" Size="Size.Medium" Style="margin-top: 10px" @onclick="OnShowChangePasswordClick">Change password</Button>
+
+        <Modal @ref="_passwordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
+            <BodyTemplate>
+                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
         
-        <div class="row">
-    <div class="col-md-6">
-        <EditForm Model="Input" FormName="change-password" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your old password." />
-                <label for="old-password" class="form-label">Old password</label>
-                <ValidationMessage For="() => Input.OldPassword" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please enter your new password." />
-                <label for="new-password" class="form-label">New password</label>
-                <ValidationMessage For="() => Input.NewPassword" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please confirm your new password." />
-                <label for="confirm-password" class="form-label">Confirm password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Update password</button>
-        </EditForm>
-    </div>
-</div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <EditForm Model="Input" FormName="change-password" OnValidSubmit="OnValidSubmitAsync" method="post">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger" role="alert" />
+                            <div class="form-floating mb-3">
+                                <InputText type="password" @bind-Value="Input.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your old password." />
+                                <label for="old-password" class="form-label">Old password</label>
+                                <ValidationMessage For="() => Input.OldPassword" class="text-danger" />
+                            </div>
+                            <div class="form-floating mb-3">
+                                <InputText type="password" @bind-Value="Input.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please enter your new password." />
+                                <label for="new-password" class="form-label">New password</label>
+                                <ValidationMessage For="() => Input.NewPassword" class="text-danger" />
+                            </div>
+                            <div class="form-floating mb-3">
+                                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please confirm your new password." />
+                                <label for="confirm-password" class="form-label">Confirm password</label>
+                                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                            </div>
+                            <button type="submit" class="w-100 btn btn-lg btn-primary">Update password</button>
+                        </EditForm>
+                    </div>
+                </div>
 
 
-    </BodyTemplate>
-    <FooterTemplate>
+            </BodyTemplate>
+            <FooterTemplate>
         
-    </FooterTemplate>
-</Modal>
+            </FooterTemplate>
+        </Modal>
+        
+    </Authorized>
+    <NotAuthorized>
+        <h1>Not authorized</h1>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private Modal _loginModal = default!;

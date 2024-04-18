@@ -9,33 +9,40 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<User> UserManager
 
-<h3>Borrowed books</h3>
+<PageTitle>Borrowed books</PageTitle>
 
-@foreach (var borrowedBook in AllBorrowedBooks)
-{
-    var book = DbApi.GetBook(borrowedBook.BookId)!;
-    var deadline = borrowedBook.Deadline.ToString("dd/MM/yyyy");
-    <Card Style="width:18rem;">
-        <CardBody>
-            <CardTitle>@book.Title</CardTitle>
-            <CardText>
-                <p>Author: @book.Author</p>
-                <p>Publisher: @book.Publisher</p>
-                <p>Publish Date: @book.PublishDate</p>
-                <p>Category: @book.Category</p>
-                <p>Deadline: @deadline</p>
-                @if (string.Compare(deadline, DateTime.Now.ToString("dd/MM/yyyy"), StringComparison.Ordinal) > 0)
-                {
-                    <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="@(() => Postpone(borrowedBook))"> Postpone </Button>
-                }
+<AuthorizeView>
+    <Authorized>
 
-            </CardText>
-        </CardBody>
-    </Card>
-}
+    <h3>Borrowed books</h3>
 
-<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+    @foreach (var borrowedBook in AllBorrowedBooks)
+    {
+        var book = DbApi.GetBook(borrowedBook.BookId)!;
+        var deadline = borrowedBook.Deadline.ToString("dd/MM/yyyy");
+        <Card Style="width:18rem;">
+            <CardBody>
+                <CardTitle>@book.Title</CardTitle>
+                <CardText>
+                    <p>Author: @book.Author</p>
+                    <p>Publisher: @book.Publisher</p>
+                    <p>Publish Date: @book.PublishDate</p>
+                    <p>Category: @book.Category</p>
+                    <p>Deadline: @deadline</p>
+                    @if (string.Compare(deadline, DateTime.Now.ToString("dd/MM/yyyy"), StringComparison.Ordinal) > 0)
+                    {
+                        <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="@(() => Postpone(borrowedBook))"> Postpone </Button>
+                    }
 
+                </CardText>
+            </CardBody>
+        </Card>
+    }
+
+    <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private List<BorrowedBook> AllBorrowedBooks { get; set; } = new List<BorrowedBook>();
