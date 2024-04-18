@@ -1,28 +1,11 @@
 ﻿@page "/readers"
-@using library_management_system.Components.Account
+@rendermode InteractiveServer
+
 @using library_management_system.Data
 @using library_management_system.Services
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.EntityFrameworkCore
-@rendermode InteractiveServer
+
 @inject DbApi DbApi
-@inject AlertService AlertService
 
-@using System.ComponentModel.DataAnnotations
-@using System.Text
-@using System.Text.Encodings.Web
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.WebUtilities
-@using library_management_system.Data
-
-@inject UserManager<User> UserManager
-@inject IUserStore<User> UserStore
-@inject SignInManager<User> SignInManager
-@inject IEmailSender<User> EmailSender
-@inject ILogger<Readers> Logger
-@inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
-@inject RoleManager<IdentityRole> RoleManager
 
 <PageTitle>Readers</PageTitle>
 
@@ -31,88 +14,17 @@
 
         <h1>Readers</h1>
 
-        <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
-            <BodyTemplate>
-                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
-
-                <div class="col-md-4">
-                    <StatusMessage Message="@Message"/>
-                    <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
-                              FormName="register">
-                        <DataAnnotationsValidator/>
-                        <h2>Create a new account.</h2>
-                        <hr/>
-                        <ValidationSummary class="text-danger" role="alert"/>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="Input.Name" class="form-control"
-                                       aria-required="true"/>
-                            <label for="name">Name</label>
-                            <ValidationMessage For="() => Input.Name" class="text-danger"/>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="Input.Surname" class="form-control"
-                                       aria-required="true"/>
-                            <label for="surname">Surname</label>
-                            <ValidationMessage For="() => Input.Surname" class="text-danger"/>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="Input.Address" class="form-control"
-                                       aria-required="true"/>
-                            <label for="address">Address</label>
-                            <ValidationMessage For="() => Input.Address" class="text-danger"/>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="Input.PhoneNumber" class="form-control"
-                                       aria-required="true"/>
-                            <label for="phoneNumber">Phone Number</label>
-                            <ValidationMessage For="() => Input.PhoneNumber" class="text-danger"/>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="Input.Login" class="form-control"
-                                       aria-required="true"/>
-                            <label for="login">Login</label>
-                            <ValidationMessage For="() => Input.Login" class="text-danger"/>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username"
-                                       aria-required="true" placeholder="name@example.com"/>
-                            <label for="email">Email</label>
-                            <ValidationMessage For="() => Input.Email" class="text-danger"/>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText type="password" @bind-Value="Input.Password" class="form-control"
-                                       autocomplete="new-password" aria-required="true" placeholder="password"/>
-                            <label for="password">Password</label>
-                            <ValidationMessage For="() => Input.Password" class="text-danger"/>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control"
-                                       autocomplete="new-password" aria-required="true" placeholder="password"/>
-                            <label for="confirm-password">Confirm Password</label>
-                            <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
-                        </div>
-
-                        <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-                    </EditForm>
-                </div>
-
-            </BodyTemplate>
-            <FooterTemplate>
-                <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
-            </FooterTemplate>
-        </Modal>
+        <AddUserModal Role="@(ERole.Reader)" OnAdd="OnInitializedAsync"/>
 
         <input @oninput="@((str) => Search((string)str.Value))"/>
 
-        <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Reader</Button>
-
-        @for (var i = readersPerPage * (currentPageNumber - 1); i < readersPerPage * currentPageNumber && i < ReadersCount; i++)
+        @for (var i = _readersPerPage * (_currentPageNumber - 1); i < _readersPerPage * _currentPageNumber && i < ReadersCount; i++)
         {
             var i1 = i;
             <UserRecord User="@(SelectedReaders[i1])"/>
         }
 
-        <Pagination ActivePageNumber="@currentPageNumber" TotalPages="@TotalPages" PageChanged="OnPageChangedAsync"/>
+        <Pagination ActivePageNumber="@_currentPageNumber" TotalPages="@TotalPages" PageChanged="OnPageChangedAsync"/>
 
     </Authorized>
     <NotAuthorized>
@@ -121,160 +33,33 @@
 </AuthorizeView>
 
 @code {
-    private int currentPageNumber = 1;
-    private int readersPerPage = 4;
+    private int _currentPageNumber = 1;
+    private readonly int _readersPerPage = 4;
 
-    private Modal modal = default!;
-    private string Name { get; set; }
-    private string Surname { get; set; }
-    private string Address { get; set; }
-    private string PhoneNumber { get; set; }
-    private string Email { get; set; }
-    private string Login { get; set; }
-    private string Password { get; set; }
-
-    private int TotalPages => (ReadersCount - 1) / readersPerPage + 1;
+    private int TotalPages => (ReadersCount - 1) / _readersPerPage + 1;
 
     private int ReadersCount => SelectedReaders.Count;
 
-    private List<User> AllReaders => DbApi.GetAllReaders();
+    private List<User> AllReaders { get; set; } = new();
 
-    private List<User> SelectedReaders = new();
-    
-    private IEnumerable<IdentityError>? identityErrors;
+    private List<User> SelectedReaders { get; set; } = new();
 
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    protected override Task OnInitializedAsync()
+    {
+        AllReaders = DbApi.GetAllReaders();
+        SelectedReaders = AllReaders;
 
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
-
+        return base.OnInitializedAsync();
+    }
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
-        await Task.Run(() => { currentPageNumber = newPageNumber; });
-    }
-
-    private async Task OnShowModalClick()
-    {
-        await modal.ShowAsync();
-    }
-
-    private async Task OnHideModalClick()
-    {
-        await modal.HideAsync();
-        AlertService.ClearMessages();
-    }
-
-    protected override void OnInitialized()
-    {
-        SelectedReaders = AllReaders;
-        base.OnInitialized();
+        await Task.Run(() => { _currentPageNumber = newPageNumber; });
     }
 
     private async void Search(string search)
     {
-        SelectedReaders = AllReaders.Where(reader => reader.Name.ToLower().Contains(search.ToLower())).ToList();
-    }
-    
-    public async Task RegisterUser(EditContext editContext)
-    {
-        var user = CreateUser();
-
-        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-        var emailStore = GetEmailStore();
-        await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-        var result = await UserManager.CreateAsync(user, Input.Password);
-
-        if (!result.Succeeded)
-        {
-            identityErrors = result.Errors;
-            return;
-        }
-
-        var role = await RoleManager.FindByNameAsync("reader");
-        if (role is null)
-        {
-            role = new IdentityRole("reader");
-            await RoleManager.CreateAsync(role);
-        }
-
-        await UserManager.AddToRoleAsync(user, role.Name);
-
-        Logger.LogInformation("User created a new account with password.");
-
-        AlertService.ShowSuccess("User created a new account with password.");
-
-        Input = new InputModel();
-
-        SelectedReaders = AllReaders;
+        SelectedReaders = AllReaders.Where(reader => reader.Name != null && reader.Name.ToLower().Contains(search.ToLower())).ToList();
     }
 
-    private User CreateUser()
-    {
-        try
-        {
-            return new User()
-            {
-                Name = Input.Name,
-                Surname = Input.Surname,
-                Address = Input.Address,
-                TelephoneNr = Input.PhoneNumber,
-                Role = ERole.Reader,
-            };
-        }
-        catch
-        {
-            throw new InvalidOperationException($"Can't create an instance of '{nameof(User)}'. " +
-                $"Ensure that '{nameof(User)}' is not an abstract class and has a parameterless constructor.");
-        }
-    }
-
-    private IUserEmailStore<User> GetEmailStore()
-    {
-        if (!UserManager.SupportsUserEmail)
-        {
-            throw new NotSupportedException("The default UI requires a user store with email support.");
-        }
-        return (IUserEmailStore<User>)UserStore;
-    }
-
-    private sealed class InputModel
-    {
-        [Required]
-        [Display(Name = "Name")]
-        public string Name { get; set; } = "";
-
-        [Required]
-        [Display(Name = "Surname")]
-        public string Surname { get; set; } = "";
-
-        [Display(Name = "Address")]
-        public string Address { get; set; } = "";
-
-        [Display(Name = "Phone number")]
-        public string PhoneNumber { get; set; } = "";
-
-        [Required]
-        [Display(Name = "Login")]
-        public string Login { get; set; } = "";
-
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; } = "";
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; } = "";
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; } = "";
-    }
 }
