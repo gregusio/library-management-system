@@ -2,9 +2,19 @@ using BlazorBootstrap;
 
 namespace library_management_system.Components.Layout;
 
-public class LibrarianNavigationMenu
+public class NavigationMenu
 {
-    public List<(string, string, IconName)> GetItems()
+    public List<(string, string, IconName)> GetForReader()
+    {
+        return
+        [
+            ("books", "Books", IconName.Book),
+            ("reserved-books", "Reserved Books", IconName.Bookmark),
+            ("borrowed-books", "Borrowed Books", IconName.Book),
+        ];
+    }
+    
+    public List<(string, string, IconName)> GetForLibrarian()
     {
         return
         [
