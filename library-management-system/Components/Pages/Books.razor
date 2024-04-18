@@ -8,72 +8,77 @@
 
 <PageTitle>Books</PageTitle>
 
-<h1>Books</h1>
+<AuthorizeView>
+    <Authorized Context="wholePage">
 
-<AuthorizeView Roles="admin,librarian">
-    <Authorized>
-        
-    <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
-        <BodyTemplate>
-            <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+        <h1>Books</h1>
 
-            <div class="container">
-                <p>Title</p>
-                <input @bind="@Title"/>
-            </div>
+        <AuthorizeView Roles="admin,librarian">
+            <Authorized Context="onlyForLibrarians">
 
-            <div class="container">
-                <p>Author</p>
-                <input @bind="@Author"/>
-            </div>
+                <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
+                    <BodyTemplate>
+                        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
 
-            <div class="container">
-                <p>Publisher</p>
-                <input @bind="@Publisher"/>
-            </div>
+                        <div class="container">
+                            <p>Title</p>
+                            <input @bind="@Title"/>
+                        </div>
 
-            <div class="container">
-                <p>Publish Date</p>
-                <input type="date" @bind="@PublishDate"/>
-            </div>
+                        <div class="container">
+                            <p>Author</p>
+                            <input @bind="@Author"/>
+                        </div>
 
-            <div class="container">
-                <p>Category</p>
-                <input @bind="@Category"/>
-            </div>
+                        <div class="container">
+                            <p>Publisher</p>
+                            <input @bind="@Publisher"/>
+                        </div>
 
-            <div class="container">
-                <p>Amount</p>
-                <input type="number" @bind="@Amount"/>
-            </div>
+                        <div class="container">
+                            <p>Publish Date</p>
+                            <input type="date" @bind="@PublishDate"/>
+                        </div>
 
+                        <div class="container">
+                            <p>Category</p>
+                            <input @bind="@Category"/>
+                        </div>
 
-        </BodyTemplate>
-        <FooterTemplate>
-            <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
-            <Button Color="ButtonColor.Primary" @onclick="AddBook">Add Book</Button>
-        </FooterTemplate>
-    </Modal>
-
-    <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Book</Button>
+                        <div class="container">
+                            <p>Amount</p>
+                            <input type="number" @bind="@Amount"/>
+                        </div>
 
 
-</Authorized>
+                    </BodyTemplate>
+                    <FooterTemplate>
+                        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+                        <Button Color="ButtonColor.Primary" @onclick="AddBook">Add Book</Button>
+                    </FooterTemplate>
+                </Modal>
+
+                <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Book</Button>
+            </Authorized>
+        </AuthorizeView>
+
+        <input @oninput="@((str) => Search((string)str.Value))"/>
+
+
+        @for (var i = booksPerPage * (currentPageNumber - 1); i < booksPerPage * currentPageNumber && i < BooksCount; i++)
+        {
+            var i1 = i;
+            <BookRecord Book="@SelectedBooks[i1]"/>
+        }
+
+        <Pagination ActivePageNumber="@currentPageNumber"
+                    TotalPages="@TotalPages"
+                    PageChanged="OnPageChangedAsync"/>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Not authorized</h1>
+    </NotAuthorized>
 </AuthorizeView>
-
-<input @oninput="@((str) => Search((string)str.Value))"/>
-
-
-@for (var i = booksPerPage * (currentPageNumber - 1); i < booksPerPage * currentPageNumber && i < BooksCount; i++)
-{
-    var i1 = i;
-    <BookRecord Book="@SelectedBooks[i1]"/>
-}
-
-<Pagination ActivePageNumber="@currentPageNumber"
-            TotalPages="@TotalPages"
-            PageChanged="OnPageChangedAsync"/>
-
 
 @code {
     private int currentPageNumber = 1;

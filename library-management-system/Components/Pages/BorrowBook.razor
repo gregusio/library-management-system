@@ -5,45 +5,53 @@
 @inject DbApi DbApi
 @inject AlertService AlertService
 
-<h3>BorrowBook</h3>
+<PageTitle>Borrow book</PageTitle>
 
-<BlazoredTypeahead SearchMethod="GetReadersLocal"
-                   TItem="User"
-                   TValue="User"
-                   @bind-Value="SelectedPerson"
-                   placeholder="Search by first name...">
-    <SelectedTemplate Context="personId">
-        @{
-            var selectedPerson = SelectedPerson;
+<AuthorizeView Roles="admin,librarian">
+    <Authorized>
 
-            <text>@selectedPerson?.Name @selectedPerson?.Surname</text>
-        }
-    </SelectedTemplate>
-    <ResultTemplate Context="person">
-        @person.Name @person.Surname (Id: @person.Id)
-    </ResultTemplate>
-</BlazoredTypeahead>
+    <h3>BorrowBook</h3>
 
-<BlazoredTypeahead SearchMethod="GetBooksLocal"
-                   TItem="Book"
-                   TValue="Book"
-                   @bind-Value="SelectedBook"
-                   placeholder="Search by title...">
-    <SelectedTemplate Context="personId">
-        @{
-            var selectedBook = SelectedBook;
+    <BlazoredTypeahead SearchMethod="GetReadersLocal"
+                       TItem="User"
+                       TValue="User"
+                       @bind-Value="SelectedPerson"
+                       placeholder="Search by first name...">
+        <SelectedTemplate Context="personId">
+            @{
+                var selectedPerson = SelectedPerson;
 
-            <text>@selectedBook?.Title @selectedBook?.Author</text>
-        }
-    </SelectedTemplate>
-    <ResultTemplate Context="book">
-        @book.Title @book.Author (Id: @book.BookId)
-    </ResultTemplate>
-</BlazoredTypeahead>
+                <text>@selectedPerson?.Name @selectedPerson?.Surname</text>
+            }
+        </SelectedTemplate>
+        <ResultTemplate Context="person">
+            @person.Name @person.Surname (Id: @person.Id)
+        </ResultTemplate>
+    </BlazoredTypeahead>
 
-<Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="TryBorrowBook"> Borrow Book </Button>
+    <BlazoredTypeahead SearchMethod="GetBooksLocal"
+                       TItem="Book"
+                       TValue="Book"
+                       @bind-Value="SelectedBook"
+                       placeholder="Search by title...">
+        <SelectedTemplate Context="personId">
+            @{
+                var selectedBook = SelectedBook;
 
-<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+                <text>@selectedBook?.Title @selectedBook?.Author</text>
+            }
+        </SelectedTemplate>
+        <ResultTemplate Context="book">
+            @book.Title @book.Author (Id: @book.BookId)
+        </ResultTemplate>
+    </BlazoredTypeahead>
+
+    <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="TryBorrowBook"> Borrow Book </Button>
+
+    <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private List<User> AllReaders => DbApi.GetAllReaders();
