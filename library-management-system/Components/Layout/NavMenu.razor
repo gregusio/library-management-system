@@ -19,7 +19,7 @@
 
         <AuthorizeView Roles="admin,librarian">
             <Authorized>
-                @foreach (var (href, buttonName, iconName) in _librarianNavigationMenu!.GetItems())
+                @foreach (var (href, buttonName, iconName) in _navigationMenu!.GetForLibrarian())
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href=@href>
@@ -36,7 +36,7 @@
 
         <AuthorizeView Roles="reader">
             <Authorized>
-                @foreach (var (href, buttonName, iconName) in _readerNavigationMenu!.GetItems())
+                @foreach (var (href, buttonName, iconName) in _navigationMenu!.GetForReader())
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href=@href>
@@ -85,6 +85,5 @@
 </div>
 
 @code {
-    private ReaderNavigationMenu _readerNavigationMenu = new();
-    private LibrarianNavigationMenu _librarianNavigationMenu = new();
+    private NavigationMenu _navigationMenu = new();
 }
