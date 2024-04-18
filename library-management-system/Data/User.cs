@@ -17,7 +17,7 @@ public class User : IdentityUser
 
     [Required, StringLength(30)]
     public ERole Role { get; set; }
-    
+
     public User()
     {
     }

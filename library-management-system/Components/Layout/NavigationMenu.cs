@@ -13,7 +13,7 @@ public class NavigationMenu
             ("borrowed-books", "Borrowed Books", IconName.Book),
         ];
     }
-    
+
     public List<(string, string, IconName)> GetForLibrarian()
     {
         return

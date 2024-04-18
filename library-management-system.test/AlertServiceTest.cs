@@ -14,7 +14,7 @@ public class AlertServiceTest
         Assert.Equal("Info", alert.Messages[0].Message);
         Assert.Equal(ToastType.Info, alert.Messages[0].Type);
     }
-    
+
     [Fact]
     public void TestShowSuccess()
     {
@@ -24,7 +24,7 @@ public class AlertServiceTest
         Assert.Equal("Success", alert.Messages[0].Message);
         Assert.Equal(ToastType.Success, alert.Messages[0].Type);
     }
-    
+
     [Fact]
     public void TestShowWarning()
     {
@@ -34,7 +34,7 @@ public class AlertServiceTest
         Assert.Equal("Warning", alert.Messages[0].Message);
         Assert.Equal(ToastType.Warning, alert.Messages[0].Type);
     }
-    
+
     [Fact]
     public void TestClearMessages()
     {
@@ -43,7 +43,7 @@ public class AlertServiceTest
         alert.ClearMessages();
         Assert.Empty(alert.Messages);
     }
-    
+
     [Fact]
     public void TestMultipleMessages()
     {
@@ -51,15 +51,15 @@ public class AlertServiceTest
         alert.ShowWarning("Warning");
         alert.ShowInfo("Info");
         alert.ShowSuccess("Success");
-        
+
         Assert.Equal(3, alert.Messages.Count);
-        
+
         Assert.Equal("Warning", alert.Messages[0].Message);
         Assert.Equal(ToastType.Warning, alert.Messages[0].Type);
-        
+
         Assert.Equal("Info", alert.Messages[1].Message);
         Assert.Equal(ToastType.Info, alert.Messages[1].Type);
-        
+
         Assert.Equal("Success", alert.Messages[2].Message);
         Assert.Equal(ToastType.Success, alert.Messages[2].Type);
     }

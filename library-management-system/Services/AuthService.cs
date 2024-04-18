@@ -12,7 +12,7 @@ public class AuthService(UserManager<User> userManager)
         var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         if (!user.Identity!.IsAuthenticated) return null;
-        
+
         return await userManager.GetUserAsync(user);
     }
 }
