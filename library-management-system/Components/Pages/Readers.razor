@@ -96,7 +96,6 @@
     </BodyTemplate>
     <FooterTemplate>
         <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
-        <Button Color="ButtonColor.Primary" @onclick="AddReader">Add reader</Button>
     </FooterTemplate>
 </Modal>
 
@@ -133,32 +132,21 @@
     private List<User> AllReaders => DbApi.GetAllReaders();
 
     private List<User> SelectedReaders = new();
+    
+    private IEnumerable<IdentityError>? identityErrors;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
         await Task.Run(() => { currentPageNumber = newPageNumber; });
-    }
-
-    private async void AddReader()
-    {
-        @* try
-        {
-            DbApi.AddReader(new User()
-                {
-                    Name = Name,
-                    Surname = Surname,
-                    Address = Address,
-                    TelephoneNr = PhoneNumber,
-                });
-
-            SelectedReaders = AllReaders;
-
-            AlertService.ShowSuccess("Reader added successfully!");
-        }
-        catch (DbUpdateException e)
-        {
-            AlertService.ShowWarning("Something went wrong!");
-        } *@
     }
 
     private async Task OnShowModalClick()
@@ -182,19 +170,7 @@
     {
         SelectedReaders = AllReaders.Where(reader => reader.Name.ToLower().Contains(search.ToLower())).ToList();
     }
-
-
-
-    private IEnumerable<IdentityError>? identityErrors;
-
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
-
+    
     public async Task RegisterUser(EditContext editContext)
     {
         var user = CreateUser();
@@ -210,10 +186,10 @@
             return;
         }
 
-        var role = await RoleManager.FindByNameAsync("Reader");
+        var role = await RoleManager.FindByNameAsync("reader");
         if (role is null)
         {
-            role = new IdentityRole("Reader");
+            role = new IdentityRole("reader");
             await RoleManager.CreateAsync(role);
         }
 
