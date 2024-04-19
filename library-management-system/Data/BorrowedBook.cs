@@ -5,11 +5,13 @@ namespace library_management_system.Data;
 
 public class BorrowedBook
 {
-    [Key] public int Id { get; set; }
+    [Key] public int Id { get; init; }
 
-    [ForeignKey("User")] public string? ReaderId { get; set; }
+    [ForeignKey("User")] 
+    [StringLength(30)]
+    public string? ReaderId { get; init; }
 
-    [ForeignKey("Book")] public int BookId { get; set; }
+    [ForeignKey("Book")] public int BookId { get; init; }
 
     public DateTime Deadline { get; set; }
 }
