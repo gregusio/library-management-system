@@ -4,7 +4,7 @@ namespace library_management_system.Data;
 
 public class Book
 {
-    [Key] public int BookId { get; set; } // Key 
+    [Key] public int BookId { get; init; }
 
     [StringLength(30)]
     public string? Title { get; set; }

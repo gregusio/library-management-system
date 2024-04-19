@@ -16,7 +16,7 @@ public class User : IdentityUser
     public string? TelephoneNr { get; set; }
 
     [Required, StringLength(30)]
-    public ERole Role { get; set; }
+    public ERole Role { get; init; }
 
     public User()
     {
