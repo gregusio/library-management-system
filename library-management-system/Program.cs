@@ -1,6 +1,6 @@
 using library_management_system.Components;
 using library_management_system.Components.Account;
-using library_management_system.Data;
+using library_management_system.Model;
 using library_management_system.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;

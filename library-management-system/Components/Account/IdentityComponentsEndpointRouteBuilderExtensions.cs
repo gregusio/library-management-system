@@ -1,6 +1,6 @@
 using library_management_system.Components.Account.Pages;
 using library_management_system.Components.Account.Pages.Manage;
-using library_management_system.Data;
+using library_management_system.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;

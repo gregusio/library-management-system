@@ -1,4 +1,4 @@
-using library_management_system.Data;
+using library_management_system.Model;
 using Microsoft.AspNetCore.Identity;
 
 public class DbInitializer

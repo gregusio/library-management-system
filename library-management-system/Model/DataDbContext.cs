@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace library_management_system.Data;
+namespace library_management_system.Model;
 
 public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDbContext<User>(options)
 {

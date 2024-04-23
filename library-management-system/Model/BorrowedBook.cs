@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace library_management_system.Data;
+namespace library_management_system.Model;
 
 public class BorrowedBook
 {
