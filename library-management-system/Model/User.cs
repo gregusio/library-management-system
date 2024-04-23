@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace library_management_system.Data;
+namespace library_management_system.Model;
 
 public class User : IdentityUser
 {
