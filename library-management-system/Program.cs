@@ -49,7 +49,7 @@ builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 // var folder = Environment.SpecialFolder.LocalApplicationData;
 // var path = Environment.GetFolderPath(folder);
 
-var dbPath = "../library.db";
+var dbPath = "./tmp/library.db";
 
 builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
