@@ -4,7 +4,10 @@ namespace library_management_system.Model;
 
 public class Book
 {
-    [Key] public int BookId { get; init; }
+    [Key] public int Id { get; init; }
+    
+    [Required, StringLength(13)]
+    public string? ISBN { get; set; }
 
     [StringLength(30)]
     public string? Title { get; set; }
@@ -18,10 +21,4 @@ public class Book
     public DateTime PublishDate { get; set; }
 
     public ECategory Category { get; set; }
-
-    public int Available { get; set; }
-
-    public int NotAvailable { get; set; }
-
-    public int Reserved { get; set; }
 }
