@@ -5,6 +5,7 @@ using library_management_system.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddTransient<DbApi>();
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddTransient<AlertService>();
 builder.Services.AddBlazorBootstrap();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 
 builder.Services.AddAuthentication(options =>
