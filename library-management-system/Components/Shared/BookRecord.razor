@@ -111,9 +111,17 @@ else
 
     private void CloseAndSave()
     {
-        DbApi.SaveChanges();
-        AlertService.ShowSuccess("Changes saved");
-        _editMode = false;
+        var result = DbApi.SaveChanges();
+
+        if (result == EOperationResult.Success)
+        {
+            AlertService.ShowSuccess("Changes saved");
+            _editMode = false;
+        }
+        else
+        {
+            AlertService.ShowWarning("Database error");
+        }
     }
 
     private void Reserve()

@@ -145,9 +145,17 @@ else
 
     private void CloseAndSave()
     {
-        DbApi.SaveChanges();
-        AlertService.ShowSuccess("Changes saved!");
-        editMode = false;
+        var result = DbApi.SaveChanges();
+
+        if (result == EOperationResult.Success)
+        {
+            AlertService.ShowSuccess("Changes saved!");
+            editMode = false;
+        }
+        else
+        {
+            AlertService.ShowWarning("Failed to save changes!");
+        }
     }
 
     private async Task OnShowReservedBooksClick()

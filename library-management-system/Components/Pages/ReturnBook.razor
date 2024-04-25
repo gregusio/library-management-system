@@ -77,8 +77,12 @@
     {
         if (SelectedBook != null)
         {
-            DbApi.RemoveBorrowedBook(SelectedBook);
-            AlertService.ShowSuccess("Book returned successfully");
+            var result = DbApi.RemoveBorrowedBook(SelectedBook);
+            
+            if(result == EOperationResult.Success)
+                AlertService.ShowSuccess("Book returned successfully");
+            else
+                AlertService.ShowWarning("Error while returning book");
         }
         else
         {

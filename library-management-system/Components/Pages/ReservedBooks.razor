@@ -56,8 +56,12 @@
 
     private void Delete(ReservedBook reservedBook)
     {
-        DbApi.RemoveReservedBook(reservedBook);
-        AlertService.ShowSuccess("Book deleted successfully!");
+        var result = DbApi.RemoveReservedBook(reservedBook);
+        
+        if(result == EOperationResult.Success)
+            AlertService.ShowSuccess("Book deleted successfully!");
+        else
+            AlertService.ShowWarning("Failed to delete book!");
 
         OnInitializedAsync();
     }
