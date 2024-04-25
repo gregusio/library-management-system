@@ -9,9 +9,13 @@ public class BorrowedBook
 
     [ForeignKey("User")] 
     [StringLength(30)]
-    public string? ReaderId { get; init; }
+    public string? UserId { get; init; }
+    
+    public User? User { get; init; }
 
     [ForeignKey("Book")] public int BookId { get; init; }
+    
+    public Book? Book { get; init; }
 
     public DateTime Deadline { get; set; }
 }
