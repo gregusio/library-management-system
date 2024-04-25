@@ -6,7 +6,26 @@
 @inject AlertService AlertService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-@if (!_editMode)
+@if (_editMode)
+{
+    <Card Style="width:18rem;">
+        <CardBody>
+            <CardTitle>
+                <input @bind="@Book.Title"/>
+            </CardTitle>
+            <CardText>
+                <p>Author: <input @bind="@Book.Author"/></p>
+                <p>Publisher: <input @bind="@Book.Publisher"/></p>
+                <p>Publish Date: <input @bind="@Book.PublishDate"/></p>
+                <p>Category: <input @bind="@Book.Category"/></p>
+                <p>Available: <input @bind="@BookInventory!.AvailableCopies"></p>
+            </CardText>
+            <Button Color="ButtonColor.Primary" @onclick="CloseEditMode">Exit</Button>
+            <Button Color="ButtonColor.Primary" @onclick="CloseAndSave">Save</Button>
+        </CardBody>
+    </Card>
+}
+else
 {
     <Card Style="width:18rem;">
         <CardBody>
@@ -16,10 +35,7 @@
                 <p>Publisher: @Book.Publisher</p>
                 <p>Publish Date: @Book.PublishDate</p>
                 <p>Category: @Book.Category</p>
-                <p>Available: @Book.Available</p>
-                <p>Reserved: @Book.Reserved</p>
-                <p>Borrowed: @Book.NotAvailable</p>
-
+                <p>Available: @BookInventory!.AvailableCopies</p>
             </CardText>
 
             <AuthorizeView Roles="admin,librarian">
@@ -37,32 +53,16 @@
         </CardBody>
     </Card>
 }
-else
-{
-    <Card Style="width:18rem;">
-        <CardBody>
-            <CardTitle>
-                <input @bind="@Book.Title"/>
-            </CardTitle>
-            <CardText>
-                <p>Author: <input @bind="@Book.Author"/></p>
-                <p>Publisher: <input @bind="@Book.Publisher"/></p>
-                <p>Publish Date: <input @bind="@Book.PublishDate"/></p>
-                <p>Category: <input @bind="@Book.Category"/></p>
-                <p>Available: <input @bind="@Book.Available"/></p>
-            </CardText>
-            <Button Color="ButtonColor.Primary" @onclick="CloseEditMode">Exit</Button>
-            <Button Color="ButtonColor.Primary" @onclick="CloseAndSave">Save</Button>
-        </CardBody>
-    </Card>
-}
+
 
 <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
 
 @code {
     [Parameter] public required Book Book { get; set; }
+    
     private User? User { get; set; }
+    private BookInventory? BookInventory { get; set; }
     private bool _editMode = false;
     private string? Title { get; set; }
     private string? Author { get; set; }
@@ -74,7 +74,8 @@ else
     protected override Task OnInitializedAsync()
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
-
+        BookInventory = DbApi.GetBookInventory(Book);
+        
         return base.OnInitializedAsync();
     }
 
@@ -85,7 +86,6 @@ else
         Publisher = Book.Publisher;
         PublishDate = Book.PublishDate;
         Category = Book.Category;
-        Available = Book.Available;
     }
 
     private void UndoChanges()
@@ -95,7 +95,6 @@ else
         Book.Publisher = Publisher;
         Book.PublishDate = PublishDate;
         Book.Category = Category;
-        Book.Available = Available;
     }
 
     private void EditMode()
@@ -119,20 +118,19 @@ else
 
     private void Reserve()
     {
-        if (Book.Available > 0)
+        var result = DbApi.AddReservedBook(User!, Book);
+
+        switch (result)
         {
-            Book.Available--;
-            Book.Reserved++;
-            DbApi.AddReservedBook(new ReservedBook()
-            {
-                BookId = Book.BookId,
-                ReaderId = User!.Id
-            });
-            AlertService.ShowSuccess("Book reserved");
-        }
-        else
-        {
-            AlertService.ShowInfo("Book not available");
+            case EOperationResult.Success:
+                AlertService.ShowSuccess("Book reserved");
+                break;
+            case EOperationResult.NoAvailableCopies:
+                AlertService.ShowWarning("No available copies");
+                break;
+            case EOperationResult.DatabaseError:
+                AlertService.ShowWarning("Database error");
+                break;
         }
     }
 }
