@@ -20,13 +20,14 @@ public class DbInsertService(DataDbContext db)
             });
             
             db.SaveChanges();
+            
+            return EOperationResult.Success;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.WriteLine(e);
             return EOperationResult.DatabaseError;
         }
-        
-        return EOperationResult.Success;
     }
 
     public EOperationResult AddBorrowedBook(User user, Book book)
@@ -59,13 +60,13 @@ public class DbInsertService(DataDbContext db)
             bookInventory.BorrowedCopies++;
             
             db.SaveChanges();
+            
+            return EOperationResult.Success;
         }
         catch (Exception)
         {
             return EOperationResult.DatabaseError;
         }
-
-        return EOperationResult.Success;
     }
 
     public EOperationResult ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
@@ -121,12 +122,12 @@ public class DbInsertService(DataDbContext db)
             bookInventory.ReservedCopies++;
             
             db.SaveChanges();
+            
+            return EOperationResult.Success;
         }
         catch (Exception)
         {
             return EOperationResult.DatabaseError;
         }
-        
-        return EOperationResult.Success;
     }
 }

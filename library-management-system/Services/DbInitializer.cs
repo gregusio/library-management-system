@@ -1,28 +1,19 @@
 using library_management_system.Model;
 using Microsoft.AspNetCore.Identity;
 
-public class DbInitializer
+public class DbInitializer(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
 {
-    private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-
-    public DbInitializer(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-    }
-
     public async Task Initialize()
     {
         string adminEmail = "admin@example.com";
         string adminPassword = "Admin123#";
 
-        if (await _roleManager.FindByNameAsync("admin") == null)
+        if (await roleManager.FindByNameAsync("admin") == null)
         {
-            await _roleManager.CreateAsync(new IdentityRole("admin"));
+            await roleManager.CreateAsync(new IdentityRole("admin"));
         }
 
-        if (await _userManager.FindByEmailAsync(adminEmail) == null)
+        if (await userManager.FindByEmailAsync(adminEmail) == null)
         {
             var admin = new User
             {
@@ -35,11 +26,11 @@ public class DbInitializer
                 UserName = adminEmail
             };
 
-            IdentityResult result = await _userManager.CreateAsync(admin, adminPassword);
+            IdentityResult result = await userManager.CreateAsync(admin, adminPassword);
 
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(admin, "admin");
+                await userManager.AddToRoleAsync(admin, "admin");
             }
         }
     }
