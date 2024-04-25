@@ -42,7 +42,7 @@
                 }
             </SelectedTemplate>
             <ResultTemplate Context="book">
-                @book.Title @book.Author (Id: @book.BookId)
+                @book.Title @book.Author (Id: @book.Id)
             </ResultTemplate>
         </BlazoredTypeahead>
 
@@ -57,10 +57,18 @@
 </AuthorizeView>
 
 @code {
-    private List<User> AllReaders => DbApi.GetAllReaders();
+    private List<User> AllReaders { get; set; } = new();
     private User? SelectedPerson { get; set; }
-    private List<Book> AllBooks => DbApi.GetAllBooks();
+    private List<Book> AllBooks { get; set; } = new();
     private Book? SelectedBook { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        AllReaders = DbApi.GetAllReaders();
+        AllBooks = DbApi.GetAllBooks();
+        
+        return base.OnInitializedAsync();
+    }
 
     private async Task<IEnumerable<User>> GetReadersLocal(string searchText)
     {
@@ -69,7 +77,7 @@
 
     private async Task<IEnumerable<Book>> GetBooksLocal(string searchText)
     {
-        return await Task.FromResult(AllBooks.Where(book => book.Title.ToLower().Contains(searchText.ToLower()) && (book.Available > 0 || book.Reserved > 0)).ToList());
+        return await Task.FromResult(AllBooks.Where(book => book.Title.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
     private void TryBorrowBook()
@@ -82,36 +90,18 @@
 
         var reservedBook = DbApi.GetReservedBook(SelectedPerson, SelectedBook);
 
+        EOperationResult result;
         if (reservedBook != null)
         {
-            DbApi.RemoveReservedBook(reservedBook);
-            DbApi.AddBorrowedBook(new BorrowedBook()
-            {
-                ReaderId = SelectedPerson.Id,
-                BookId = SelectedBook.BookId,
-                Deadline = DateTime.Now.AddDays(30)
-            });
-            
-            AlertService.ShowSuccess("Book borrowed");
+            result = DbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
 
+            AlertService.ShowOperationResult(result);
+            
             return;
         }
 
-        if (SelectedBook.Available > 0)
-        {
-            DbApi.AddBorrowedBook(new BorrowedBook()
-            {
-                ReaderId = SelectedPerson.Id,
-                BookId = SelectedBook.BookId,
-                Deadline = DateTime.Now.AddDays(30)
-            });
-            
-            AlertService.ShowSuccess("Book borrowed");
-
-            return;
-        }
+        result = DbApi.AddBorrowedBook(SelectedPerson, SelectedBook);
         
-        AlertService.ShowWarning("Book not available");
+        AlertService.ShowOperationResult(result);
     }
-
 }
