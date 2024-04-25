@@ -1,4 +1,5 @@
 using BlazorBootstrap;
+using library_management_system.Model;
 
 namespace library_management_system.Services;
 
@@ -9,6 +10,25 @@ public class AlertService
     public void ClearMessages()
     {
         Messages.Clear();
+    }
+
+    public void ShowOperationResult(EOperationResult result)
+    {
+        switch (result)
+        {
+            case EOperationResult.Success:
+                ShowSuccess("Book borrowed");
+                return;
+            case EOperationResult.DatabaseError:
+                ShowWarning("Database error");
+                return;
+            case EOperationResult.UnexpectedError:
+                ShowWarning("Unexpected error");
+                return;
+            case EOperationResult.NoAvailableCopies:
+                ShowInfo("No available copies");
+                return;
+        }
     }
 
     public void ShowInfo(string message)
