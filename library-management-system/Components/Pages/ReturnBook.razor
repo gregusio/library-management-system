@@ -43,7 +43,7 @@
                 }
             </SelectedTemplate>
             <ResultTemplate Context="borrowedBook">
-                @(DbApi.GetBook(borrowedBook.BookId).Title) @(DbApi.GetBook(borrowedBook.BookId).Author) (Id: @(DbApi.GetBook(borrowedBook.BookId).BookId) )
+                @(DbApi.GetBook(borrowedBook.BookId).Title) @(DbApi.GetBook(borrowedBook.BookId).Author) (Id: @(DbApi.GetBook(borrowedBook.BookId).Id) )
             </ResultTemplate>
         </BlazoredTypeahead>
 
