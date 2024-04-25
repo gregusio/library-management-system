@@ -4,12 +4,12 @@ namespace library_management_system.Services;
 
 public class DbApi(DataDbContext db)
 {
-    public List<User> GetAllReaders()
+    public List<User>? GetAllReaders()
     {
         return new DbSearchService(db).GetAllReaders();
     }
 
-    public List<User> GetAllLibrarians()
+    public List<User>? GetAllLibrarians()
     {
         return new DbSearchService(db).GetAllLibrarians();
     }
@@ -24,17 +24,17 @@ public class DbApi(DataDbContext db)
         return new DbSearchService(db).GetBookInventory(book);
     }
 
-    public List<Book> GetAllBooks()
+    public List<Book>? GetAllBooks()
     {
         return new DbSearchService(db).GetAllBooks();
     }
 
-    public List<BorrowedBook> GetBorrowedBooks(User reader)
+    public List<BorrowedBook>? GetBorrowedBooks(User reader)
     {
         return new DbSearchService(db).GetBorrowedBooks(reader);
     }
 
-    public List<ReservedBook> GetReservedBooks(User reader)
+    public List<ReservedBook>? GetReservedBooks(User reader)
     {
         return new DbSearchService(db).GetReservedBooks(reader);
     }
@@ -64,33 +64,33 @@ public class DbApi(DataDbContext db)
         return new DbInsertService(db).AddReservedBook(user, book);
     }
 
-    public void RemoveUser(string id)
+    public EOperationResult RemoveUser(string id)
     {
-        new DbRemoveService(db).RemoveUser(id);
+        return new DbRemoveService(db).RemoveUser(id);
     }
 
-    public void RemoveBook(int id)
+    public EOperationResult RemoveBook(int id)
     {
-        new DbRemoveService(db).RemoveBook(id);
+        return new DbRemoveService(db).RemoveBook(id);
     }
 
-    public void RemoveBorrowedBook(BorrowedBook borrowedBook)
+    public EOperationResult RemoveBorrowedBook(BorrowedBook borrowedBook)
     {
-        new DbRemoveService(db).RemoveBorrowedBook(borrowedBook);
+        return new DbRemoveService(db).RemoveBorrowedBook(borrowedBook);
     }
 
-    public void RemoveReservedBook(ReservedBook reservedBook)
+    public EOperationResult RemoveReservedBook(ReservedBook reservedBook)
     {
-        new DbRemoveService(db).RemoveReservedBook(reservedBook);
+        return new DbRemoveService(db).RemoveReservedBook(reservedBook);
     }
 
-    public void SaveChanges()
+    public EOperationResult SaveChanges()
     {
-        new DbUpdateService(db).SaveChanges();
+        return new DbUpdateService(db).SaveChanges();
     }
 
-    public void PostponeBorrowedBook(BorrowedBook borrowedBook)
+    public EOperationResult PostponeBorrowedBook(BorrowedBook borrowedBook)
     {
-        new DbUpdateService(db).PostponeBorrowedBook(borrowedBook);
+        return new DbUpdateService(db).PostponeBorrowedBook(borrowedBook);
     }
 }
