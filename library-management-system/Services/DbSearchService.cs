@@ -4,24 +4,56 @@ namespace library_management_system.Services;
 
 public class DbSearchService(DataDbContext db)
 {
-    public List<User> GetAllReaders()
+    public List<User>? GetAllReaders()
     {
-        return db.Users.Where(user => user.Role == ERole.Reader).ToList();
+        try
+        {
+            return db.Users.Where(user => user.Role == ERole.Reader).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
     }
 
-    public List<User> GetAllLibrarians()
+    public List<User>? GetAllLibrarians()
     {
-        return db.Users.Where(user => user.Role == ERole.Librarian).ToList();
+        try
+        {
+            return db.Users.Where(user => user.Role == ERole.Librarian).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
     }
 
-    public List<Book> GetAllBooks()
+    public List<Book>? GetAllBooks()
     {
-        return db.Books.ToList();
+        try
+        {
+            return db.Books.ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
     }
 
     public Book? GetBook(int id)
     {
-        return db.Books.FirstOrDefault(book => book.Id == id);
+        try
+        {
+            return db.Books.FirstOrDefault(book => book.Id == id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
     }
 
     public BookInventory? GetBookInventory(Book book)
@@ -32,23 +64,48 @@ public class DbSearchService(DataDbContext db)
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.StackTrace);
+            Console.WriteLine(e);
             return null;
         }
     }
 
-    public List<BorrowedBook> GetBorrowedBooks(User reader)
+    public List<BorrowedBook>? GetBorrowedBooks(User reader)
     {
-        return db.BorrowedBooks.Where(borrowedBook => borrowedBook.UserId == reader.Id).ToList();
+        try
+        {
+            return db.BorrowedBooks.Where(borrowedBook => borrowedBook.UserId == reader.Id).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
     }
 
-    public List<ReservedBook> GetReservedBooks(User reader)
+    public List<ReservedBook>? GetReservedBooks(User reader)
     {
-        return db.ReservedBooks.Where(reservedBook => reservedBook.UserId == reader.Id).ToList();
+        try
+        {
+            return db.ReservedBooks.Where(reservedBook => reservedBook.UserId == reader.Id).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
     }
 
     public ReservedBook? GetReservedBook(User reader, Book book)
     {
-        return db.ReservedBooks.FirstOrDefault(reservedBook => reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
+        try
+        {
+            return db.ReservedBooks.FirstOrDefault(reservedBook => reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
     }
 }

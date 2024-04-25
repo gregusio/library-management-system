@@ -4,53 +4,93 @@ namespace library_management_system.Services;
 
 public class DbRemoveService(DataDbContext db)
 {
-    public void RemoveUser(string id)
+    public EOperationResult RemoveUser(string id)
     {
-        var user = db.Users.FirstOrDefault(user => user.Id == id);
-        if (user != null)
+        try
         {
-            db.Users.Remove(user);
-            db.SaveChanges();
+            var user = db.Users.FirstOrDefault(user => user.Id == id);
+            if (user != null)
+            {
+                db.Users.Remove(user);
+                db.SaveChanges();
+            }
+            
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
         }
     }
 
-    public void RemoveBook(int id)
+    public EOperationResult RemoveBook(int id)
     {
-        var book = db.Books.FirstOrDefault(book => book.Id == id);
-        if (book != null)
+        try
         {
-            db.Books.Remove(book);
-            db.SaveChanges();
+            var book = db.Books.FirstOrDefault(book => book.Id == id);
+            if (book != null)
+            {
+                db.Books.Remove(book);
+                db.SaveChanges();
+            }
+            
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
         }
     }
 
-    public void RemoveBorrowedBook(BorrowedBook borrowedBook)
+    public EOperationResult RemoveBorrowedBook(BorrowedBook borrowedBook)
     {
-        var book = db.Books.FirstOrDefault(book => book.Id == borrowedBook.BookId);
-        var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == borrowedBook.BookId);
+        try
+        {
+            var book = db.Books.FirstOrDefault(book => book.Id == borrowedBook.BookId);
+            var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == borrowedBook.BookId);
         
-        if (book != null && bookInventory != null)
-        {
-            bookInventory.AvailableCopies += 1;
-            bookInventory.BorrowedCopies -= 1;
-        }
+            if (book != null && bookInventory != null)
+            {
+                bookInventory.AvailableCopies += 1;
+                bookInventory.BorrowedCopies -= 1;
+            }
 
-        db.BorrowedBooks.Remove(borrowedBook);
-        db.SaveChanges();
+            db.BorrowedBooks.Remove(borrowedBook);
+            db.SaveChanges();
+            
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
+        }
     }
 
-    public void RemoveReservedBook(ReservedBook reservedBook)
+    public EOperationResult RemoveReservedBook(ReservedBook reservedBook)
     {
-        var book = db.Books.FirstOrDefault(book => book.Id == reservedBook.BookId);
-        var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == reservedBook.BookId);
-        
-        if (book != null && bookInventory != null)
+        try
         {
-            bookInventory.AvailableCopies += 1;
-            bookInventory.ReservedCopies -= 1;
-        }
+            var book = db.Books.FirstOrDefault(book => book.Id == reservedBook.BookId);
+            var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == reservedBook.BookId);
+        
+            if (book != null && bookInventory != null)
+            {
+                bookInventory.AvailableCopies += 1;
+                bookInventory.ReservedCopies -= 1;
+            }
 
-        db.ReservedBooks.Remove(reservedBook);
-        db.SaveChanges();
+            db.ReservedBooks.Remove(reservedBook);
+            db.SaveChanges();
+            
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
+        }
     }
 }

@@ -4,14 +4,34 @@ namespace library_management_system.Services;
 
 public class DbUpdateService(DataDbContext db)
 {
-    public void SaveChanges()
+    public EOperationResult SaveChanges()
     {
-        db.SaveChanges();
+        try
+        {
+            db.SaveChanges();
+            
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
+        }
     }
 
-    public void PostponeBorrowedBook(BorrowedBook borrowedBook)
+    public EOperationResult PostponeBorrowedBook(BorrowedBook borrowedBook)
     {
-        borrowedBook.Deadline = borrowedBook.Deadline.AddDays(7);
-        db.SaveChanges();
+        try
+        {
+            borrowedBook.Deadline = borrowedBook.Deadline.AddDays(7);
+            db.SaveChanges();
+            
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
+        }
     }
 }
