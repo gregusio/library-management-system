@@ -9,11 +9,10 @@
 
 @inject AuthService AuthService
 @inject AlertService AlertService
-@inject DbApi DbApi
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<User> UserManager
-@inject SignInManager<User> SignInManager
 @inject ILogger<Account> Logger
+
 
 <PageTitle>Account</PageTitle>
 
@@ -37,17 +36,17 @@
                             <ValidationSummary class="text-danger" role="alert" />
                             <div class="form-floating mb-3">
                                 <InputText type="password" @bind-Value="Input.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your old password." />
-                                <label for="old-password" class="form-label">Old password</label>
+                                <label class="form-label">Old password</label>
                                 <ValidationMessage For="() => Input.OldPassword" class="text-danger" />
                             </div>
                             <div class="form-floating mb-3">
                                 <InputText type="password" @bind-Value="Input.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please enter your new password." />
-                                <label for="new-password" class="form-label">New password</label>
+                                <label class="form-label">New password</label>
                                 <ValidationMessage For="() => Input.NewPassword" class="text-danger" />
                             </div>
                             <div class="form-floating mb-3">
                                 <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please confirm your new password." />
-                                <label for="confirm-password" class="form-label">Confirm password</label>
+                                <label class="form-label">Confirm password</label>
                                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
                             </div>
                             <button type="submit" class="w-100 btn btn-lg btn-primary">Update password</button>
@@ -69,43 +68,33 @@
 </AuthorizeView>
 
 @code {
-    private Modal _loginModal = default!;
     private Modal _passwordModal = default!;
     private User? User { get; set;}
-    private string _currentLogin = default!;
-    private string _newLogin = default!;
-    private string _confirmNewLogin = default!;
-    private string _currentPassword = default!;
-    private string _newPassword = default!;
-    private string _confirmNewPassword = default!;
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
-    }
-    
-    private async Task OnShowChangeLoginClick()
-    {
-        await _loginModal.ShowAsync();
+
+        return base.OnInitializedAsync();
     }
     
     private async Task OnShowChangePasswordClick()
     {
         await _passwordModal.ShowAsync();
     }
-
+    
     private async Task OnHideModalClick()
     {
-        await _loginModal.HideAsync();
+        await _passwordModal.HideAsync();
         AlertService.ClearMessages();
     }
 
     private async Task OnValidSubmitAsync()
     {
-        var changePasswordResult = await UserManager.ChangePasswordAsync(User, Input.OldPassword, Input.NewPassword);
+        var changePasswordResult = await UserManager.ChangePasswordAsync(User!, Input.OldPassword, Input.NewPassword);
         if (!changePasswordResult.Succeeded)
         {
             AlertService.ShowWarning("Something went wrong. Please try again.");

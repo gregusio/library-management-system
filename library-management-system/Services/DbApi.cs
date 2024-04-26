@@ -74,9 +74,9 @@ public class DbApi(DataDbContext db)
         return new DbRemoveService(db).RemoveBook(id);
     }
 
-    public EOperationResult RemoveBorrowedBook(BorrowedBook borrowedBook)
+    public EOperationResult ReturnBook(BorrowedBook borrowedBook)
     {
-        return new DbRemoveService(db).RemoveBorrowedBook(borrowedBook);
+        return new DbRemoveService(db).ReturnBook(borrowedBook);
     }
 
     public EOperationResult RemoveReservedBook(ReservedBook reservedBook)

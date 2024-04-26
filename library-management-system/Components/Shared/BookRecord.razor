@@ -47,7 +47,7 @@ else
             <AuthorizeView Roles="reader">
                 <Authorized>
                     <Button Color="ButtonColor.Primary" @onclick="Reserve">Reserve</Button>
-                </Authorized>   
+                </Authorized>
             </AuthorizeView>
 
         </CardBody>
@@ -60,7 +60,7 @@ else
 
 @code {
     [Parameter] public required Book Book { get; set; }
-    
+
     private User? User { get; set; }
     private BookInventory? BookInventory { get; set; }
     private bool _editMode = false;
@@ -75,7 +75,13 @@ else
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
         BookInventory = DbApi.GetBookInventory(Book);
-        
+
+        if (BookInventory == null)
+        {
+            AlertService.ShowWarning("Database error");
+            BookInventory = new();
+        }
+
         return base.OnInitializedAsync();
     }
 
@@ -141,4 +147,5 @@ else
                 break;
         }
     }
+
 }

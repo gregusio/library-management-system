@@ -1,9 +1,12 @@
 @page "/borrow-book"
+@rendermode InteractiveServer
+
 @using library_management_system.Model
 @using library_management_system.Services
-@rendermode InteractiveServer
+
 @inject DbApi DbApi
 @inject AlertService AlertService
+
 
 <PageTitle>Borrow book</PageTitle>
 
@@ -17,11 +20,9 @@
                            TValue="User"
                            @bind-Value="SelectedPerson"
                            placeholder="Search by first name...">
-            <SelectedTemplate Context="personId">
+            <SelectedTemplate Context="person">
                 @{
-                    var selectedPerson = SelectedPerson;
-
-                    <text>@selectedPerson?.Name @selectedPerson?.Surname</text>
+                    <text>@person.Name @person.Surname</text>
                 }
             </SelectedTemplate>
             <ResultTemplate Context="person">
@@ -34,11 +35,9 @@
                            TValue="Book"
                            @bind-Value="SelectedBook"
                            placeholder="Search by title...">
-            <SelectedTemplate Context="personId">
+            <SelectedTemplate Context="book">
                 @{
-                    var selectedBook = SelectedBook;
-
-                    <text>@selectedBook?.Title @selectedBook?.Author</text>
+                    <text>@book.Title @book.Author</text>
                 }
             </SelectedTemplate>
             <ResultTemplate Context="book">
@@ -57,27 +56,34 @@
 </AuthorizeView>
 
 @code {
-    private List<User> AllReaders { get; set; } = new();
+    private List<User>? AllReaders { get; set; } = new();
     private User? SelectedPerson { get; set; }
-    private List<Book> AllBooks { get; set; } = new();
+    private List<Book>? AllBooks { get; set; } = new();
     private Book? SelectedBook { get; set; }
 
     protected override Task OnInitializedAsync()
     {
         AllReaders = DbApi.GetAllReaders();
         AllBooks = DbApi.GetAllBooks();
+
+        if (AllReaders == null || AllBooks == null)
+        {
+            AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
+            AllReaders = new();
+            AllBooks = new();
+        }
         
         return base.OnInitializedAsync();
     }
 
     private async Task<IEnumerable<User>> GetReadersLocal(string searchText)
     {
-        return await Task.FromResult(AllReaders.Where(reader => reader.Name.ToLower().Contains(searchText.ToLower())).ToList());
+        return await Task.FromResult(AllReaders!.Where(reader => reader.Name!.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
     private async Task<IEnumerable<Book>> GetBooksLocal(string searchText)
     {
-        return await Task.FromResult(AllBooks.Where(book => book.Title.ToLower().Contains(searchText.ToLower())).ToList());
+        return await Task.FromResult(AllBooks!.Where(book => book.Title!.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
     private void TryBorrowBook()

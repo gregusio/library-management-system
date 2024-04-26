@@ -44,7 +44,7 @@ public class DbRemoveService(DataDbContext db)
         }
     }
 
-    public EOperationResult RemoveBorrowedBook(BorrowedBook borrowedBook)
+    public EOperationResult ReturnBook(BorrowedBook borrowedBook)
     {
         try
         {

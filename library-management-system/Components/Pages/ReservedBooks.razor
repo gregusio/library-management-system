@@ -9,6 +9,7 @@
 @inject AlertService AlertService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+
 <PageTitle>Reserved books</PageTitle>
 
 <AuthorizeView>
@@ -16,7 +17,7 @@
 
         <h3>Reserved books</h3>
 
-        @foreach (var reservedBook in AllReservedBooks)
+        @foreach (var reservedBook in AllReservedBooks!)
         {
             var book = DbApi.GetBook(reservedBook.BookId)!;
             <Card Style="width:18rem;">
@@ -44,12 +45,19 @@
 </AuthorizeView>
 
 @code {
-    private List<ReservedBook> AllReservedBooks { get; set; } = new List<ReservedBook>();
+    private List<ReservedBook>? AllReservedBooks { get; set; } = new();
+    private User? User { get; set; } 
 
     protected override Task OnInitializedAsync()
     {
-        var user = AuthService.GetUser(AuthenticationStateProvider).Result;
-        AllReservedBooks = DbApi.GetReservedBooks(user);
+        User = AuthService.GetUser(AuthenticationStateProvider).Result;
+        AllReservedBooks = DbApi.GetReservedBooks(User!);
+
+        if (AllReservedBooks == null)
+        {
+            AlertService.ShowWarning("Failed to load reserved books!");
+            AllReservedBooks = new();
+        }
 
         return Task.CompletedTask;
     }

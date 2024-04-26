@@ -22,7 +22,6 @@
         <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
         <div class="col-md-4">
-            <StatusMessage Message="@Message"/>
             <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
                       FormName="register">
                 <DataAnnotationsValidator/>
@@ -97,13 +96,9 @@
 
     private Modal _modal = default!;
 
-    private IEnumerable<IdentityError>? _identityErrors;
-
     [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
-
-    private string? Message => _identityErrors is null ? null : $"Error: {string.Join(", ", _identityErrors.Select(error => error.Description))}";
 
     private async Task OnShowModalClick()
     {
@@ -127,7 +122,6 @@
 
         if (!result.Succeeded)
         {
-            _identityErrors = result.Errors;
             return;
         }
 

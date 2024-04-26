@@ -1,4 +1,6 @@
 @page "/borrowed-books"
+@rendermode InteractiveServer
+
 @using library_management_system.Model
 @using library_management_system.Services
 
@@ -7,6 +9,7 @@
 @inject AlertService AlertService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+
 <PageTitle>Borrowed books</PageTitle>
 
 <AuthorizeView>
@@ -14,7 +17,7 @@
 
     <h3>Borrowed books</h3>
 
-    @foreach (var borrowedBook in AllBorrowedBooks)
+    @foreach (var borrowedBook in AllBorrowedBooks!)
     {
         var book = DbApi.GetBook(borrowedBook.BookId)!;
         var deadline = borrowedBook.Deadline.ToString("dd/MM/yyyy");
@@ -44,13 +47,19 @@
 
 @code {
     private User? User { get; set; }
-    private List<BorrowedBook> AllBorrowedBooks { get; set; } = new();
+    private List<BorrowedBook>? AllBorrowedBooks { get; set; } = new();
 
     protected override Task OnInitializedAsync()
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
         
         AllBorrowedBooks = DbApi.GetBorrowedBooks(User!);
+
+        if (AllBorrowedBooks == null)
+        {
+            AlertService.ShowWarning("Failed to load borrowed books!");
+            AllBorrowedBooks = new();
+        }
         
         return base.OnInitializedAsync();
     }
