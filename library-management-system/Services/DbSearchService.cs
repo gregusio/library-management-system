@@ -108,4 +108,22 @@ public class DbSearchService(DataDbContext db)
             return null;
         }
     }
+    
+    public List<(string?, DateTime?)>? GetUserActivityHistory(User user)
+    {
+        try
+        {
+            return db.UserActivityHistories
+                .Where(activity => activity.UserId == user.Id)
+                .Select(activity => new { activity.Activity , activity.ActivityTime })
+                .AsEnumerable()
+                .Select(x => (x.Activity, x.ActivityTime))
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
+    }
 }

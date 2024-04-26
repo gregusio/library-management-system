@@ -60,6 +60,14 @@ public class DbInsertService(DataDbContext db)
             bookInventory.AvailableCopies--;
             bookInventory.BorrowedCopies++;
             
+            db.UserActivityHistories.Add(new UserActivityHistory
+            {
+                UserId = user.Id,
+                User = user,
+                Activity = $"Borrowed a book - title: {book.Title}, author: {book.Author}",
+                ActivityTime = DateTime.Now
+            });
+            
             db.SaveChanges();
             
             return EOperationResult.Success;
@@ -121,6 +129,14 @@ public class DbInsertService(DataDbContext db)
             
             bookInventory.AvailableCopies--;
             bookInventory.ReservedCopies++;
+            
+            db.UserActivityHistories.Add(new UserActivityHistory
+            {
+                UserId = user.Id,
+                User = user,
+                Activity = $"Reserved a book - title: {book.Title}, author: {book.Author}",
+                ActivityTime = DateTime.Now
+            });
             
             db.SaveChanges();
             

@@ -24,6 +24,15 @@ public class DbUpdateService(DataDbContext db)
         try
         {
             borrowedBook.Deadline = borrowedBook.Deadline.AddDays(7);
+            
+            db.UserActivityHistories.Add(new UserActivityHistory
+            {
+                UserId = borrowedBook.UserId,
+                User = borrowedBook.User,
+                Activity = "Postponed borrowing deadline for book " + borrowedBook.Book!.Title,
+                ActivityTime = DateTime.Now
+            });
+            
             db.SaveChanges();
             
             return EOperationResult.Success;
