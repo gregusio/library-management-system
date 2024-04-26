@@ -1,0 +1,47 @@
+@page "/activity-history"
+@rendermode InteractiveServer
+
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject AuthService AuthService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject DbApi DbApi
+@inject AlertService AlertService
+
+
+<PageTitle>Activity history</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        @foreach(var (activity, date) in UserActivityHistory!)
+        {
+            <p>@date: @activity</p>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>Not authorized</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private User? User { get; set; }
+    private List<(string?, DateTime?)>? UserActivityHistory { get; set; } = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        User = AuthService.GetUser(AuthenticationStateProvider).Result;
+        UserActivityHistory = DbApi.GetUserActivityHistory(User!);
+
+        if (UserActivityHistory == null)
+        {
+            AlertService.ShowWarning("Failed to get user activity history.");
+            UserActivityHistory = new();
+        }
+
+        UserActivityHistory.Reverse();
+        
+        return base.OnInitializedAsync();
+    }
+
+}
