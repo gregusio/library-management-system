@@ -21,7 +21,6 @@ public class NavigationMenu
             ("books", "Books", IconName.Book),
             ("readers", "Readers", IconName.People),
             ("borrow-book", "Borrow book", IconName.Book),
-            ("return-book", "Return book", IconName.Book),
             ("librarians", "Librarians", IconName.People),
         ];
     }
