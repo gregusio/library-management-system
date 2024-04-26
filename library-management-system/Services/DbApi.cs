@@ -49,9 +49,9 @@ public class DbApi(DataDbContext db)
         return new DbInsertService(db).AddBook(book, quantity);
     }
 
-    public EOperationResult AddBorrowedBook(User user, Book book)
+    public EOperationResult BorrowBook(User user, Book book)
     {
-        return new DbInsertService(db).AddBorrowedBook(user, book);
+        return new DbInsertService(db).BorrowBook(user, book);
     }
     
     public EOperationResult ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
@@ -59,9 +59,9 @@ public class DbApi(DataDbContext db)
         return new DbInsertService(db).ChangeReservedToBorrowed(user, reservedBook);
     }
 
-    public EOperationResult AddReservedBook(User user, Book book)
+    public EOperationResult ReserveBook(User user, Book book)
     {
-        return new DbInsertService(db).AddReservedBook(user, book);
+        return new DbInsertService(db).ReserveBook(user, book);
     }
 
     public EOperationResult RemoveUser(string id)

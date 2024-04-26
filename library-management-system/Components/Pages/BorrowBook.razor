@@ -106,7 +106,7 @@
             return;
         }
 
-        result = DbApi.AddBorrowedBook(SelectedPerson, SelectedBook);
+        result = DbApi.BorrowBook(SelectedPerson, SelectedBook);
         
         AlertService.ShowOperationResult(result);
     }

@@ -132,7 +132,7 @@ else
 
     private void Reserve()
     {
-        var result = DbApi.AddReservedBook(User!, Book);
+        var result = DbApi.ReserveBook(User!, Book);
 
         switch (result)
         {

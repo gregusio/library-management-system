@@ -30,7 +30,7 @@ public class DbInsertService(DataDbContext db)
         }
     }
 
-    public EOperationResult AddBorrowedBook(User user, Book book)
+    public EOperationResult BorrowBook(User user, Book book)
     {
         try
         {
@@ -86,7 +86,7 @@ public class DbInsertService(DataDbContext db)
             bookInventory.ReservedCopies--;
             bookInventory.AvailableCopies++;
 
-            return AddBorrowedBook(user, reservedBook.Book!);
+            return BorrowBook(user, reservedBook.Book!);
         }
         catch (Exception)
         {
@@ -94,7 +94,7 @@ public class DbInsertService(DataDbContext db)
         }
     }
 
-    public EOperationResult AddReservedBook(User user, Book book)
+    public EOperationResult ReserveBook(User user, Book book)
     {
         try
         {
