@@ -1,11 +1,13 @@
 ﻿@page "/books"
+@rendermode InteractiveServer
+
 @using library_management_system.Model
 @using library_management_system.Services
-@using Microsoft.EntityFrameworkCore
 @using library_management_system.Components.Shared
-@rendermode InteractiveServer
+
 @inject DbApi DbApi
-@inject AuthService AuthService
+@inject AlertService AlertService
+
 
 <PageTitle>Books</PageTitle>
 
@@ -16,63 +18,22 @@
 
         <AuthorizeView Roles="admin,librarian">
             <Authorized Context="onlyForLibrarians">
+                
+                <AddBookModal OnAdd="OnInitializedAsync"></AddBookModal>
 
-                <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
-                    <BodyTemplate>
-                        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
-
-                        <div class="container">
-                            <p>Title</p>
-                            <input @bind="@Title"/>
-                        </div>
-
-                        <div class="container">
-                            <p>Author</p>
-                            <input @bind="@Author"/>
-                        </div>
-
-                        <div class="container">
-                            <p>Publisher</p>
-                            <input @bind="@Publisher"/>
-                        </div>
-
-                        <div class="container">
-                            <p>Publish Date</p>
-                            <input type="date" @bind="@PublishDate"/>
-                        </div>
-
-                        <div class="container">
-                            <p>Category</p>
-                            <input @bind="@Category"/>
-                        </div>
-
-                        <div class="container">
-                            <p>Amount</p>
-                            <input type="number" @bind="@Amount"/>
-                        </div>
-
-
-                    </BodyTemplate>
-                    <FooterTemplate>
-                        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
-                        <Button Color="ButtonColor.Primary" @onclick="AddBook">Add Book</Button>
-                    </FooterTemplate>
-                </Modal>
-
-                <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Book</Button>
             </Authorized>
         </AuthorizeView>
 
-        <input @oninput="@((str) => Search((string)str.Value))"/>
+        <input @oninput="@(Search)"/>
 
 
-        @for (var i = booksPerPage * (currentPageNumber - 1); i < booksPerPage * currentPageNumber && i < BooksCount; i++)
+        @for (var i = _booksPerPage * (_currentPageNumber - 1); i < _booksPerPage * _currentPageNumber && i < BooksCount; i++)
         {
             var i1 = i;
-            <BookRecord Book="@SelectedBooks[i1]"/>
+            <BookRecord Book="@SelectedBooks![i1]"/>
         }
 
-        <Pagination ActivePageNumber="@currentPageNumber"
+        <Pagination ActivePageNumber="@_currentPageNumber"
                     TotalPages="@TotalPages"
                     PageChanged="OnPageChangedAsync"/>
     </Authorized>
@@ -82,103 +43,48 @@
 </AuthorizeView>
 
 @code {
-    private int currentPageNumber = 1;
-    private int booksPerPage = 4;
+    private int _currentPageNumber = 1;
+    private readonly int _booksPerPage = 4;
 
-    private Modal modal = default!;
-    private string Title { get; set; }
-    private string Author { get; set; }
-    private string Publisher { get; set; }
-    private DateTime PublishDate { get; set; }
-    private ECategory Category { get; set; }
-    private int Amount { get; set; }
+    private int TotalPages => (BooksCount - 1) / _booksPerPage + 1;
 
-    List<ToastMessage> messages = new();
+    private int BooksCount => SelectedBooks!.Count;
 
-    private int TotalPages => (BooksCount - 1) / booksPerPage + 1;
+    private List<Book>? AllBooks { get; set; } = new();
 
-    private int BooksCount => SelectedBooks.Count;
+    private List<Book>? SelectedBooks { get; set; } = new();
 
-    private List<Book> AllBooks => DbApi.GetAllBooks();
-
-    private List<Book> SelectedBooks = new();
-
-    private void ShowMessage(ToastType toastType)
+    protected override Task OnInitializedAsync()
     {
-        messages.Add(CreateToastMessage(toastType));
-    }
+        AllBooks = DbApi.GetAllBooks();
 
-    private ToastMessage CreateToastMessage(ToastType toastType)
-    {
-        if (toastType is ToastType.Success)
-            return new ToastMessage
-            {
-                Type = toastType,
-                Title = "Success",
-                HelpText = $"{DateTime.Now}",
-                Message = $"Book added successfully"
-            };
-        else
-            return new ToastMessage
-            {
-                Type = toastType,
-                Title = "Warning",
-                HelpText = $"{DateTime.Now}",
-                Message = $"Something went wrong"
-            };
+        if (AllBooks == null)
+        {
+            AlertService.ShowWarning("Failed to load books");
+            AllBooks = new();
+        }
+        
+        SelectedBooks = AllBooks;
+        
+        return base.OnInitializedAsync();
     }
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
-        await Task.Run(() => { currentPageNumber = newPageNumber; });
+        await Task.Run(() => { _currentPageNumber = newPageNumber; });
     }
 
-    private async void AddBook()
+    private void Search(ChangeEventArgs e)
     {
-        try
-        {
-            DbApi.AddBook(new Book()
-            {
-                Title = Title,
-                Author = Author,
-                Publisher = Publisher,
-                PublishDate = PublishDate,
-                Category = Category,
-                Available = Amount,
-                NotAvailable = 0,
-                Reserved = 0
-            });
+        var search = e.Value!.ToString()!.ToLower();
 
+        if (string.IsNullOrEmpty(search))
+        {
             SelectedBooks = AllBooks;
-
-            ShowMessage(ToastType.Success);
+            return;
         }
-        catch (DbUpdateException e)
-        {
-            ShowMessage(ToastType.Warning);
-        }
-    }
 
-    private async Task OnShowModalClick()
-    {
-        await modal.ShowAsync();
-    }
-
-    private async Task OnHideModalClick()
-    {
-        await modal.HideAsync();
-        messages = new List<ToastMessage>();
-    }
-
-    protected override void OnInitialized()
-    {
-        SelectedBooks = AllBooks;
-        base.OnInitialized();
-    }
-
-    private async void Search(string search)
-    {
-        SelectedBooks = AllBooks.Where(book => book.Title.ToLower().Contains(search.ToLower())).ToList();
+        SelectedBooks = AllBooks!.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
     }
 
 }

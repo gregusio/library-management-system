@@ -6,6 +6,7 @@
 @using library_management_system.Components.Shared
 
 @inject DbApi DbApi
+@inject AlertService AlertService
 
 
 <PageTitle>Librarians</PageTitle>
@@ -20,7 +21,7 @@
         @for (var i = _librariansPerPage * (_currentPageNumber - 1); i < _librariansPerPage * _currentPageNumber && i < LibrariansCount; i++)
         {
             var i1 = i;
-            <UserRecord User="@AllLibrarians[i1]"/>
+            <UserRecord User="@AllLibrarians![i1]"/>
         }
 
         <Pagination ActivePageNumber="@_currentPageNumber"
@@ -37,13 +38,19 @@
     private int _currentPageNumber = 1;
     private readonly int _librariansPerPage = 4;
 
-    private int LibrariansCount => AllLibrarians.Count;
+    private int LibrariansCount => AllLibrarians!.Count;
 
-    private List<User> AllLibrarians { get; set; } = new();
+    private List<User>? AllLibrarians { get; set; } = new();
 
     protected override Task OnInitializedAsync()
     {
         AllLibrarians = DbApi.GetAllLibrarians();
+
+        if (AllLibrarians == null)
+        {
+            AlertService.ShowWarning("Something went wrong while fetching librarians");
+            AllLibrarians = new List<User>();
+        }
 
         return base.OnInitializedAsync();
     }
