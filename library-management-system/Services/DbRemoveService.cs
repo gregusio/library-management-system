@@ -58,6 +58,14 @@ public class DbRemoveService(DataDbContext db)
             }
 
             db.BorrowedBooks.Remove(borrowedBook);
+            
+            db.UserActivityHistories.Add(new UserActivityHistory
+            {
+                UserId = borrowedBook.UserId,
+                Activity = $"Returned book - title: {book?.Title}, author: {book?.Author}",
+                ActivityTime = DateTime.Now
+            });
+            
             db.SaveChanges();
             
             return EOperationResult.Success;
@@ -83,6 +91,14 @@ public class DbRemoveService(DataDbContext db)
             }
 
             db.ReservedBooks.Remove(reservedBook);
+            
+            db.UserActivityHistories.Add(new UserActivityHistory
+            {
+                UserId = reservedBook.UserId,
+                Activity = $"Removed reservation - title: {book?.Title}, author: {book?.Author}",
+                ActivityTime = DateTime.Now
+            });
+            
             db.SaveChanges();
             
             return EOperationResult.Success;

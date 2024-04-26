@@ -11,6 +11,7 @@ public class NavigationMenu
             ("books", "Books", IconName.Book),
             ("reserved-books", "Reserved Books", IconName.Bookmark),
             ("borrowed-books", "Borrowed Books", IconName.Book),
+            ("activity-history", "Activity History", IconName.Activity)
         ];
     }
 
