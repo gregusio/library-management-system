@@ -17,7 +17,7 @@
 @inject RoleManager<IdentityRole> RoleManager
 
 
-<Modal @ref="_modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+<Modal @ref="_modal" title="Add user" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
     <BodyTemplate>
         <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
@@ -25,8 +25,6 @@
             <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser"
                       FormName="register">
                 <DataAnnotationsValidator/>
-                <h2>Create a new account.</h2>
-                <hr/>
                 <ValidationSummary class="text-danger" role="alert"/>
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="Input.Name" class="form-control"
@@ -82,9 +80,6 @@
         </div>
 
     </BodyTemplate>
-    <FooterTemplate>
-        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
-    </FooterTemplate>
 </Modal>
 
 <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add @(Role.ToString())</Button>
