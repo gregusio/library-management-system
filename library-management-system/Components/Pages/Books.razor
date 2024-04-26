@@ -1,11 +1,13 @@
 ﻿@page "/books"
+@rendermode InteractiveServer
+
 @using library_management_system.Model
 @using library_management_system.Services
-@using Microsoft.EntityFrameworkCore
 @using library_management_system.Components.Shared
-@rendermode InteractiveServer
+
 @inject DbApi DbApi
-@inject AuthService AuthService
+@inject AlertService AlertService
+
 
 <PageTitle>Books</PageTitle>
 
@@ -17,9 +19,9 @@
         <AuthorizeView Roles="admin,librarian">
             <Authorized Context="onlyForLibrarians">
 
-                <Modal @ref="modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
+                <Modal @ref="_modal" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
                     <BodyTemplate>
-                        <Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight"/>
+                        <Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight"/>
 
                         <div class="container">
                             <p>ISBN</p>
@@ -68,16 +70,16 @@
             </Authorized>
         </AuthorizeView>
 
-        <input @oninput="@((str) => Search((string)str.Value))"/>
+        <input @oninput="@(Search)"/>
 
 
-        @for (var i = booksPerPage * (currentPageNumber - 1); i < booksPerPage * currentPageNumber && i < BooksCount; i++)
+        @for (var i = _booksPerPage * (_currentPageNumber - 1); i < _booksPerPage * _currentPageNumber && i < BooksCount; i++)
         {
             var i1 = i;
-            <BookRecord Book="@SelectedBooks[i1]"/>
+            <BookRecord Book="@SelectedBooks![i1]"/>
         }
 
-        <Pagination ActivePageNumber="@currentPageNumber"
+        <Pagination ActivePageNumber="@_currentPageNumber"
                     TotalPages="@TotalPages"
                     PageChanged="OnPageChangedAsync"/>
     </Authorized>
@@ -87,31 +89,46 @@
 </AuthorizeView>
 
 @code {
-    private int currentPageNumber = 1;
-    private int booksPerPage = 4;
+    private int _currentPageNumber = 1;
+    private readonly int _booksPerPage = 4;
 
-    private Modal modal = default!;
-    private string Title { get; set; }
-    private string Author { get; set; }
-    private string Publisher { get; set; }
-    private string ISBN { get; set; }
+    private Modal _modal = default!;
+    private string Title { get; set; } = null!;
+    private string Author { get; set; } = null!;
+    private string Publisher { get; set; } = null!;
+    private string ISBN { get; set; } = null!;
     private DateTime PublishDate { get; set; }
     private ECategory Category { get; set; }
     private int Amount { get; set; }
 
-    List<ToastMessage> messages = new();
+    List<ToastMessage> _messages = new();
 
-    private int TotalPages => (BooksCount - 1) / booksPerPage + 1;
+    private int TotalPages => (BooksCount - 1) / _booksPerPage + 1;
 
-    private int BooksCount => SelectedBooks.Count;
+    private int BooksCount => SelectedBooks!.Count;
 
-    private List<Book> AllBooks => DbApi.GetAllBooks();
+    private List<Book>? AllBooks { get; set; } = new();
 
-    private List<Book> SelectedBooks = new();
+    private List<Book>? SelectedBooks { get; set; } = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        AllBooks = DbApi.GetAllBooks();
+
+        if (AllBooks == null)
+        {
+            AlertService.ShowWarning("Failed to load books");
+            AllBooks = new();
+        }
+        
+        SelectedBooks = AllBooks;
+        
+        return base.OnInitializedAsync();
+    }
 
     private void ShowMessage(ToastType toastType)
     {
-        messages.Add(CreateToastMessage(toastType));
+        _messages.Add(CreateToastMessage(toastType));
     }
 
     private ToastMessage CreateToastMessage(ToastType toastType)
@@ -136,28 +153,30 @@
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
-        await Task.Run(() => { currentPageNumber = newPageNumber; });
+        await Task.Run(() => { _currentPageNumber = newPageNumber; });
     }
 
-    private async void AddBook()
+    private void AddBook()
     {
-        try
+        var newBook = new Book()
         {
-            DbApi.AddBook(new Book()
-            {
-                ISBN = ISBN,
-                Title = Title,
-                Author = Author,
-                Publisher = Publisher,
-                PublishDate = PublishDate,
-                Category = Category,
-            }, Amount);
+            ISBN = ISBN,
+            Title = Title,
+            Author = Author,
+            Publisher = Publisher,
+            PublishDate = PublishDate,
+            Category = Category,
+        };
 
-            SelectedBooks = AllBooks;
-
+        var result = DbApi.AddBook(newBook, Amount);
+        
+        if (result == EOperationResult.Success)
+        {
             ShowMessage(ToastType.Success);
+            AllBooks = DbApi.GetAllBooks();
+            SelectedBooks = AllBooks;
         }
-        catch (DbUpdateException e)
+        else
         {
             ShowMessage(ToastType.Warning);
         }
@@ -165,24 +184,26 @@
 
     private async Task OnShowModalClick()
     {
-        await modal.ShowAsync();
+        await _modal.ShowAsync();
     }
 
     private async Task OnHideModalClick()
     {
-        await modal.HideAsync();
-        messages = new List<ToastMessage>();
+        await _modal.HideAsync();
+        _messages = new List<ToastMessage>();
     }
 
-    protected override void OnInitialized()
+    private void Search(ChangeEventArgs e)
     {
-        SelectedBooks = AllBooks;
-        base.OnInitialized();
-    }
+        var search = e.Value!.ToString()!.ToLower();
 
-    private async void Search(string search)
-    {
-        SelectedBooks = AllBooks.Where(book => book.Title.ToLower().Contains(search.ToLower())).ToList();
+        if (string.IsNullOrEmpty(search))
+        {
+            SelectedBooks = AllBooks;
+            return;
+        }
+
+        SelectedBooks = AllBooks!.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
     }
 
 }
