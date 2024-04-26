@@ -88,7 +88,7 @@
             await RoleManager.CreateAsync(role);
         }
 
-        await UserManager.AddToRoleAsync(user, role.Name);
+        await UserManager.AddToRoleAsync(user, role.Name!);
 
         Logger.LogInformation("User created a new account with password.");
 

@@ -1,0 +1,142 @@
+@using System.ComponentModel.DataAnnotations
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject AlertService AlertService
+@inject DbApi DbApi
+
+
+<Modal @ref="_modal" title="Add book" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+        <div class="col-md-4">
+            <EditForm Model="Input" method="post" OnValidSubmit="AddBook"
+                      FormName="register">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="text-danger" role="alert"/>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.ISBN" class="form-control"
+                               aria-required="true"/>
+                    <label>ISBN</label>
+                    <ValidationMessage For="() => Input.ISBN" class="text-danger"/>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Title" class="form-control"
+                               aria-required="true"/>
+                    <label>Title</label>
+                    <ValidationMessage For="() => Input.Title" class="text-danger"/>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Author" class="form-control"
+                               aria-required="true"/>
+                    <label>Author</label>
+                    <ValidationMessage For="() => Input.Author" class="text-danger"/>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Publisher" class="form-control"
+                               aria-required="true"/>
+                    <label>Publisher</label>
+                    <ValidationMessage For="() => Input.Publisher" class="text-danger"/>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputDate @bind-Value="Input.PublishDate" class="form-control"
+                               aria-required="true"/>
+                    <label>Publish Date</label>
+                    <ValidationMessage For="() => Input.PublishDate" class="text-danger"/>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputSelect @bind-Value="Input.Category" class="form-control"
+                                 aria-required="true" placeholder="name@example.com">
+                        @foreach(var category in Enum.GetValues(typeof(ECategory)))
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    </InputSelect>
+                    <label>Category</label>
+                    <ValidationMessage For="() => Input.Category" class="text-danger"/>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="Input.Amount" class="form-control"
+                               aria-required="true" placeholder="password"/>
+                    <label>Amount</label>
+                    <ValidationMessage For="() => Input.Amount" class="text-danger"/>
+                </div>
+                
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Add Book</button>
+            </EditForm>
+        </div>
+
+    </BodyTemplate>
+</Modal>
+
+<Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Book</Button>
+
+@code {
+    [Parameter] public EventCallback OnAdd { get; set; }
+
+    private Modal _modal = default!;
+
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+
+    private async Task OnShowModalClick()
+    {
+        await _modal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await _modal.HideAsync();
+        AlertService.ClearMessages();
+    }
+
+    public async Task AddBook(EditContext editContext)
+    {
+        var newBook = new Book()
+        {
+            ISBN = Input.ISBN,
+            Title = Input.Title,
+            Author = Input.Author,
+            Publisher = Input.Publisher,
+            PublishDate = Input.PublishDate,
+            Category = Input.Category
+        };
+
+        var result = DbApi.AddBook(newBook, Input.Amount);
+        
+        if (result == EOperationResult.Success)
+        {
+            AlertService.ShowSuccess("Book added successfully");
+            Input = new();
+        }
+        else
+        {
+            AlertService.ShowWarning("Failed to add book");
+        }
+        
+        await OnAdd.InvokeAsync();
+    }
+
+    private sealed class InputModel
+    {
+        [Required] 
+        [Display(Name = "ISBN")]
+        [StringLength(13, MinimumLength = 13, ErrorMessage = "ISBN must be 13 characters")]
+        public string ISBN { get; set; } = "";
+
+        [Required] [Display(Name = "Title")] public string Title { get; set; } = "";
+
+        [Required] [Display(Name = "Author")] public string Author { get; set; } = "";
+
+        [Display(Name = "Publisher")] public string Publisher { get; set; } = "";
+
+        [Display(Name = "Publish Date")] public DateTime PublishDate { get; set; } = DateTime.Now;
+        
+        [Display(Name = "Category")] public ECategory Category { get; set; } = ECategory.Fantasy;
+        
+        [Display(Name = "Amount")] 
+        [Range(1, int.MaxValue, ErrorMessage = "Amount must be greater than 0")]
+        public int Amount { get; set; } = 0;
+    }
+
+}

@@ -17,17 +17,4 @@ public class User : IdentityUser
 
     [Required, StringLength(30)]
     public ERole Role { get; init; }
-
-    public User()
-    {
-    }
-
-    public User(string name, string surname, string address, string telephoneNr, ERole role)
-    {
-        Name = name;
-        Surname = surname;
-        Address = address;
-        TelephoneNr = telephoneNr;
-        Role = role;
-    }
 }
