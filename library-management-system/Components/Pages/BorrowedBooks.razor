@@ -1,13 +1,14 @@
 @page "/borrowed-books"
+@rendermode InteractiveServer
+
 @using library_management_system.Model
 @using library_management_system.Services
-@using Microsoft.AspNetCore.Identity
 
 @inject AuthService AuthService
 @inject DbApi DbApi
 @inject AlertService AlertService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserManager<User> UserManager
+
 
 <PageTitle>Borrowed books</PageTitle>
 
@@ -16,7 +17,7 @@
 
     <h3>Borrowed books</h3>
 
-    @foreach (var borrowedBook in AllBorrowedBooks)
+    @foreach (var borrowedBook in AllBorrowedBooks!)
     {
         var book = DbApi.GetBook(borrowedBook.BookId)!;
         var deadline = borrowedBook.Deadline.ToString("dd/MM/yyyy");
@@ -45,17 +46,31 @@
 </AuthorizeView>
 
 @code {
-    private List<BorrowedBook> AllBorrowedBooks { get; set; } = new List<BorrowedBook>();
+    private User? User { get; set; }
+    private List<BorrowedBook>? AllBorrowedBooks { get; set; } = new();
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        var user = AuthService.GetUser(AuthenticationStateProvider).Result;
-        AllBorrowedBooks = DbApi.GetBorrowedBooks(user);
+        User = AuthService.GetUser(AuthenticationStateProvider).Result;
+        
+        AllBorrowedBooks = DbApi.GetBorrowedBooks(User!);
+
+        if (AllBorrowedBooks == null)
+        {
+            AlertService.ShowWarning("Failed to load borrowed books!");
+            AllBorrowedBooks = new();
+        }
+        
+        return base.OnInitializedAsync();
     }
 
     private void Postpone(BorrowedBook borrowedBook)
     {
-        DbApi.PostponeBorrowedBook(borrowedBook);
-        AlertService.ShowSuccess("Postponed successfully!");
+        var result = DbApi.PostponeBorrowedBook(borrowedBook);
+        
+        if (result == EOperationResult.Success)
+            AlertService.ShowSuccess("Postponed successfully!");
+        else 
+            AlertService.ShowWarning("Failed to postpone!");
     }
 }
