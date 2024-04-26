@@ -43,6 +43,11 @@ public class DbApi(DataDbContext db)
     {
         return new DbSearchService(db).GetReservedBook(reader, book);
     }
+    
+    public List<(string?, DateTime?)>? GetUserActivityHistory(User user)
+    {
+        return new DbSearchService(db).GetUserActivityHistory(user);
+    }
 
     public EOperationResult AddBook(Book book, int quantity)
     {
