@@ -11,5 +11,6 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDb
     public required DbSet<BookInventory> BookInventories { get; init; }
     public required DbSet<BorrowedBook> BorrowedBooks { get; init; }
     public required DbSet<ReservedBook> ReservedBooks { get; init; }
+    public required DbSet<UserActivityHistory> UserActivityHistories { get; init; }
 
 }
