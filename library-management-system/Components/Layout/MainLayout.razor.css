@@ -5,7 +5,14 @@
 }
 
 main {
+    display: flex;
     flex: 1;
+    flex-direction: column;
+}
+
+article {
+    flex: 1;
+    padding: 1.5rem;
 }
 
 .sidebar {
@@ -71,7 +78,7 @@ main {
     }
 
     .top-row, article {
-        padding-left: 2rem !important;
+        padding-left: 1.5rem !important;
         padding-right: 1.5rem !important;
     }
 }
