@@ -12,48 +12,49 @@
 
 <PageTitle>Log in</PageTitle>
 
-<h1>Log in</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
-            <StatusMessage Message="@errorMessage" />
-            <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
-                <DataAnnotationsValidator />
-                <h2>Use a local account to log in.</h2>
-                <hr />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label for="email" class="form-label">Email</label>
-                    <ValidationMessage For="() => Input.Email" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label for="password" class="form-label">Password</label>
-                    <ValidationMessage For="() => Input.Password" class="text-danger" />
-                </div>
-                <div class="checkbox mb-3">
-                    <label class="form-label">
-                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                        Remember me
-                    </label>
-                </div>
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-                </div>
-                <br/>
-                <div>
-                    <p>
-                        <a href="Account/ForgotPassword">Forgot your password?</a>
-                    </p>
-                </div>
-            </EditForm>
-        </section>
+
+<div class="login">
+    <div class="login-item">
+            <section>
+                <StatusMessage Message="@_errorMessage"/>
+                <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+                    <DataAnnotationsValidator/>
+                    <h2>Use a local account to log in.</h2>
+                    <hr/>
+                    <ValidationSummary class="text-danger" role="alert"/>
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com"/>
+                        <label class="form-label">Email</label>
+                        <ValidationMessage For="() => Input.Email" class="text-danger"/>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password"/>
+                        <label class="form-label">Password</label>
+                        <ValidationMessage For="() => Input.Password" class="text-danger"/>
+                    </div>
+                    <div class="checkbox mb-3">
+                        <label class="form-label">
+                            <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input"/>
+                            Remember me
+                        </label>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    </div>
+                    <br/>
+                    <div>
+                        <p>
+                            <a href="Account/ForgotPassword">Forgot your password?</a>
+                        </p>
+                    </div>
+                </EditForm>
+            </section>
     </div>
 </div>
 
+
 @code {
-    private string? errorMessage;
+    private string? _errorMessage;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -83,7 +84,6 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            @* RedirectManager.RedirectTo(ReturnUrl); *@
             NavigationManager.NavigateTo("/books");
         }
         else if (result.RequiresTwoFactor)
@@ -99,7 +99,7 @@
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            _errorMessage = "Error: Invalid login attempt.";
         }
     }
 
