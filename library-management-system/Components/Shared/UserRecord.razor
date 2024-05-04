@@ -5,10 +5,11 @@
 @inject DbApi DbApi
 @inject AlertService AlertService
 
-@if (_editMode)
-{
-    <Card Style="width:18rem;">
-        <CardBody>
+
+<Card Style="width: 100%">
+    <CardBody>
+        @if (_editMode)
+        {
             <CardTitle>
                 <input @bind="@User.Name"/> <input @bind="@User.Surname"/>
             </CardTitle>
@@ -17,15 +18,11 @@
                 <p>Phone Number: <input @bind="@User.TelephoneNr"/></p>
                 <p>Email: @User.Email</p>
             </CardText>
-            <Button Color="ButtonColor.Primary" @onclick="CloseEditMode">Exit</Button>
             <Button Color="ButtonColor.Primary" @onclick="CloseAndSave">Save</Button>
-        </CardBody>
-    </Card>
-}
-else
-{
-    <Card Style="width:18rem;">
-        <CardBody>
+            <Button Color="ButtonColor.Primary" @onclick="CloseEditMode">Exit</Button>
+        }
+        else
+        {
             <CardTitle>@User.Name @User.Surname</CardTitle>
             <CardText>
                 <p>Address: @User.Address</p>
@@ -40,9 +37,11 @@ else
 
                 </Authorized>
             </AuthorizeView>
-        </CardBody>
-    </Card>
-}
+        }
+        
+    </CardBody>
+</Card>
+
 
 
 <Modal @ref="_modal1" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
