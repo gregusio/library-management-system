@@ -82,7 +82,7 @@
     </BodyTemplate>
 </Modal>
 
-<Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add @(Role.ToString())</Button>
+<Button Size="Size.ExtraLarge" Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add @(Role.ToString())</Button>
 
 @code {
     [Parameter] public ERole Role { get; set; }

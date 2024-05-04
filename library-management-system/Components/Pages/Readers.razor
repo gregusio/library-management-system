@@ -13,21 +13,33 @@
 
 <AuthorizeView Roles="admin,librarian">
     <Authorized Context="wholePage">
+        <div class="readers">
+            <div class="button-and-input">
 
-        <h1>Readers</h1>
+                <AddUserModal Role="@(ERole.Reader)" OnAdd="OnInitializedAsync"/>
 
-        <AddUserModal Role="@(ERole.Reader)" OnAdd="OnInitializedAsync"/>
+                <InputText class="form-control" style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
 
-        <input @oninput="@(Search)"/>
+            </div>
+            
+            <div class="users">
+            
+            @for (var i = _readersPerPage * (_currentPageNumber - 1); i < _readersPerPage * _currentPageNumber && i < ReadersCount; i++)
+            {
+                var i1 = i;
+                <div class="single-user">
+                    <UserRecord User="@(SelectedReaders![i1])"/>
+                </div>
+            }
 
-        @for (var i = _readersPerPage * (_currentPageNumber - 1); i < _readersPerPage * _currentPageNumber && i < ReadersCount; i++)
-        {
-            var i1 = i;
-            <UserRecord User="@(SelectedReaders![i1])"/>
-        }
-
-        <Pagination ActivePageNumber="@_currentPageNumber" TotalPages="@TotalPages" PageChanged="OnPageChangedAsync"/>
-
+            </div>
+            
+            <div class="pagination">
+                <Pagination ActivePageNumber="@_currentPageNumber" TotalPages="@TotalPages" PageChanged="OnPageChangedAsync"/>
+            </div>
+            
+        </div>
+        
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -37,6 +49,7 @@
 @code {
     private int _currentPageNumber = 1;
     private readonly int _readersPerPage = 4;
+    private string? _searchString = "";
 
     private int TotalPages => (ReadersCount - 1) / _readersPerPage + 1;
 

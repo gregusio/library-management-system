@@ -1,9 +1,29 @@
-.container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 kolumny z jednakowym udziałem */
-    grid-gap: 10px; /* Odstęp między elementami */
+.readers {
+    
 }
 
-.element {
-    /* Dodatkowe style dla elementów */
+.button-and-input {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    gap: 20px;
+}
+
+.users {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.users .single-user {
+    flex-grow: 1;
+    padding: 10px;
+    max-width: fit-content;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
 }
