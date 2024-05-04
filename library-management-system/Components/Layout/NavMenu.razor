@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
@@ -57,11 +57,21 @@
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="account">
+                        <div class="me-3">
+                            <span class="bi" aria-hidden="true"></span>
+                            <Icon Style="margin-right: 5px" Name="IconName.EmojiSmile"></Icon>Account
+                        </div>
+
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
                     <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="" />
+                        <AntiforgeryToken/>
+                        <input type="hidden" name="ReturnUrl" value=""/>
                         <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                            <span class="bi" aria-hidden="true"></span> Logout
                         </button>
                     </form>
                 </div>
