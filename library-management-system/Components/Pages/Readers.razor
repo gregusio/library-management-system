@@ -13,7 +13,7 @@
 
 <AuthorizeView Roles="admin,librarian">
     <Authorized Context="wholePage">
-        <div class="readers">
+        <div class="common-page-styles">
             <div class="button-and-input">
 
                 <AddUserModal Role="@(ERole.Reader)" OnAdd="OnInitializedAsync"/>
@@ -22,7 +22,7 @@
 
             </div>
             
-            <div class="users">
+            <div class="cards">
             
             @for (var i = _readersPerPage * (_currentPageNumber - 1); i < _readersPerPage * _currentPageNumber && i < ReadersCount; i++)
             {
