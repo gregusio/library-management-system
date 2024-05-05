@@ -126,4 +126,17 @@ public class DbSearchService(DataDbContext db)
             return null;
         }
     }
+
+    public List<Avatar>? GetAvatars()
+    {
+        try
+        {
+            return db.Avatars.ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
+    }
 }

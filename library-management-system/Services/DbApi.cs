@@ -48,6 +48,11 @@ public class DbApi(DataDbContext db)
     {
         return new DbSearchService(db).GetUserActivityHistory(user);
     }
+    
+    public List<Avatar>? GetAvatars()
+    {
+        return new DbSearchService(db).GetAvatars();
+    }
 
     public EOperationResult AddBook(Book book, int quantity)
     {
