@@ -119,6 +119,14 @@
     protected override Task OnInitializedAsync()
     {
         Avatars = DbApi.GetAvatars();
+
+        if (Avatars == null)
+        {
+            Avatars = new();
+            AlertService.ShowWarning("Database is empty. Please add avatars.");
+        }
+        
+        Input.Avatar = Avatars.First();
         
         return base.OnInitializedAsync();
     }
