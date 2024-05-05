@@ -13,29 +13,34 @@
 
 <AuthorizeView>
     <Authorized Context="wholePage">
+        <div class="common-page-styles">
+            <div class="button-and-input">
+                <AuthorizeView Roles="admin,librarian">
+                    <Authorized Context="onlyForLibrarians">
+                        <AddBookModal OnAdd="OnInitializedAsync"></AddBookModal>
+                    </Authorized>
+                </AuthorizeView>
 
-        <h1>Books</h1>
+                <InputText class="form-control" style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
+            </div>
 
-        <AuthorizeView Roles="admin,librarian">
-            <Authorized Context="onlyForLibrarians">
-                
-                <AddBookModal OnAdd="OnInitializedAsync"></AddBookModal>
+            <div class="cards">
+                @for (var i = _booksPerPage * (_currentPageNumber - 1); i < _booksPerPage * _currentPageNumber && i < BooksCount; i++)
+                {
+                    var i1 = i;
+                    <div class="single-card">
+                        <BookRecord Book="@SelectedBooks![i1]"/>
+                    </div>
+                    
+                }
+            </div>
 
-            </Authorized>
-        </AuthorizeView>
-
-        <input @oninput="@(Search)"/>
-
-
-        @for (var i = _booksPerPage * (_currentPageNumber - 1); i < _booksPerPage * _currentPageNumber && i < BooksCount; i++)
-        {
-            var i1 = i;
-            <BookRecord Book="@SelectedBooks![i1]"/>
-        }
-
-        <Pagination ActivePageNumber="@_currentPageNumber"
-                    TotalPages="@TotalPages"
-                    PageChanged="OnPageChangedAsync"/>
+            <div class="pagintation">
+                <Pagination ActivePageNumber="@_currentPageNumber"
+                            TotalPages="@TotalPages"
+                            PageChanged="OnPageChangedAsync"/>
+            </div>
+        </div>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -45,6 +50,7 @@
 @code {
     private int _currentPageNumber = 1;
     private readonly int _booksPerPage = 4;
+    private string _searchString = "";
 
     private int TotalPages => (BooksCount - 1) / _booksPerPage + 1;
 
