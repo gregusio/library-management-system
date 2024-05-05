@@ -1,0 +1,22 @@
+.user-modal {
+    display: flex;
+    flex-direction: row;
+}
+
+.avatar-select {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    display: flex;
+    width: 256px;
+    height: 256px;
+}
+
+.avatar.selected {
+    border: 2px solid #007bff;
+}

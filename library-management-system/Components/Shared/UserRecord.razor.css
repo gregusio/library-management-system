@@ -1,0 +1,6 @@
+.footer {
+    flex-grow: 1;
+    align-content: end;
+    display: grid;
+    gap: 10px
+}
