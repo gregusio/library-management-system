@@ -6,41 +6,22 @@
 @inject AlertService AlertService
 
 
-<Card Style="width: 100%">
-    <CardBody>
-        @if (_editMode)
-        {
-            <CardTitle>
-                <input @bind="@User.Name"/> <input @bind="@User.Surname"/>
-            </CardTitle>
-            <CardText>
-                <p>Address: <input @bind="@User.Address"/></p>
-                <p>Phone Number: <input @bind="@User.TelephoneNr"/></p>
-                <p>Email: @User.Email</p>
-            </CardText>
-            <Button Color="ButtonColor.Primary" @onclick="CloseAndSave">Save</Button>
-            <Button Color="ButtonColor.Primary" @onclick="CloseEditMode">Exit</Button>
-        }
-        else
-        {
-            <CardTitle>@User.Name @User.Surname</CardTitle>
-            <CardText>
-                <p>Address: @User.Address</p>
-                <p>Phone Number: @User.TelephoneNr</p>
-                <p>Email: @User.Email</p>
-            </CardText>
-            <Button Color="ButtonColor.Primary" @onclick="EditMode">Edit</Button>
-            <AuthorizeView Roles="admin,librarian">
-                <Authorized>
-                    <Button Color="ButtonColor.Primary" @onclick="OnShowReservedBooksClick">Show reserved books</Button>
-                    <Button Color="ButtonColor.Primary" @onclick="OnShowBorrowedBooksClick">Show borrowed books</Button>
-
-                </Authorized>
-            </AuthorizeView>
-        }
-        
+<Card Style="width: 100%; height: 100%">
+    <img class="rounded-top" src="data:image/jpg;base64, @Convert.ToBase64String(User.Avatar.Image)" alt="Card image cap" />
+    <CardBody Style="display: flex; flex-direction: column">
+        <CardTitle>@User.Name @User.Surname</CardTitle>
+        <CardText>
+            <p>Address: @User.Address</p>
+            <p>Phone Number: @User.TelephoneNr</p>
+            <p>Email: @User.Email</p>
+        </CardText>
+        <div class="footer">
+            <Button Color="ButtonColor.Primary" @onclick="OnShowReservedBooksClick">Reserved books</Button>
+            <Button Color="ButtonColor.Primary" @onclick="OnShowBorrowedBooksClick">Borrowed books</Button>
+        </div>
     </CardBody>
 </Card>
+
 
 
 

@@ -12,5 +12,26 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDb
     public required DbSet<BorrowedBook> BorrowedBooks { get; init; }
     public required DbSet<ReservedBook> ReservedBooks { get; init; }
     public required DbSet<UserActivityHistory> UserActivityHistories { get; init; }
+    
+    public required DbSet<Avatar> Avatars { get; init; }
 
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        var folder = Path.Join("Avatars");
+        var files = Directory.GetFiles(folder);
+        var id = 1;
+        
+        foreach (var file in files)
+        {
+            var image = File.ReadAllBytes(file);
+            var avatar = new Avatar
+            {
+                Id = id++,
+                Image = image
+            };
+            builder.Entity<Avatar>().HasData(avatar);
+        }
+        
+        base.OnModelCreating(builder);
+    }
 }

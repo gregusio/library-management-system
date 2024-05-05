@@ -17,6 +17,8 @@ public class DbInitializer(UserManager<User> userManager, RoleManager<IdentityRo
         {
             var admin = new User
             {
+                AvatarId = 1,
+                Avatar = null,
                 Name = "admin",
                 Surname = "admin",
                 Address = "admin",
