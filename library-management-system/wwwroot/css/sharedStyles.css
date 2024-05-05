@@ -1,21 +1,21 @@
-.readers {
-    
+.common-page-styles {
+
 }
 
-.button-and-input {
+.common-page-styles .button-and-input {
     display: flex;
     justify-content: space-between;
     margin-bottom: 40px;
     gap: 20px;
 }
 
-.users {
+.common-page-styles .cards {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
 }
 
-.users .single-user {
+.common-page-styles .cards .single-card {
     display: flex;
     flex-grow: 1;
     padding: 10px;
@@ -26,7 +26,7 @@
     max-width: 200px
 }
 
-.pagination {
+.common-page-styles .pagination {
     display: flex;
     justify-content: right;
     position: fixed;
