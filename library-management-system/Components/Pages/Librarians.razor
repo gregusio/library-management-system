@@ -13,21 +13,28 @@
 
 <AuthorizeView Roles="admin">
     <Authorized>
+        <div class="common-page-styles">
 
-        <h1>Librarians</h1>
-
-        <AddUserModal Role="@(ERole.Librarian)" OnAdd="OnInitializedAsync"/>
-
-        @for (var i = _librariansPerPage * (_currentPageNumber - 1); i < _librariansPerPage * _currentPageNumber && i < LibrariansCount; i++)
-        {
-            var i1 = i;
-            <UserRecord User="@AllLibrarians![i1]"/>
-        }
-
-        <Pagination ActivePageNumber="@_currentPageNumber"
-                    TotalPages="@(LibrariansCount / _librariansPerPage)"
-                    PageChanged="OnPageChangedAsync"/>
-
+            <div class="button-and-input">
+                <AddUserModal Role="@(ERole.Librarian)" OnAdd="OnInitializedAsync"/>
+            </div>
+            
+            <div class="cards">
+                @for (var i = _librariansPerPage * (_currentPageNumber - 1); i < _librariansPerPage * _currentPageNumber && i < LibrariansCount; i++)
+                {
+                    var i1 = i;
+                    <div class="single-card">
+                        <UserRecord User="@AllLibrarians![i1]"/>
+                    </div>
+                }
+            </div>
+            
+            <div class="pagination">
+                <Pagination ActivePageNumber="@_currentPageNumber"
+                            TotalPages="@(LibrariansCount / _librariansPerPage)"
+                            PageChanged="OnPageChangedAsync"/>
+            </div>
+        </div>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
