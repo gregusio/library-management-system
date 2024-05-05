@@ -52,12 +52,6 @@
                         <ValidationMessage For="() => Input.PhoneNumber" class="text-danger"/>
                     </div>
                     <div class="form-floating mb-3">
-                        <InputText @bind-Value="Input.Login" class="form-control"
-                                   aria-required="true"/>
-                        <label>Login</label>
-                        <ValidationMessage For="() => Input.Login" class="text-danger"/>
-                    </div>
-                    <div class="form-floating mb-3">
                         <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username"
                                    aria-required="true" placeholder="name@example.com"/>
                         <label>Email</label>
@@ -221,8 +215,6 @@
         [Display(Name = "Address")] public string Address { get; set; } = "";
 
         [Display(Name = "Phone number")] public string PhoneNumber { get; set; } = "";
-
-        [Required] [Display(Name = "Login")] public string Login { get; set; } = "";
 
         [Required]
         [EmailAddress]
