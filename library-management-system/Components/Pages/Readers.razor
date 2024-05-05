@@ -27,7 +27,7 @@
             @for (var i = _readersPerPage * (_currentPageNumber - 1); i < _readersPerPage * _currentPageNumber && i < ReadersCount; i++)
             {
                 var i1 = i;
-                <div class="single-user">
+                <div class="single-card">
                     <UserRecord User="@(SelectedReaders![i1])"/>
                 </div>
             }
