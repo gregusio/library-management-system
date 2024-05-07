@@ -1,0 +1,36 @@
+.book-modal {
+    display: flex;
+    flex-direction: row;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+}
+
+.image-select {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.image {
+    margin: 1rem;
+    display: flex;
+    justify-content: center;
+    max-height: 500px;
+}
+
+.image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.file-select {
+    display: flex;
+    flex-grow: 1;
+    margin: 1rem;
+    align-items: end;
+}

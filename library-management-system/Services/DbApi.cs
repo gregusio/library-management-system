@@ -54,9 +54,9 @@ public class DbApi(DataDbContext db)
         return new DbSearchService(db).GetAvatars();
     }
 
-    public EOperationResult AddBook(Book book, int quantity)
+    public EOperationResult AddBook(Book book, int quantity, BookCover bookCover)
     {
-        return new DbInsertService(db).AddBook(book, quantity);
+        return new DbInsertService(db).AddBook(book, quantity, bookCover);
     }
 
     public EOperationResult BorrowBook(User user, Book book)
