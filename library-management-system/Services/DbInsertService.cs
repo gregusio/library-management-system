@@ -4,10 +4,15 @@ namespace library_management_system.Services;
 
 public class DbInsertService(DataDbContext db)
 {
-    public EOperationResult AddBook(Book book, int quantity)
+    public EOperationResult AddBook(Book book, int quantity, BookCover bookCover)
     {
         try
         {
+            if (!AddBookCover(bookCover))
+            {
+                return EOperationResult.DatabaseError;
+            }
+            
             db.Books.Add(book);
             
             db.BookInventories.Add(new BookInventory
@@ -27,6 +32,23 @@ public class DbInsertService(DataDbContext db)
         {
             Console.WriteLine(e);
             return EOperationResult.DatabaseError;
+        }
+    }
+    
+    private bool AddBookCover(BookCover bookCover)
+    {
+        try
+        {
+            db.BookCovers.Add(bookCover);
+            
+            db.SaveChanges();
+            
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
         }
     }
 

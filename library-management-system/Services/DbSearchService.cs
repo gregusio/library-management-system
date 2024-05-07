@@ -1,4 +1,5 @@
 using library_management_system.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Services;
 
@@ -34,7 +35,7 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.Books.ToList();
+            return db.Books.Include(b => b.BookCover).ToList();
         }
         catch (Exception e)
         {
