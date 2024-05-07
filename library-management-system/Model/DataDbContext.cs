@@ -14,10 +14,12 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDb
     public required DbSet<UserActivityHistory> UserActivityHistories { get; init; }
     
     public required DbSet<Avatar> Avatars { get; init; }
+    
+    public required DbSet<BookCover> BookCovers { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        var folder = Path.Join("Avatars");
+        var folder = Path.Join("Images/Avatars");
         var files = Directory.GetFiles(folder);
         var id = 1;
         

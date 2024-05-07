@@ -21,4 +21,8 @@ public class Book
     public DateTime PublishDate { get; set; }
 
     public ECategory Category { get; set; }
+    
+    [Required] public int BookCoverId { get; set; }
+    
+    [Required] public BookCover? BookCover { get; set; }
 }
