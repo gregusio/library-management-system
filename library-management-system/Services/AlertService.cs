@@ -17,7 +17,7 @@ public class AlertService
         switch (result)
         {
             case EOperationResult.Success:
-                ShowSuccess("Book borrowed");
+                ShowSuccess("Success");
                 return;
             case EOperationResult.DatabaseError:
                 ShowWarning("Database error");
@@ -27,6 +27,12 @@ public class AlertService
                 return;
             case EOperationResult.NoAvailableCopies:
                 ShowInfo("No available copies");
+                return;
+            case EOperationResult.BorrowedBookLimitExceeded:
+                ShowInfo("Borrowed book limit exceeded");
+                return;
+            case EOperationResult.ReservedBookLimitExceeded:
+                ShowInfo("Reserved book limit exceeded");
                 return;
         }
     }
