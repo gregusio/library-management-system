@@ -5,5 +5,7 @@ public enum EOperationResult
     Success,
     DatabaseError,
     NoAvailableCopies,
-    UnexpectedError
+    UnexpectedError,
+    BorrowedBookLimitExceeded,
+    ReservedBookLimitExceeded,
 }
