@@ -56,6 +56,11 @@ public class DbInsertService(DataDbContext db)
     {
         try
         {
+            if(user.BorrowedBooksCount >= 5)
+            {
+                return EOperationResult.BorrowedBookLimitExceeded;
+            }
+            
             var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == book.Id);
         
             if(bookInventory == null)
@@ -81,6 +86,7 @@ public class DbInsertService(DataDbContext db)
             
             bookInventory.AvailableCopies--;
             bookInventory.BorrowedCopies++;
+            user.BorrowedBooksCount++;
             
             db.UserActivityHistories.Add(new UserActivityHistory
             {
@@ -128,6 +134,11 @@ public class DbInsertService(DataDbContext db)
     {
         try
         {
+            if(user.ReservedBooksCount >= 5)
+            {
+                return EOperationResult.ReservedBookLimitExceeded;
+            }
+            
             var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == book.Id);
             if (bookInventory == null)
             {
@@ -151,6 +162,7 @@ public class DbInsertService(DataDbContext db)
             
             bookInventory.AvailableCopies--;
             bookInventory.ReservedCopies++;
+            user.ReservedBooksCount++;
             
             db.UserActivityHistories.Add(new UserActivityHistory
             {
