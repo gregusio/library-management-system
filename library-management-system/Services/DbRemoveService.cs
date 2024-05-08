@@ -66,6 +66,13 @@ public class DbRemoveService(DataDbContext db)
                 ActivityTime = DateTime.Now
             });
             
+            var user = db.Users.FirstOrDefault(user => user.Id == borrowedBook.UserId);
+            if(user == null)
+            {
+                return EOperationResult.DatabaseError;
+            }
+            user.BorrowedBooksCount -= 1;
+            
             db.SaveChanges();
             
             return EOperationResult.Success;
@@ -98,6 +105,13 @@ public class DbRemoveService(DataDbContext db)
                 Activity = $"Removed reservation - title: {book?.Title}, author: {book?.Author}",
                 ActivityTime = DateTime.Now
             });
+            
+            var user = db.Users.FirstOrDefault(user => user.Id == reservedBook.UserId);
+            if(user == null)
+            {
+                return EOperationResult.DatabaseError;
+            }
+            user.ReservedBooksCount -= 1;
             
             db.SaveChanges();
             
