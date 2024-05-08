@@ -108,18 +108,7 @@
     {
         var result = DbApi.ReserveBook(User!, Book);
 
-        switch (result)
-        {
-            case EOperationResult.Success:
-                AlertService.ShowSuccess("Book reserved");
-                break;
-            case EOperationResult.NoAvailableCopies:
-                AlertService.ShowWarning("No available copies");
-                break;
-            case EOperationResult.DatabaseError:
-                AlertService.ShowWarning("Database error");
-                break;
-        }
+        AlertService.ShowOperationResult(result);
     }
 
 }
