@@ -21,4 +21,8 @@ public class User : IdentityUser
 
     [Required, StringLength(30)]
     public ERole Role { get; init; }
+    
+    public int BorrowedBooksCount { get; set; }
+    
+    public int ReservedBooksCount { get; set; }
 }
