@@ -74,8 +74,8 @@
                 </EditForm>
             </div>
         
-            <div class="avatar-select">
-                
+            <div class="common-page-styles">
+                <div class="avatar-select">
                     @foreach (var avatar in Avatars)
                     {
                         var isSelected = Input.Avatar == avatar;
@@ -85,9 +85,8 @@
                             </Button>
                         </div>
                     }
-
+                </div>
             </div>
-            
         </div>
         
     </BodyTemplate>
