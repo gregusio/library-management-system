@@ -12,6 +12,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<User> UserManager
 @inject ILogger<Account> Logger
+@inject DbApi DbApi
 
 
 <PageTitle>Account</PageTitle>
@@ -19,48 +20,106 @@
 <AuthorizeView>
     <Authorized Context="wholePage">
 
-        <h3>Account</h3>
+        <div class="account-site">
+            <div class="account-info">
+                <UserRecord User="@(User)" />
+            </div>
+            
+            <div class="actions">
+                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangeAvatarClick">Change avatar</Button>
+                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangeInfoClick">Change info</Button>
+                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangePasswordClick">Change password</Button>
+            </div>
+        </div>
 
-        @* <UserRecord User="@User"></UserRecord> *@
-
-        <Button Color="ButtonColor.Primary" Size="Size.Medium" Style="margin-top: 10px" @onclick="OnShowChangePasswordClick">Change password</Button>
-
-        <Modal @ref="_passwordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge" OnHiding="OnHideModalClick">
+        <Modal @ref="_passwordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.Regular" OnHiding="OnHideModalClick">
             <BodyTemplate>
                 <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
-        
+
                 <div class="row">
-                    <div class="col-md-6">
-                        <EditForm Model="Input" FormName="change-password" OnValidSubmit="OnValidSubmitAsync" method="post">
-                            <DataAnnotationsValidator />
-                            <ValidationSummary class="text-danger" role="alert" />
+                    <EditForm Model="Input" FormName="change-password" OnValidSubmit="OnValidSubmitAsync" method="post">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" role="alert" />
+                        <div class="form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your old password." />
+                            <label class="form-label">Old password</label>
+                            <ValidationMessage For="() => Input.OldPassword" class="text-danger" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please enter your new password." />
+                            <label class="form-label">New password</label>
+                            <ValidationMessage For="() => Input.NewPassword" class="text-danger" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please confirm your new password." />
+                            <label class="form-label">Confirm password</label>
+                            <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                        </div>
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Update password</button>
+                    </EditForm>
+                </div>
+            </BodyTemplate>
+        </Modal>
+        
+        <Modal @ref="_avatarModal" Title="Change avatar" IsVerticallyCentered="true" Size="ModalSize.Large" OnHiding="OnHideModalClick">
+            <BodyTemplate>
+                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+                <div class="common-page-styles">
+                    <div class="avatar-select">
+                        @foreach (var avatar in Avatars)
+                        {
+                            var isSelected = SelectedAvatar == avatar;
+                            <div class="avatar @((isSelected) ? "selected" : "")">
+                                <Button @onclick="() => SelectedAvatar = avatar">
+                                    <img style="width: 100%; height: 100%" src="data:image/jpg;base64, @Convert.ToBase64String(avatar.Image!)"/>
+                                </Button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Primary" @onclick="ChangeAvatar">Change avatar</Button>
+            </FooterTemplate>
+        </Modal>
+
+        <Modal @ref="_infoModal" title="Change info" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+            <BodyTemplate>
+                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+                <div class="user-modal">
+                    <div class="col-md-4">
+                        <EditForm Model="Input" method="post" OnValidSubmit="ChangeInfo"
+                                  FormName="register">
                             <div class="form-floating mb-3">
-                                <InputText type="password" @bind-Value="Input.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your old password." />
-                                <label class="form-label">Old password</label>
-                                <ValidationMessage For="() => Input.OldPassword" class="text-danger" />
+                                <InputText @bind-Value="User.Name" class="form-control"
+                                           aria-required="true"/>
+                                <label>Name</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <InputText type="password" @bind-Value="Input.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please enter your new password." />
-                                <label class="form-label">New password</label>
-                                <ValidationMessage For="() => Input.NewPassword" class="text-danger" />
+                                <InputText @bind-Value="User.Surname" class="form-control"
+                                           aria-required="true"/>
+                                <label>Surname</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please confirm your new password." />
-                                <label class="form-label">Confirm password</label>
-                                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                                <InputText @bind-Value="User.Address" class="form-control"
+                                           aria-required="true"/>
+                                <label>Address</label>
                             </div>
-                            <button type="submit" class="w-100 btn btn-lg btn-primary">Update password</button>
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="User.TelephoneNr" class="form-control"
+                                           aria-required="true"/>
+                                <label>Phone Number</label>
+                            </div>
+
+                            <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
                         </EditForm>
                     </div>
                 </div>
 
-
             </BodyTemplate>
-            <FooterTemplate>
-        
-            </FooterTemplate>
         </Modal>
-        
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -69,7 +128,11 @@
 
 @code {
     private Modal _passwordModal = default!;
-    private User? User { get; set;}
+    private Modal _avatarModal = default!;
+    private Modal _infoModal = default!;
+    private User? User { get; set; }
+    private List<Avatar>? Avatars { get; set; } = new();
+    private Avatar? SelectedAvatar { get; set; }
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
@@ -77,6 +140,14 @@
     protected override Task OnInitializedAsync()
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
+        Avatars = DbApi.GetAvatars();
+        
+        if (User == null || Avatars == null)
+        {
+            AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
+            User = new();
+            Avatars = new();
+        }
 
         return base.OnInitializedAsync();
     }
@@ -86,9 +157,21 @@
         await _passwordModal.ShowAsync();
     }
     
+    private async Task OnShowChangeAvatarClick()
+    {
+        await _avatarModal.ShowAsync();
+    }
+    
+    private async Task OnShowChangeInfoClick()
+    {
+        await _infoModal.ShowAsync();
+    }
+    
     private async Task OnHideModalClick()
     {
         await _passwordModal.HideAsync();
+        await _avatarModal.HideAsync();
+        await _infoModal.HideAsync();
         AlertService.ClearMessages();
     }
 
@@ -106,6 +189,23 @@
         AlertService.ShowSuccess("Your password has been changed.");
 
         Input = new InputModel();
+    }
+    
+    private void ChangeAvatar()
+    {
+        User!.Avatar = SelectedAvatar;
+        User.AvatarId = SelectedAvatar!.Id;
+
+        var result = DbApi.SaveChanges();
+        
+        AlertService.ShowOperationResult(result);
+    }
+    
+    private void ChangeInfo()
+    {
+        var result = DbApi.SaveChanges();
+        
+        AlertService.ShowOperationResult(result);
     }
 
     private sealed class InputModel

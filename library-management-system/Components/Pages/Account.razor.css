@@ -1,0 +1,38 @@
+.account-site {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 1rem;
+    gap: 10rem;
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.actions {
+    display: grid;
+    margin: 1rem;
+    gap: 2rem;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 1000px) {
+    .account-site {
+        flex-direction: column;
+        max-width: 512px;
+        gap: 1rem;
+    }
+
+    .actions {
+        margin: 0;
+        align-content: normal;
+        justify-content: normal;
+        align-items: normal;
+    }
+}
+
