@@ -35,3 +35,21 @@
     margin-bottom: 1rem;
     margin-right: 1.5rem;
 }
+
+.common-page-styles .avatar-select {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+}
+
+.common-page-styles .avatar {
+    display: flex;
+    width: 256px;
+    height: 256px;
+}
+
+.common-page-styles .avatar.selected {
+    border: 2px solid #007bff;
+}

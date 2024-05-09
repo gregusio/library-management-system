@@ -1,196 +1,19 @@
 @using library_management_system.Model
-@using library_management_system.Services
-
-@inject AuthService AuthService
-@inject DbApi DbApi
-@inject AlertService AlertService
 
 
 <Card Style="width: 100%; height: 100%">
     <img class="rounded-top" src="data:image/jpg;base64, @Convert.ToBase64String(User.Avatar.Image)" alt="Card image cap" />
-    <CardBody Style="display: flex; flex-direction: column">
-        <CardTitle>@User.Name @User.Surname</CardTitle>
-        <CardText>
+    <CardBody Style="display: flex; flex-direction: column; font-size: 1rem">
+        <CardTitle Style="font-size: 1.5em">@User.Name @User.Surname</CardTitle>
+        <CardText Style="font-size: 1.5em">
             <p>Address: @User.Address</p>
             <p>Phone Number: @User.TelephoneNr</p>
             <p>Email: @User.Email</p>
         </CardText>
-        <div class="footer">
-            <Button Color="ButtonColor.Primary" @onclick="OnShowReservedBooksClick">Reserved books</Button>
-            <Button Color="ButtonColor.Primary" @onclick="OnShowBorrowedBooksClick">Borrowed books</Button>
-        </div>
     </CardBody>
 </Card>
 
 
-
-
-<Modal @ref="_modal1" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
-    <BodyTemplate>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Author</th>
-                <th scope="col">Deadline</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var borrowedBook in BorrowedBooks!)
-            {
-                var book = borrowedBook.Book!;
-
-                <tr>
-                    <td>@(book.Title)</td>
-                    <td>@(book.Author)</td>
-                    <td>@(borrowedBook.Deadline)</td>
-                    <td>
-                        <Button Color="ButtonColor.Primary" @onclick="@(() => OnReturnBookClick(borrowedBook))">Return</Button>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </BodyTemplate>
-    <FooterTemplate>
-    </FooterTemplate>
-</Modal>
-
-<Modal @ref="_modal2" title="Modal title" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
-    <BodyTemplate>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Author</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var reservedBook in ReservedBooks!)
-            {
-                var book = reservedBook.Book!;
-
-                <tr>
-                    <td>@(book.Title)</td>
-                    <td>@(book.Author)</td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </BodyTemplate>
-    <FooterTemplate>
-    </FooterTemplate>
-</Modal>
-
-<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
-
-
 @code {
     [Parameter] public required User User { get; set; }
-    private bool _editMode = false;
-    private string? Name { get; set; }
-    private string? Surname { get; set; }
-    private string? Address { get; set; }
-    private string? TelephoneNr { get; set; }
-    private string? EmailAddress { get; set; }
-
-    private Modal _modal1 = default!;
-    private Modal _modal2 = default!;
-
-    private List<BorrowedBook>? BorrowedBooks { get; set; } = new();
-    private List<ReservedBook>? ReservedBooks { get; set; } = new();
-
-    protected override Task OnInitializedAsync()
-    {
-        BorrowedBooks = DbApi.GetBorrowedBooks(User);
-        ReservedBooks = DbApi.GetReservedBooks(User);
-
-        if (BorrowedBooks == null || ReservedBooks == null)
-        {
-            AlertService.ShowWarning("Failed to load borrowed or reserved books!");
-            BorrowedBooks = new();
-            ReservedBooks = new();
-        }
-
-        return base.OnInitializedAsync();
-    }
-
-    private void SaveState()
-    {
-        Name = User.Name;
-        Surname = User.Surname;
-        Address = User.Address;
-        TelephoneNr = User.TelephoneNr;
-    }
-
-    private void UndoChanges()
-    {
-        User.Name = Name;
-        User.Surname = Surname;
-        User.Address = Address;
-        User.TelephoneNr = TelephoneNr;
-    }
-
-    private void EditMode()
-    {
-        SaveState();
-        _editMode = true;
-    }
-
-    private void CloseEditMode()
-    {
-        UndoChanges();
-        _editMode = false;
-    }
-
-    private void CloseAndSave()
-    {
-        var result = DbApi.SaveChanges();
-
-        if (result == EOperationResult.Success)
-        {
-            AlertService.ShowSuccess("Changes saved!");
-            _editMode = false;
-        }
-        else
-        {
-            AlertService.ShowWarning("Failed to save changes!");
-        }
-    }
-
-    private Task OnReturnBookClick(BorrowedBook borrowedBook)
-    {
-        var result = DbApi.ReturnBook(borrowedBook);
-
-        if (result == EOperationResult.Success)
-        {
-            AlertService.ShowSuccess("Book returned!");
-        }
-        else
-        {
-            AlertService.ShowWarning("Failed to return book!");
-        }
-
-        OnInitializedAsync();
-
-        return Task.CompletedTask;
-    }
-
-    private async Task OnShowReservedBooksClick()
-    {
-        await _modal2.ShowAsync();
-    }
-
-    private async Task OnShowBorrowedBooksClick()
-    {
-        await _modal1.ShowAsync();
-    }
-
-    private async Task OnHideModalClick()
-    {
-        await _modal1.HideAsync();
-        await _modal2.HideAsync();
-        AlertService.ClearMessages();
-    }
-
 }
