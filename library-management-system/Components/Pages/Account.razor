@@ -84,40 +84,37 @@
             </FooterTemplate>
         </Modal>
 
-        <Modal @ref="_infoModal" title="Change info" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
+        <Modal @ref="_infoModal" title="Change info" IsVerticallyCentered="true" Size="ModalSize.Regular">
             <BodyTemplate>
                 <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
-                <div class="user-modal">
-                    <div class="col-md-4">
-                        <EditForm Model="Input" method="post" OnValidSubmit="ChangeInfo"
-                                  FormName="register">
-                            <div class="form-floating mb-3">
-                                <InputText @bind-Value="User.Name" class="form-control"
-                                           aria-required="true"/>
-                                <label>Name</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <InputText @bind-Value="User.Surname" class="form-control"
-                                           aria-required="true"/>
-                                <label>Surname</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <InputText @bind-Value="User.Address" class="form-control"
-                                           aria-required="true"/>
-                                <label>Address</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <InputText @bind-Value="User.TelephoneNr" class="form-control"
-                                           aria-required="true"/>
-                                <label>Phone Number</label>
-                            </div>
+                <div>
+                    <EditForm Model="Input" method="post" OnValidSubmit="ChangeInfo"
+                              FormName="register">
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="User.Name" class="form-control"
+                                       aria-required="true"/>
+                            <label>Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="User.Surname" class="form-control"
+                                       aria-required="true"/>
+                            <label>Surname</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="User.Address" class="form-control"
+                                       aria-required="true"/>
+                            <label>Address</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="User.TelephoneNr" class="form-control"
+                                       aria-required="true"/>
+                            <label>Phone Number</label>
+                        </div>
 
-                            <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-                        </EditForm>
-                    </div>
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+                    </EditForm>
                 </div>
-
             </BodyTemplate>
         </Modal>
     </Authorized>
