@@ -8,7 +8,7 @@
 
 
 <Card Style="width:100%; height: 100%">
-    <img class="image-style" src="data:image/jpg;base64, @Convert.ToBase64String(Book.BookCover.Image)" alt="Card image cap" />
+    <img class="image-style" src="data:image/jpg;base64, @Convert.ToBase64String(BookCover!.Image)" alt="Card image cap" />
     <CardBody Style="align-content: end">
         <CardTitle>@Book.Title</CardTitle>
         <CardText>
@@ -18,97 +18,34 @@
             <p>Category: @Book.Category</p>
             <p>Available: @BookInventory!.AvailableCopies</p>
         </CardText>
-
-        <AuthorizeView Roles="reader">
-            <Authorized>
-                <Button Color="ButtonColor.Primary" @onclick="Reserve">Reserve</Button>
-            </Authorized>
-        </AuthorizeView>
-
     </CardBody>
 </Card>
 
 
-<Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
-
-
 @code {
     [Parameter] public required Book Book { get; set; }
-
-    private User? User { get; set; }
+    
     private BookInventory? BookInventory { get; set; }
-    private bool _editMode = false;
-    private string? Title { get; set; }
-    private string? Author { get; set; }
-    private string? Publisher { get; set; }
-    private DateTime PublishDate { get; set; }
-    private ECategory Category { get; set; }
-    private int Available { get; set; }
+    private BookCover? BookCover => Book.BookCover;
 
     protected override Task OnInitializedAsync()
     {
-        User = AuthService.GetUser(AuthenticationStateProvider).Result;
         BookInventory = DbApi.GetBookInventory(Book);
 
-        if (BookInventory == null)
+        if (BookInventory != null) return base.OnInitializedAsync();
+        
+        BookInventory = new BookInventory
         {
-            AlertService.ShowWarning("Database error");
-            BookInventory = new();
-        }
+            BookId = Book.Id,
+            Book = Book,
+            AvailableCopies = 0,
+            BorrowedCopies = 0,
+            ReservedCopies = 0
+        };
+
+        AlertService.ShowInfo("Book Inventory not found, something went wrong.");
 
         return base.OnInitializedAsync();
-    }
-
-    private void SaveState()
-    {
-        Title = Book.Title;
-        Author = Book.Author;
-        Publisher = Book.Publisher;
-        PublishDate = Book.PublishDate;
-        Category = Book.Category;
-    }
-
-    private void UndoChanges()
-    {
-        Book.Title = Title;
-        Book.Author = Author;
-        Book.Publisher = Publisher;
-        Book.PublishDate = PublishDate;
-        Book.Category = Category;
-    }
-
-    private void EditMode()
-    {
-        SaveState();
-        _editMode = true;
-    }
-
-    private void CloseEditMode()
-    {
-        UndoChanges();
-        _editMode = false;
-    }
-
-    private void CloseAndSave()
-    {
-        var result = DbApi.SaveChanges();
-
-        if (result == EOperationResult.Success)
-        {
-            AlertService.ShowSuccess("Changes saved");
-            _editMode = false;
-        }
-        else
-        {
-            AlertService.ShowWarning("Database error");
-        }
-    }
-
-    private void Reserve()
-    {
-        var result = DbApi.ReserveBook(User!, Book);
-
-        AlertService.ShowOperationResult(result);
     }
 
 }
