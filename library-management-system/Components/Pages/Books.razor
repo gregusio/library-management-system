@@ -28,7 +28,7 @@
                 @for (var i = _booksPerPage * (_currentPageNumber - 1); i < _booksPerPage * _currentPageNumber && i < BooksCount; i++)
                 {
                     var i1 = i;
-                    <div class="single-card">
+                    <div class="single-card" @onclick="@(() => OnShowDetails(SelectedBooks![i1]))">
                         <BookRecord Book="@SelectedBooks![i1]"/>
                     </div>
                     
@@ -41,6 +41,8 @@
                             PageChanged="OnPageChangedAsync"/>
             </div>
         </div>
+        
+        <BookDetailsModal @ref="_bookDetailsModal"></BookDetailsModal>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -51,6 +53,8 @@
     private int _currentPageNumber = 1;
     private readonly int _booksPerPage = 4;
     private string _searchString = "";
+
+    private BookDetailsModal _bookDetailsModal = default!;
 
     private int TotalPages => (BooksCount - 1) / _booksPerPage + 1;
 
@@ -91,6 +95,11 @@
         }
 
         SelectedBooks = AllBooks!.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
+    }
+    
+    private void OnShowDetails(Book book)
+    {
+        _bookDetailsModal.Show(book);
     }
 
 }
