@@ -1,0 +1,64 @@
+@using library_management_system.Model
+
+<Modal @ref="_modal" Fullscreen="ModalFullscreen.Always">
+    <BodyTemplate>
+        <div class="modal-body">
+            <div class="book-record">
+                <BookRecord Book="Book"></BookRecord>
+            </div>
+            
+            <div class="modal-actions">
+                <div class="header">
+                    <AuthorizeView Roles="admin,librarian">
+                        <Authorized>
+                            <div class="edit">
+                                <Icon Name="IconName.PencilSquare"></Icon>
+                            </div>        
+                        </Authorized>
+                    </AuthorizeView>
+                    
+                    <div class="fav-book" @onclick="HeartClicked">
+                        @if(_isFav)
+                        {
+                            <Icon Name="IconName.HeartFill" Color="IconColor.Danger"></Icon>
+                        }
+                        else
+                        {
+                            <Icon Name="IconName.Heart"></Icon>
+                        }
+                    </div>
+
+                </div>
+                
+                <div class="more-details">
+                    
+                </div>
+                
+                <div class="reserve">
+                    
+                </div>
+                
+                
+            </div>
+            
+        </div>
+    </BodyTemplate>
+</Modal>
+
+@code {
+    private Book? Book { get; set; }
+    private bool _isFav = false;
+    
+    private Modal _modal = default!;
+    
+    public void Show(Book book)
+    {
+        Book = book;
+        _modal.ShowAsync();
+    }
+    
+    private void HeartClicked()
+    {
+        _isFav = !_isFav;
+    }
+}
