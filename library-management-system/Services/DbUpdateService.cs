@@ -23,6 +23,13 @@ public class DbUpdateService(DataDbContext db)
     {
         try
         {
+            if(borrowedBook.RenewalCount >= 2)
+            {
+                return EOperationResult.RenewalLimitReached;
+            }
+            
+            borrowedBook.RenewalCount++;
+            
             borrowedBook.Deadline = borrowedBook.Deadline.AddDays(7);
             
             db.UserActivityHistories.Add(new UserActivityHistory

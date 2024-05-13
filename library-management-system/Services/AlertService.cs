@@ -34,6 +34,9 @@ public class AlertService
             case EOperationResult.ReservedBookLimitExceeded:
                 ShowInfo("Reserved book limit exceeded");
                 return;
+            case EOperationResult.RenewalLimitReached:
+                ShowInfo("Renewal limit reached");
+                return;
         }
     }
 
