@@ -18,4 +18,6 @@ public class BorrowedBook
     public Book? Book { get; init; }
 
     public DateTime Deadline { get; set; }
+    
+    public int RenewalCount { get; set; }
 }

@@ -79,7 +79,8 @@ public class DbInsertService(DataDbContext db)
                 User = user,
                 BookId = book.Id,
                 Book = book,
-                Deadline = DateTime.Now.AddDays(30)
+                Deadline = DateTime.Now.AddDays(30),
+                RenewalCount = 0
             };
 
             db.BorrowedBooks.Add(borrowedBook);

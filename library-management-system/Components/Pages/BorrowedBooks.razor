@@ -20,7 +20,7 @@
     @foreach (var borrowedBook in AllBorrowedBooks!)
     {
         var book = DbApi.GetBook(borrowedBook.BookId)!;
-        var deadline = borrowedBook.Deadline.ToString("dd/MM/yyyy");
+        var deadline = borrowedBook.Deadline;
         <Card Style="width:18rem;">
             <CardBody>
                 <CardTitle>@book.Title</CardTitle>
@@ -29,10 +29,14 @@
                     <p>Publisher: @book.Publisher</p>
                     <p>Publish Date: @book.PublishDate</p>
                     <p>Category: @book.Category</p>
-                    <p>Deadline: @deadline</p>
-                    @if (string.Compare(deadline, DateTime.Now.ToString("dd/MM/yyyy"), StringComparison.Ordinal) > 0)
+                    @if (deadline < DateTime.Now)
                     {
+                        <p><span class="text-danger">Deadline: @deadline</span></p>
                         <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="@(() => Postpone(borrowedBook))"> Postpone </Button>
+                    }
+                    else
+                    {
+                        <p>Deadline: @deadline</p>
                     }
 
                 </CardText>
@@ -68,9 +72,6 @@
     {
         var result = DbApi.PostponeBorrowedBook(borrowedBook);
         
-        if (result == EOperationResult.Success)
-            AlertService.ShowSuccess("Postponed successfully!");
-        else 
-            AlertService.ShowWarning("Failed to postpone!");
+        AlertService.ShowOperationResult(result);
     }
 }

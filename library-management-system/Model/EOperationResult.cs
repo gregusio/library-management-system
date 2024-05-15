@@ -8,4 +8,5 @@ public enum EOperationResult
     UnexpectedError,
     BorrowedBookLimitExceeded,
     ReservedBookLimitExceeded,
+    RenewalLimitReached
 }
