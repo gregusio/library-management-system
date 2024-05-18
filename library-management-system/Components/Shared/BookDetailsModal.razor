@@ -84,6 +84,11 @@
                                     @if (_editMode)
                                     {
                                         <div class="form-floating">
+                                            <InputText @bind-Value="@Book.ISBN" class="form-control"
+                                                       aria-required="true"/>
+                                            <label>ISBN</label>
+                                        </div>
+                                        <div class="form-floating">
                                             <InputText @bind-Value="@Book.Author" class="form-control"
                                                        aria-required="true"/>
                                             <label>Author</label>
@@ -116,6 +121,7 @@
                                     }
                                     else
                                     {
+                                        <p>ISBN: @Book.ISBN</p>
                                         <p>Author: @Book.Author</p>
                                         <p>Publisher: @Book.Publisher</p>
                                         <p>Publish Date: @Book.PublishDate</p>
