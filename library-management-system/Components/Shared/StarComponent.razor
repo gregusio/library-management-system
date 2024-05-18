@@ -1,0 +1,24 @@
+@if (Type == StarType.Full)
+{
+    <Icon Name="IconName.StarFill" Color="IconColor.Info"></Icon>
+}
+else if (Type == StarType.Half)
+{
+    <Icon Name="IconName.StarHalf" Color="IconColor.Info"></Icon>
+}
+else
+{
+    <Icon Name="IconName.Star"></Icon>
+}
+
+@code {
+    [Parameter] public StarType Type { get; set; } = StarType.Empty;
+
+    public enum StarType
+    {
+        Full,
+        Half,
+        Empty
+    }
+
+}
