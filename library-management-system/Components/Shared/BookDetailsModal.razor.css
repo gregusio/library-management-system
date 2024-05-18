@@ -1,0 +1,106 @@
+.modal-body {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: center;
+    width: 100%;
+}
+
+.book-record {
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    gap: 2rem;
+}
+
+.book-image-placeholder {
+    display: flex;
+    flex-direction: column;
+    margin-right: 1rem;
+    margin-top: 2rem;
+    overflow: hidden;
+}
+
+.book-image {
+    border: 1px solid #3a0647;
+    border-radius: 5px;
+    margin: 1rem;
+    height: auto;
+    max-width: 25rem;
+    object-fit: cover;
+}
+
+.book-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.description-and-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 30rem;
+    margin-top: 1rem;
+}
+
+.title-with-rating {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-right: 1rem;
+}
+
+.actions {
+    display: flex;
+    flex-direction: row; 
+    gap: 1rem; 
+    justify-content: center; 
+    align-items: center; 
+    font-size: 3rem;
+}
+
+.action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 50%;
+}
+
+.scrollable {
+    overflow-y: auto;
+    max-height: 15rem;
+}
+
+@media (max-width: 1200px) {
+    .modal-body {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .book-record {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .description-and-actions {
+        width: 100%;
+    }
+
+    .book-image-placeholder {
+        justify-content: center;
+    }
+}
+
+.form-control {
+    border: none;
+    border-bottom: 1px solid #ccc; /* Example style */
+    border-radius: 0; /* Makes input fields look like underlined text */
+}

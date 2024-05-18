@@ -1,0 +1,29 @@
+<div class="stars">
+    @foreach (var starType in _starTypes)
+    {
+        <StarComponent Type="@starType"/>
+    }
+</div>
+
+@code {
+    [Parameter] public double Rating { get; set; }
+
+    private readonly List<StarComponent.StarType> _starTypes = new();
+
+    protected override void OnParametersSet()
+    {
+        _starTypes.Clear();
+        int fullStars = (int)Math.Floor(Rating);
+        bool hasHalfStar = Rating % 1 >= 0.5;
+        int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+        _starTypes.AddRange(Enumerable.Repeat(StarComponent.StarType.Full, fullStars));
+        if (hasHalfStar)
+        {
+            _starTypes.Add(StarComponent.StarType.Half);
+        }
+
+        _starTypes.AddRange(Enumerable.Repeat(StarComponent.StarType.Empty, emptyStars));
+    }
+
+}
