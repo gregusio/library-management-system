@@ -182,4 +182,29 @@ public class DbInsertService(DataDbContext db)
             return EOperationResult.DatabaseError;
         }
     }
+    
+    public EOperationResult FavoriteBook(User user, Book book)
+    {
+        try
+        {
+            var favoriteBook = new FavoriteBook
+            {
+                UserId = user.Id,
+                User = user,
+                BookId = book.Id,
+                Book = book
+            };
+            
+            db.FavoriteBooks.Add(favoriteBook);
+            
+            db.SaveChanges();
+            
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
+        }
+    }
 }
