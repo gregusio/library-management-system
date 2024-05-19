@@ -123,4 +123,24 @@ public class DbRemoveService(DataDbContext db)
             return EOperationResult.DatabaseError;
         }
     }
+    
+    public EOperationResult RemoveFavoriteBook(User user, Book book)
+    {
+        try
+        {
+            var favoriteBook = db.FavoriteBooks.FirstOrDefault(favoriteBook => favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
+            if (favoriteBook != null)
+            {
+                db.FavoriteBooks.Remove(favoriteBook);
+                db.SaveChanges();
+            }
+            
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
+        }
+    }
 }

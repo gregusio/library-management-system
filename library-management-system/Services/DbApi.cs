@@ -53,7 +53,17 @@ public class DbApi(DataDbContext db)
     {
         return new DbSearchService(db).GetAvatars();
     }
+    
+    public List<Book>? GetFavoriteBooks(User user)
+    {
+        return new DbSearchService(db).GetFavoriteBooks(user);
+    }
 
+    public bool IsBookFavorite(User user, Book book)
+    {
+        return new DbSearchService(db).IsBookFavorite(user, book);
+    }
+    
     public EOperationResult AddBook(Book book, int quantity, BookCover bookCover)
     {
         return new DbInsertService(db).AddBook(book, quantity, bookCover);
@@ -72,6 +82,11 @@ public class DbApi(DataDbContext db)
     public EOperationResult ReserveBook(User user, Book book)
     {
         return new DbInsertService(db).ReserveBook(user, book);
+    }
+    
+    public EOperationResult FavoriteBook(User user, Book book)
+    {
+        return new DbInsertService(db).FavoriteBook(user, book);
     }
 
     public EOperationResult RemoveUser(string id)
@@ -92,6 +107,11 @@ public class DbApi(DataDbContext db)
     public EOperationResult RemoveReservedBook(ReservedBook reservedBook)
     {
         return new DbRemoveService(db).RemoveReservedBook(reservedBook);
+    }
+    
+    public EOperationResult RemoveFavoriteBook(User user, Book book)
+    {
+        return new DbRemoveService(db).RemoveFavoriteBook(user, book);
     }
 
     public EOperationResult SaveChanges()

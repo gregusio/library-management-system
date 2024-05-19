@@ -7,6 +7,8 @@
 
 @inject DbApi DbApi
 @inject AlertService AlertService
+@inject AuthService AuthService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 
 <PageTitle>Books</PageTitle>
@@ -21,6 +23,11 @@
                     </Authorized>
                 </AuthorizeView>
 
+                <div class="checkbox-wrapper">
+                    <InputCheckbox id="showFavCheckbox" @bind-Value="@_showFav" @onclick="ShowFav"></InputCheckbox>
+                    <label for="showFavCheckbox" class="checkbox-label">Show Favorites</label>
+                </div>
+                
                 <InputText class="form-control" style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
             </div>
 
@@ -42,7 +49,7 @@
             </div>
         </div>
         
-        <BookDetailsModal @ref="_bookDetailsModal" OnSaveEdit="OnInitializedAsync"></BookDetailsModal>
+        <BookDetailsModal @ref="_bookDetailsModal" OnSaveEdit="OnInitializedAsync" User="User"></BookDetailsModal>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -53,6 +60,9 @@
     private int _currentPageNumber = 1;
     private readonly int _booksPerPage = 4;
     private string _searchString = "";
+    private bool _showFav = false;
+    
+    private User? User { get; set; }
 
     private BookDetailsModal _bookDetailsModal = default!;
 
@@ -63,10 +73,14 @@
     private List<Book>? AllBooks { get; set; } = new();
 
     private List<Book>? SelectedBooks { get; set; } = new();
+    
+    private List<Book>? FavBooks { get; set; } = new();
 
     protected override Task OnInitializedAsync()
     {
         AllBooks = DbApi.GetAllBooks();
+        User = AuthService.GetUser(AuthenticationStateProvider).Result;
+        FavBooks = DbApi.GetFavoriteBooks(User) ?? new();
 
         if (AllBooks == null)
         {
@@ -100,6 +114,18 @@
     private void OnShowDetails(Book book)
     {
         _bookDetailsModal.Show(book);
+    }
+    
+    private void ShowFav()
+    {
+        if (!_showFav)
+        {
+            SelectedBooks = FavBooks;
+        }
+        else
+        {
+            SelectedBooks = AllBooks;
+        }
     }
 
 }

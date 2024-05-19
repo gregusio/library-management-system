@@ -21,7 +21,7 @@
                 <div class="description-and-actions">
                     <div class="actions">
                         <div class="action">
-                            @if (_isFav)
+                            @if (IsFav)
                             {
                                 <Tooltip Title="Remove from favorites" Placement="TooltipPlacement.Top">
                                     <Icon Name="IconName.HeartFill" Color="IconColor.Danger" @onclick="HeartClicked"></Icon>
@@ -188,11 +188,12 @@
 
 @code {
     [Parameter] public EventCallback OnSaveEdit { get; set; }
+    [Parameter] public User? User { get; set; }
     
     private Book? Book { get; set; }
     private BookCover? BookCover => Book?.BookCover;
     private BookInventory? BookInventory => DbApi.GetBookInventory(Book!) ?? new BookInventory();
-    private bool _isFav = false;
+    private bool IsFav => DbApi.IsBookFavorite(User!, Book!); 
     private bool _editMode = false;
     
     private Modal _modal = default!;
@@ -206,7 +207,16 @@
     
     private void HeartClicked()
     {
-        _isFav = !_isFav;
+        if (!IsFav)
+        {
+            DbApi.FavoriteBook(User!, Book!);
+        }
+        else
+        {
+            DbApi.RemoveFavoriteBook(User!, Book!);
+        }
+        
+        OnSaveEdit.InvokeAsync();
     }
 
     private void ReserveBook()

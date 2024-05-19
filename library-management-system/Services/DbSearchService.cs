@@ -140,4 +140,34 @@ public class DbSearchService(DataDbContext db)
             return null;
         }
     }
+    
+    public List<Book>? GetFavoriteBooks(User user)
+    {
+        try
+        {
+            return db.FavoriteBooks
+                .Include(favoriteBook => favoriteBook.Book)
+                .Where(favoriteBook => favoriteBook.UserId == user.Id)
+                .Select(favoriteBook => favoriteBook.Book)
+                .ToList()!;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
+    }
+    
+    public bool IsBookFavorite(User user, Book book)
+    {
+        try
+        {
+            return db.FavoriteBooks.Any(favoriteBook => favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+    }
 }
