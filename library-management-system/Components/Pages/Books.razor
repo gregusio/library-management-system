@@ -58,7 +58,7 @@
 
 @code {
     private int _currentPageNumber = 1;
-    private readonly int _booksPerPage = 4;
+    private const int _booksPerPage = 4;
     private string _searchString = "";
     private bool _showFav;
     
@@ -70,22 +70,21 @@
 
     private int BooksCount => SelectedBooks!.Count;
 
-    private List<Book>? AllBooks { get; set; } = new();
+    private List<Book>? AllBooks { get; set; }
 
-    private List<Book>? SelectedBooks { get; set; } = new();
+    private List<Book>? SelectedBooks { get; set; } = [];
     
-    private List<Book>? FavBooks { get; set; } = new();
+    private List<Book>? FavBooks { get; set; } = [];
 
     protected override Task OnInitializedAsync()
     {
         AllBooks = DbApi.GetAllBooks();
-        User = AuthService.GetUser(AuthenticationStateProvider).Result ?? new();
-        FavBooks = DbApi.GetFavoriteBooks(User) ?? new();
-
+        User = AuthService.GetUser(AuthenticationStateProvider).Result ?? new User();
+        FavBooks = DbApi.GetFavoriteBooks(User) ?? [];
         if (AllBooks == null)
         {
             AlertService.ShowWarning("Failed to load books");
-            AllBooks = new();
+            AllBooks = [];
         }
         
         SelectedBooks = AllBooks;
@@ -118,14 +117,7 @@
     
     private void ShowFav()
     {
-        if (!_showFav)
-        {
-            SelectedBooks = FavBooks;
-        }
-        else
-        {
-            SelectedBooks = AllBooks;
-        }
+        SelectedBooks = !_showFav ? FavBooks : AllBooks;
     }
 
 }

@@ -1,14 +1,14 @@
-@if (Type == StarType.Full)
+@switch (Type)
 {
-    <Icon Name="IconName.StarFill" Color="IconColor.Info"></Icon>
-}
-else if (Type == StarType.Half)
-{
-    <Icon Name="IconName.StarHalf" Color="IconColor.Info"></Icon>
-}
-else
-{
-    <Icon Name="IconName.Star"></Icon>
+    case StarType.Full:
+        <Icon Name="IconName.StarFill" Color="IconColor.Info"></Icon>
+        break;
+    case StarType.Half:
+        <Icon Name="IconName.StarHalf" Color="IconColor.Info"></Icon>
+        break;
+    default:
+        <Icon Name="IconName.Star"></Icon>
+        break;
 }
 
 @code {

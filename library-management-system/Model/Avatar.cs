@@ -6,6 +6,6 @@ public class Avatar
 {
     [Key] public int Id { get; init; }
     
-    [Required] public byte[]? Image { get; set; }
+    [Required] public byte[]? Image { get; init; }
     
 }

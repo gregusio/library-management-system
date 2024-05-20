@@ -56,9 +56,9 @@
 </AuthorizeView>
 
 @code {
-    private List<User>? AllReaders { get; set; } = new();
+    private List<User>? AllReaders { get; set; } = [];
     private User? SelectedPerson { get; set; }
-    private List<Book>? AllBooks { get; set; } = new();
+    private List<Book>? AllBooks { get; set; } = [];
     private Book? SelectedBook { get; set; }
 
     protected override Task OnInitializedAsync()
@@ -66,13 +66,12 @@
         AllReaders = DbApi.GetAllReaders();
         AllBooks = DbApi.GetAllBooks();
 
-        if (AllReaders == null || AllBooks == null)
-        {
-            AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
-            AllReaders = new();
-            AllBooks = new();
-        }
+        if (AllReaders != null && AllBooks != null) return base.OnInitializedAsync();
         
+        AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
+        AllReaders = [];
+        AllBooks = [];
+
         return base.OnInitializedAsync();
     }
 

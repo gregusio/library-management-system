@@ -8,14 +8,14 @@
 @code {
     [Parameter] public double Rating { get; set; }
 
-    private readonly List<StarComponent.StarType> _starTypes = new();
+    private readonly List<StarComponent.StarType> _starTypes = [];
 
     protected override void OnParametersSet()
     {
         _starTypes.Clear();
-        int fullStars = (int)Math.Floor(Rating);
-        bool hasHalfStar = Rating % 1 >= 0.5;
-        int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        var fullStars = (int)Math.Floor(Rating);
+        var hasHalfStar = Rating % 1 >= 0.5;
+        var emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
         _starTypes.AddRange(Enumerable.Repeat(StarComponent.StarType.Full, fullStars));
         if (hasHalfStar)

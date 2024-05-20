@@ -5,7 +5,7 @@ namespace library_management_system.Services;
 
 public class AlertService
 {
-    public List<ToastMessage> Messages { get; } = new();
+    public List<ToastMessage> Messages { get; } = [];
 
     public void ClearMessages()
     {
@@ -37,6 +37,9 @@ public class AlertService
             case EOperationResult.RenewalLimitReached:
                 ShowInfo("Renewal limit reached");
                 return;
+            default:
+                ShowInfo("Unknown error");
+                break;
         }
     }
 
@@ -60,34 +63,22 @@ public class AlertService
         Messages.Add(CreateToastMessage(toastType, message));
     }
 
-    private ToastMessage CreateToastMessage(ToastType toastType, string message)
+    private static ToastMessage CreateToastMessage(ToastType toastType, string message)
     {
-        switch (toastType)
+        return toastType switch
         {
-            case ToastType.Info:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Info",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-            case ToastType.Success:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Success",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-            default:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Warning",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-        }
+            ToastType.Info => new ToastMessage
+            {
+                Type = toastType, Title = "Info", HelpText = $"{DateTime.Now}", Message = message
+            },
+            ToastType.Success => new ToastMessage
+            {
+                Type = toastType, Title = "Success", HelpText = $"{DateTime.Now}", Message = message
+            },
+            _ => new ToastMessage
+            {
+                Type = toastType, Title = "Warning", HelpText = $"{DateTime.Now}", Message = message
+            }
+        };
     }
 }

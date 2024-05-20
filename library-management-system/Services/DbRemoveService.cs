@@ -9,12 +9,11 @@ public class DbRemoveService(DataDbContext db)
         try
         {
             var user = db.Users.FirstOrDefault(user => user.Id == id);
-            if (user != null)
-            {
-                db.Users.Remove(user);
-                db.SaveChanges();
-            }
+            if (user == null) return EOperationResult.Success;
             
+            db.Users.Remove(user);
+            db.SaveChanges();
+
             return EOperationResult.Success;
         }
         catch (Exception e)
@@ -29,12 +28,11 @@ public class DbRemoveService(DataDbContext db)
         try
         {
             var book = db.Books.FirstOrDefault(book => book.Id == id);
-            if (book != null)
-            {
-                db.Books.Remove(book);
-                db.SaveChanges();
-            }
+            if (book == null) return EOperationResult.Success;
             
+            db.Books.Remove(book);
+            db.SaveChanges();
+
             return EOperationResult.Success;
         }
         catch (Exception e)
@@ -129,12 +127,11 @@ public class DbRemoveService(DataDbContext db)
         try
         {
             var favoriteBook = db.FavoriteBooks.FirstOrDefault(favoriteBook => favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
-            if (favoriteBook != null)
-            {
-                db.FavoriteBooks.Remove(favoriteBook);
-                db.SaveChanges();
-            }
+            if (favoriteBook == null) return EOperationResult.Success;
             
+            db.FavoriteBooks.Remove(favoriteBook);
+            db.SaveChanges();
+
             return EOperationResult.Success;
         }
         catch (Exception e)

@@ -51,7 +51,7 @@
 
 @code {
     private User? User { get; set; }
-    private List<BorrowedBook>? AllBorrowedBooks { get; set; } = new();
+    private List<BorrowedBook>? AllBorrowedBooks { get; set; } = [];
 
     protected override Task OnInitializedAsync()
     {
@@ -59,12 +59,11 @@
         
         AllBorrowedBooks = DbApi.GetBorrowedBooks(User!);
 
-        if (AllBorrowedBooks == null)
-        {
-            AlertService.ShowWarning("Failed to load borrowed books!");
-            AllBorrowedBooks = new();
-        }
+        if (AllBorrowedBooks != null) return base.OnInitializedAsync();
         
+        AlertService.ShowWarning("Failed to load borrowed books!");
+        AllBorrowedBooks = [];
+
         return base.OnInitializedAsync();
     }
 

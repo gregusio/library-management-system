@@ -4,7 +4,7 @@ namespace library_management_system.Components.Layout;
 
 public class NavigationMenu
 {
-    public List<(string, string, IconName)> GetForReader()
+    public static List<(string, string, IconName)> GetForReader()
     {
         return
         [
@@ -15,14 +15,14 @@ public class NavigationMenu
         ];
     }
 
-    public List<(string, string, IconName)> GetForLibrarian()
+    public static List<(string, string, IconName)> GetForLibrarian()
     {
         return
         [
             ("books", "Books", IconName.Book),
             ("readers", "Readers", IconName.People),
             ("borrow-book", "Borrow", IconName.Book),
-            ("librarians", "Librarians", IconName.People),
+            ("librarians", "Librarians", IconName.People)
         ];
     }
 }

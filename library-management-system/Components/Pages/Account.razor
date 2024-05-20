@@ -70,7 +70,7 @@
                         @foreach (var avatar in Avatars!)
                         {
                             var isSelected = SelectedAvatar == avatar;
-                            <div class="avatar @((isSelected) ? "selected" : "")">
+                            <div class="avatar @(isSelected ? "selected" : "")">
                                 <Button @onclick="() => SelectedAvatar = avatar">
                                     <img style="width: 100%; height: 100%" src="data:image/jpg;base64, @Convert.ToBase64String(avatar.Image!)" alt="No image"/>
                                 </Button>
@@ -128,7 +128,7 @@
     private Modal _avatarModal = default!;
     private Modal _infoModal = default!;
     private User? User { get; set; }
-    private List<Avatar>? Avatars { get; set; } = new();
+    private List<Avatar>? Avatars { get; set; } = [];
     private Avatar? SelectedAvatar { get; set; }
 
     [SupplyParameterFromForm]
@@ -138,13 +138,12 @@
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
         Avatars = DbApi.GetAvatars();
+
+        if (User != null && Avatars != null) return base.OnInitializedAsync();
         
-        if (User == null || Avatars == null)
-        {
-            AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
-            User = new();
-            Avatars = new();
-        }
+        AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
+        User = new User();
+        Avatars = [];
 
         return base.OnInitializedAsync();
     }

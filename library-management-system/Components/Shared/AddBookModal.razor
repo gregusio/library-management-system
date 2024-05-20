@@ -116,12 +116,12 @@
 
     public async Task AddBook(EditContext editContext)
     {
-        var newCover = new BookCover()
+        var newCover = new BookCover
         {
-            Image = Input.Image,
+            Image = Input.Image
         };
         
-        var newBook = new Book()
+        var newBook = new Book
         {
             ISBN = Input.ISBN,
             Title = Input.Title,
@@ -137,7 +137,7 @@
         if (result == EOperationResult.Success)
         {
             AlertService.ShowSuccess("Book added successfully");
-            Input = new();
+            Input = new InputModel();
         }
         else
         {

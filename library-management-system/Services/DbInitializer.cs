@@ -1,12 +1,14 @@
 using library_management_system.Model;
 using Microsoft.AspNetCore.Identity;
 
+namespace library_management_system.Services;
+
 public class DbInitializer(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
 {
     public async Task Initialize()
     {
-        string adminEmail = "admin@example.com";
-        string adminPassword = "Admin123#";
+        var adminEmail = "admin@example.com";
+        var adminPassword = "Admin123#";
 
         if (await roleManager.FindByNameAsync("admin") == null)
         {
@@ -28,7 +30,7 @@ public class DbInitializer(UserManager<User> userManager, RoleManager<IdentityRo
                 UserName = adminEmail
             };
 
-            IdentityResult result = await userManager.CreateAsync(admin, adminPassword);
+            var result = await userManager.CreateAsync(admin, adminPassword);
 
             if (result.Succeeded)
             {

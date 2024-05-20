@@ -45,7 +45,7 @@
 </AuthorizeView>
 
 @code {
-    private List<ReservedBook>? AllReservedBooks { get; set; } = new();
+    private List<ReservedBook>? AllReservedBooks { get; set; } = [];
     private User? User { get; set; } 
 
     protected override Task OnInitializedAsync()
@@ -53,11 +53,10 @@
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
         AllReservedBooks = DbApi.GetReservedBooks(User!);
 
-        if (AllReservedBooks == null)
-        {
-            AlertService.ShowWarning("Failed to load reserved books!");
-            AllReservedBooks = new();
-        }
+        if (AllReservedBooks != null) return Task.CompletedTask;
+        
+        AlertService.ShowWarning("Failed to load reserved books!");
+        AllReservedBooks = [];
 
         return Task.CompletedTask;
     }

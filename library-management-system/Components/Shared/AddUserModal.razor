@@ -79,7 +79,7 @@
                     @foreach (var avatar in Avatars!)
                     {
                         var isSelected = Input.Avatar == avatar;
-                        <div class="avatar @((isSelected) ? "selected" : "")">
+                        <div class="avatar @(isSelected ? "selected" : "")">
                             <Button @onclick="() => Input.Avatar = avatar">
                                 <img style="width: 100%; height: 100%" src="data:image/jpg;base64, @Convert.ToBase64String(avatar.Image!)"/>
                             </Button>
@@ -115,7 +115,7 @@
 
         if (Avatars == null)
         {
-            Avatars = new();
+            Avatars = [];
             AlertService.ShowWarning("Database is empty. Please add avatars.");
         }
         
@@ -176,7 +176,7 @@
     {
         try
         {
-            return new User()
+            return new User
             {
                 Avatar = Input.Avatar,
                 Name = Input.Name,
