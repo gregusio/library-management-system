@@ -8,7 +8,7 @@
 
 
 <Card Style="width:100%; height: 100%">
-    <img class="image-style" src="data:image/jpg;base64, @Convert.ToBase64String(BookCover!.Image)" alt="Card image cap" />
+    <img class="image-style" src="data:image/jpg;base64, @Convert.ToBase64String(BookCover!.Image!)" alt="Card image cap" />
     <CardBody Style="align-content: end">
         <CardTitle>@Book.Title</CardTitle>
         <CardText>

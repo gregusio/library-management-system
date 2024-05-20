@@ -43,21 +43,20 @@
 
 @code {
     private int _currentPageNumber = 1;
-    private readonly int _librariansPerPage = 4;
+    private const int _librariansPerPage = 4;
 
     private int LibrariansCount => AllLibrarians!.Count;
 
-    private List<User>? AllLibrarians { get; set; } = new();
+    private List<User>? AllLibrarians { get; set; } = [];
 
     protected override Task OnInitializedAsync()
     {
         AllLibrarians = DbApi.GetAllLibrarians();
 
-        if (AllLibrarians == null)
-        {
-            AlertService.ShowWarning("Something went wrong while fetching librarians");
-            AllLibrarians = new List<User>();
-        }
+        if (AllLibrarians != null) return base.OnInitializedAsync();
+        
+        AlertService.ShowWarning("Something went wrong while fetching librarians");
+        AllLibrarians = new List<User>();
 
         return base.OnInitializedAsync();
     }

@@ -9,7 +9,7 @@
             <div class="book-record">
                 <div class="book-image-placeholder">
                     
-                    <img class="book-image" src="data:image/jpg;base64, @Convert.ToBase64String(BookCover?.Image)" alt="@Book?.Title"/>
+                    <img class="book-image" src="data:image/jpg;base64, @Convert.ToBase64String(BookCover.Image!)" alt="@Book?.Title"/>
                     
                     @if (_editMode)
                     {
@@ -68,14 +68,14 @@
                             @if(_editMode)
                             {
                                 <div class="form-floating">
-                                    <InputText @bind-Value="@Book.Title" class="form-control"
+                                    <InputText @bind-Value="@Book!.Title" class="form-control"
                                                aria-required="true"/>
                                     <label>Title</label>
                                 </div>
                             }
                             else
                             {
-                                @Book.Title
+                                @Book!.Title
                             }
                         </CardTitle>
                         <CardBody>
@@ -84,7 +84,7 @@
                                     @if (_editMode)
                                     {
                                         <div class="form-floating">
-                                            <InputText @bind-Value="@Book.ISBN" class="form-control"
+                                            <InputText @bind-Value="@Book!.ISBN" class="form-control"
                                                        aria-required="true"/>
                                             <label>ISBN</label>
                                         </div>
@@ -121,12 +121,12 @@
                                     }
                                     else
                                     {
-                                        <p>ISBN: @Book.ISBN</p>
+                                        <p>ISBN: @Book!.ISBN</p>
                                         <p>Author: @Book.Author</p>
                                         <p>Publisher: @Book.Publisher</p>
                                         <p>Publish Date: @Book.PublishDate</p>
                                         <p>Category: @Book.Category</p>
-                                        <p>Available: @BookInventory?.AvailableCopies</p>
+                                        <p>Available: @BookInventory.AvailableCopies</p>
                                     }
                                 </div>
                             </CardText>
@@ -191,15 +191,21 @@
     [Parameter] public User? User { get; set; }
     
     private Book? Book { get; set; }
-    private BookCover? BookCover => Book?.BookCover;
-    private BookInventory? BookInventory => DbApi.GetBookInventory(Book!) ?? new BookInventory();
+    private BookCover BookCover => Book!.BookCover ?? new BookCover();
+    private BookInventory BookInventory => DbApi.GetBookInventory(Book!) ?? new BookInventory();
     private bool IsFav => DbApi.IsBookFavorite(User!, Book!); 
     private bool _editMode = false;
     
     private Modal _modal = default!;
 
-    public void Show(Book book)
+    public void Show(Book? book)
     {
+        if (book == null)
+        {
+            Book = new Book();
+            return;
+        }
+        
         Book = book;
         _editMode = false;
         _modal.ShowAsync();
@@ -209,11 +215,13 @@
     {
         if (!IsFav)
         {
-            DbApi.FavoriteBook(User!, Book!);
+            var result = DbApi.FavoriteBook(User!, Book!);
+            Console.WriteLine(result == EOperationResult.Success ? "Book added to favorites" : "Failed to add book to favorites");
         }
         else
         {
-            DbApi.RemoveFavoriteBook(User!, Book!);
+            var result = DbApi.RemoveFavoriteBook(User!, Book!);
+            Console.WriteLine(result == EOperationResult.Success ? "Book removed from favorites" : "Failed to remove book from favorites");
         }
         
         OnSaveEdit.InvokeAsync();
@@ -239,11 +247,9 @@
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
         var file = e.File;
-        if (file != null)
-        {
-            using var ms = new MemoryStream();
-            await file.OpenReadStream().CopyToAsync(ms);
-            BookCover.Image = ms.ToArray();
-        }
+        
+        using var ms = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(ms);
+        BookCover.Image = ms.ToArray();
     }
 }

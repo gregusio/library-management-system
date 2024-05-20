@@ -69,7 +69,7 @@
         
             <div class="image-select">
                 <div class="image">
-                    <img src="data:image/jpg;base64, @Convert.ToBase64String(Input.Image!)"
+                    <img src="data:image/jpg;base64, @Convert.ToBase64String(Input.Image)"
                          alt="Image"/>
                 </div>
 
@@ -94,7 +94,7 @@
 
     [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
 
-    private byte[]? DefaultImage { get; set; } = File.ReadAllBytes("Images/BookCovers/default-cover.jpg");
+    private byte[] DefaultImage { get; set; } = File.ReadAllBytes("Images/BookCovers/default-cover.jpg");
 
     protected override Task OnInitializedAsync()
     {
@@ -116,12 +116,12 @@
 
     public async Task AddBook(EditContext editContext)
     {
-        var newCover = new BookCover()
+        var newCover = new BookCover
         {
-            Image = Input.Image,
+            Image = Input.Image
         };
         
-        var newBook = new Book()
+        var newBook = new Book
         {
             ISBN = Input.ISBN,
             Title = Input.Title,
@@ -137,7 +137,7 @@
         if (result == EOperationResult.Success)
         {
             AlertService.ShowSuccess("Book added successfully");
-            Input = new();
+            Input = new InputModel();
         }
         else
         {
@@ -150,12 +150,11 @@
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
         var file = e.File;
-        if (file != null)
-        {
-            using var ms = new MemoryStream();
-            await file.OpenReadStream().CopyToAsync(ms);
-            Input.Image = ms.ToArray();
-        }
+        
+        using var ms = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(ms);
+        Input.Image = ms.ToArray();
+        
     }
 
     private sealed class InputModel
@@ -177,7 +176,7 @@
         
         [Display(Name = "Amount")] 
         [Range(1, int.MaxValue, ErrorMessage = "Amount must be greater than 0")]
-        public int Amount { get; set; } = 0;
+        public int Amount { get; set; }
         
         [Required] [Display(Name = "Image")] public byte[] Image { get; set; } = [];
     }
