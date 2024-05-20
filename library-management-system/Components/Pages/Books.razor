@@ -79,7 +79,7 @@
     protected override Task OnInitializedAsync()
     {
         AllBooks = DbApi.GetAllBooks();
-        User = AuthService.GetUser(AuthenticationStateProvider).Result;
+        User = AuthService.GetUser(AuthenticationStateProvider).Result ?? new();
         FavBooks = DbApi.GetFavoriteBooks(User) ?? new();
 
         if (AllBooks == null)

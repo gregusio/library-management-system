@@ -94,7 +94,7 @@
 
     [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
 
-    private byte[]? DefaultImage { get; set; } = File.ReadAllBytes("Images/BookCovers/default-cover.jpg");
+    private byte[] DefaultImage { get; set; } = File.ReadAllBytes("Images/BookCovers/default-cover.jpg");
 
     protected override Task OnInitializedAsync()
     {

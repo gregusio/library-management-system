@@ -9,7 +9,7 @@
             <div class="book-record">
                 <div class="book-image-placeholder">
                     
-                    <img class="book-image" src="data:image/jpg;base64, @Convert.ToBase64String(BookCover?.Image)" alt="@Book?.Title"/>
+                    <img class="book-image" src="data:image/jpg;base64, @Convert.ToBase64String(BookCover!.Image!)" alt="@Book?.Title"/>
                     
                     @if (_editMode)
                     {
