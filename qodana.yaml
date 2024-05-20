@@ -8,3 +8,5 @@ ide: QDNET
 #Specify inspection profile for code analysis
 profile:
   name: qodana.recommended
+dotnet: 
+  solution: library-management-system.sln
