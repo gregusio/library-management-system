@@ -67,7 +67,7 @@
 
                 <div class="common-page-styles">
                     <div class="avatar-select">
-                        @foreach (var avatar in Avatars)
+                        @foreach (var avatar in Avatars!)
                         {
                             var isSelected = SelectedAvatar == avatar;
                             <div class="avatar @((isSelected) ? "selected" : "")">
