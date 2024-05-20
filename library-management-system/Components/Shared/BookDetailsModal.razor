@@ -68,14 +68,14 @@
                             @if(_editMode)
                             {
                                 <div class="form-floating">
-                                    <InputText @bind-Value="@Book.Title" class="form-control"
+                                    <InputText @bind-Value="@Book!.Title" class="form-control"
                                                aria-required="true"/>
                                     <label>Title</label>
                                 </div>
                             }
                             else
                             {
-                                @Book.Title
+                                @Book!.Title
                             }
                         </CardTitle>
                         <CardBody>
@@ -84,7 +84,7 @@
                                     @if (_editMode)
                                     {
                                         <div class="form-floating">
-                                            <InputText @bind-Value="@Book.ISBN" class="form-control"
+                                            <InputText @bind-Value="@Book!.ISBN" class="form-control"
                                                        aria-required="true"/>
                                             <label>ISBN</label>
                                         </div>
@@ -114,14 +114,14 @@
                                             <label>Category</label>
                                         </div>
                                         <div class="form-floating">
-                                            <InputNumber @bind-Value="@BookInventory.AvailableCopies" class="form-control"
+                                            <InputNumber @bind-Value="@BookInventory!.AvailableCopies" class="form-control"
                                                        aria-required="true"/>
                                             <label>Available</label>
                                         </div>
                                     }
                                     else
                                     {
-                                        <p>ISBN: @Book.ISBN</p>
+                                        <p>ISBN: @Book!.ISBN</p>
                                         <p>Author: @Book.Author</p>
                                         <p>Publisher: @Book.Publisher</p>
                                         <p>Publish Date: @Book.PublishDate</p>
@@ -191,15 +191,21 @@
     [Parameter] public User? User { get; set; }
     
     private Book? Book { get; set; }
-    private BookCover? BookCover => Book?.BookCover;
-    private BookInventory? BookInventory => DbApi.GetBookInventory(Book!) ?? new BookInventory();
+    private BookCover? BookCover => Book!.BookCover ?? new();
+    private BookInventory? BookInventory => DbApi.GetBookInventory(Book!) ?? new();
     private bool IsFav => DbApi.IsBookFavorite(User!, Book!); 
     private bool _editMode = false;
     
     private Modal _modal = default!;
 
-    public void Show(Book book)
+    public void Show(Book? book)
     {
+        if (book == null)
+        {
+            Book = new();
+            return;
+        }
+        
         Book = book;
         _editMode = false;
         _modal.ShowAsync();
@@ -243,7 +249,7 @@
         {
             using var ms = new MemoryStream();
             await file.OpenReadStream().CopyToAsync(ms);
-            BookCover.Image = ms.ToArray();
+            BookCover!.Image = ms.ToArray();
         }
     }
 }
