@@ -191,8 +191,8 @@
     [Parameter] public User? User { get; set; }
     
     private Book? Book { get; set; }
-    private BookCover? BookCover => Book!.BookCover ?? new();
-    private BookInventory? BookInventory => DbApi.GetBookInventory(Book!) ?? new();
+    private BookCover BookCover => Book!.BookCover ?? new();
+    private BookInventory BookInventory => DbApi.GetBookInventory(Book!) ?? new();
     private bool IsFav => DbApi.IsBookFavorite(User!, Book!); 
     private bool _editMode = false;
     
@@ -245,11 +245,9 @@
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
         var file = e.File;
-        if (file != null)
-        {
-            using var ms = new MemoryStream();
-            await file.OpenReadStream().CopyToAsync(ms);
-            BookCover!.Image = ms.ToArray();
-        }
+        
+        using var ms = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(ms);
+        BookCover!.Image = ms.ToArray();
     }
 }

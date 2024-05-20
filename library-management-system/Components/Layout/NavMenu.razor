@@ -1,7 +1,4 @@
 ﻿@using library_management_system.Services
-@using library_management_system.Model
-@using Microsoft.EntityFrameworkCore.ChangeTracking.Internal
-@using Microsoft.AspNetCore.Components.Authorization
 
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
@@ -19,7 +16,7 @@
 
         <AuthorizeView Roles="admin,librarian">
             <Authorized>
-                @foreach (var (href, buttonName, iconName) in _navigationMenu!.GetForLibrarian())
+                @foreach (var (href, buttonName, iconName) in _navigationMenu.GetForLibrarian())
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href=@href>
@@ -36,7 +33,7 @@
 
         <AuthorizeView Roles="reader">
             <Authorized>
-                @foreach (var (href, buttonName, iconName) in _navigationMenu!.GetForReader())
+                @foreach (var (href, buttonName, iconName) in _navigationMenu.GetForReader())
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href=@href>
