@@ -128,7 +128,7 @@
     private Modal _avatarModal = default!;
     private Modal _infoModal = default!;
     private User? User { get; set; }
-    private List<Avatar>? Avatars { get; set; } = new();
+    private List<Avatar> Avatars { get; set; } = new();
     private Avatar? SelectedAvatar { get; set; }
 
     [SupplyParameterFromForm]
@@ -137,13 +137,12 @@
     protected override Task OnInitializedAsync()
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
-        Avatars = DbApi.GetAvatars();
+        Avatars = DbApi.GetAvatars() ?? new();
         
-        if (User == null || Avatars == null)
+        if (User == null)
         {
             AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
             User = new();
-            Avatars = new();
         }
 
         return base.OnInitializedAsync();
