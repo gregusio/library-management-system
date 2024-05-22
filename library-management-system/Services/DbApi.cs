@@ -94,9 +94,9 @@ public class DbApi(DataDbContext db)
         return new DbRemoveService(db).RemoveUser(user);
     }
 
-    public EOperationResult RemoveBook(int id)
+    public EOperationResult RemoveBook(Book book)
     {
-        return new DbRemoveService(db).RemoveBook(id);
+        return new DbRemoveService(db).RemoveBook(book);
     }
 
     public EOperationResult ReturnBook(BorrowedBook borrowedBook)
