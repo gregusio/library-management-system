@@ -20,13 +20,10 @@ public class DbRemoveService(DataDbContext db)
         }
     }
 
-    public EOperationResult RemoveBook(int id)
+    public EOperationResult RemoveBook(Book book)
     {
         try
         {
-            var book = db.Books.FirstOrDefault(book => book.Id == id);
-            if (book == null) return EOperationResult.Success;
-            
             db.Books.Remove(book);
             db.SaveChanges();
 

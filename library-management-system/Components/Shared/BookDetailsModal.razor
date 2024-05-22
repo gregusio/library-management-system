@@ -60,6 +60,12 @@
                                             </Tooltip>
                                         </div>
                                     }
+                                    
+                                    <div class="action">
+                                        <Tooltip Title="Delete" Placement="TooltipPlacement.Top">
+                                            <Icon Name="IconName.Trash" Color="IconColor.Danger" @onclick="RemoveBook"></Icon>
+                                        </Tooltip>
+                                    </div>
                                 </Authorized>
                             </AuthorizeView>
                         </div>
@@ -232,6 +238,14 @@
     private void ReserveBook()
     {
         
+    }
+    
+    private void RemoveBook()
+    {
+        var result = DbApi.RemoveBook(Book!);
+        Console.WriteLine(result == EOperationResult.Success ? "Book removed" : "Failed to remove book");
+        _modal.HideAsync();
+        OnSaveEdit.InvokeAsync();
     }
 
     private void ToggleEditMode()
