@@ -89,9 +89,9 @@ public class DbApi(DataDbContext db)
         return new DbInsertService(db).FavoriteBook(user, book);
     }
 
-    public EOperationResult RemoveUser(string id)
+    public EOperationResult RemoveUser(User user)
     {
-        return new DbRemoveService(db).RemoveUser(id);
+        return new DbRemoveService(db).RemoveUser(user);
     }
 
     public EOperationResult RemoveBook(int id)

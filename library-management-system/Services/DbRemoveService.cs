@@ -4,13 +4,10 @@ namespace library_management_system.Services;
 
 public class DbRemoveService(DataDbContext db)
 {
-    public EOperationResult RemoveUser(string id)
+    public EOperationResult RemoveUser(User user)
     {
         try
         {
-            var user = db.Users.FirstOrDefault(user => user.Id == id);
-            if (user == null) return EOperationResult.Success;
-            
             db.Users.Remove(user);
             db.SaveChanges();
 
