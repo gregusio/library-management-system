@@ -9,7 +9,9 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.Users.Where(user => user.Role == ERole.Reader).ToList();
+            return db.Users
+                .Include(user => user.Avatar)
+                .Where(user => user.Role == ERole.Reader).ToList();
         }
         catch (Exception e)
         {
@@ -22,7 +24,9 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.Users.Where(user => user.Role == ERole.Librarian).ToList();
+            return db.Users
+                .Include(user => user.Avatar)
+                .Where(user => user.Role == ERole.Librarian).ToList();
         }
         catch (Exception e)
         {
@@ -35,7 +39,9 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.Books.Include(b => b.BookCover).ToList();
+            return db.Books
+                .Include(b => b.BookCover)
+                .ToList();
         }
         catch (Exception e)
         {
@@ -61,7 +67,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == book.Id);
+            return db.BookInventories
+                .FirstOrDefault(bookInventory => bookInventory.BookId == book.Id);
         }
         catch (Exception e)
         {
@@ -74,7 +81,10 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.BorrowedBooks.Where(borrowedBook => borrowedBook.UserId == reader.Id).ToList();
+            return db.BorrowedBooks
+                .Include(b => b.Book)
+                .Where(borrowedBook => borrowedBook.UserId == reader.Id)
+                .ToList();
         }
         catch (Exception e)
         {
@@ -87,7 +97,10 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.ReservedBooks.Where(reservedBook => reservedBook.UserId == reader.Id).ToList();
+            return db.ReservedBooks
+                .Include(b => b.Book)
+                .Where(reservedBook => reservedBook.UserId == reader.Id)
+                .ToList();
         }
         catch (Exception e)
         {
@@ -100,7 +113,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.ReservedBooks.FirstOrDefault(reservedBook => reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
+            return db.ReservedBooks
+                .FirstOrDefault(reservedBook => reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
 
         }
         catch (Exception e)
@@ -162,7 +176,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return db.FavoriteBooks.Any(favoriteBook => favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
+            return db.FavoriteBooks
+                .Any(favoriteBook => favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
         }
         catch (Exception e)
         {
