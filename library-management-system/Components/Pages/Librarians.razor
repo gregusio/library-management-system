@@ -23,7 +23,7 @@
                 @for (var i = _librariansPerPage * (_currentPageNumber - 1); i < _librariansPerPage * _currentPageNumber && i < LibrariansCount; i++)
                 {
                     var i1 = i;
-                    <div class="single-card">
+                    <div class="single-card" @onclick="@(() => OnShowDetails(AllLibrarians![i1]))">
                         <UserRecord User="@AllLibrarians![i1]"/>
                     </div>
                 }
@@ -35,6 +35,8 @@
                             PageChanged="OnPageChangedAsync"/>
             </div>
         </div>
+        
+        <UserDetailsModal @ref="_userDetailsModal" OnSaveEdit="OnInitializedAsync"></UserDetailsModal>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -48,6 +50,8 @@
     private int LibrariansCount => AllLibrarians!.Count;
 
     private List<User>? AllLibrarians { get; set; } = [];
+
+    private UserDetailsModal _userDetailsModal = default!;
 
     protected override Task OnInitializedAsync()
     {
@@ -64,6 +68,11 @@
     private async Task OnPageChangedAsync(int newPageNumber)
     {
         await Task.Run(() => { _currentPageNumber = newPageNumber; });
+    }
+    
+    private void OnShowDetails(User user)
+    {
+        _userDetailsModal.Show(user);
     }
 
 }
