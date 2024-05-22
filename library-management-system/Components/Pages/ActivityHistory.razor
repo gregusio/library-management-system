@@ -14,11 +14,16 @@
 
 <AuthorizeView>
     <Authorized>
-        @foreach(var (activity, date) in UserActivityHistory!)
-        {
-            <p>@date: @activity</p>
-        }
-    </Authorized>
+        <div class="history-page">
+            <div class="activity">
+
+                @foreach (var (activity, date) in UserActivityHistory!)
+                {
+                    <p>@date: &emsp; @activity</p>
+                }
+            </div>
+        </div>
+        </Authorized>
     <NotAuthorized>
         <p>Not authorized</p>
     </NotAuthorized>

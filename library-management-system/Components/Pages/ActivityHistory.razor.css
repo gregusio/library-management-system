@@ -1,0 +1,16 @@
+.history-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.activity {
+    display: flex;
+    flex-direction: column;
+    margin: 3rem;
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 2rem;
+}
