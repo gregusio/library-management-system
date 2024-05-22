@@ -1,0 +1,163 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject DbApi DbApi
+
+<Modal @ref="_modal" Size="ModalSize.ExtraLarge">
+    <BodyTemplate>
+        <div class="common-page-styles">
+            <div class="modal-body">
+                <div class="record">
+                    <div class="image-placeholder">
+                        <img class="image" src="data:image/jpg;base64, @Convert.ToBase64String(Avatar!.Image!)" alt="@User!.Name"/>
+                    </div>
+
+                    <div class="description-and-actions">
+                        <div class="actions">
+                            @if (_editMode)
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Save" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.Save" @onclick="Save"></Icon>
+                                    </Tooltip>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Edit" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.PencilSquare" @onclick="ToggleEditMode"></Icon>
+                                    </Tooltip>
+                                </div>
+                            }
+                            
+                            <div class="action">
+                                <Tooltip Title="Remove" Placement="TooltipPlacement.Top">
+                                    <Icon Name="IconName.Trash" Color="IconColor.Danger" @onclick="RemoveUser"></Icon>
+                                </Tooltip>
+                            </div>
+                        </div>
+
+                        <Card>
+                            <CardTitle Style="margin: 1rem">
+                                @if (_editMode)
+                                {
+                                    <div class="info">
+                                        <div class="form-floating">
+                                            <InputText @bind-Value="@User.Name" class="form-control"
+                                                       aria-required="true"/>
+                                            <label>Title</label>
+                                        </div>
+                                    
+                                        <div class="form-floating">
+                                            <InputText @bind-Value="@User.Surname" class="form-control"
+                                                       aria-required="true"/>
+                                            <label>Surname</label>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @User.Name @User.Surname
+                                }
+                            </CardTitle>
+                            <CardBody>
+                                <CardText>
+                                    <div class="info">
+                                        @if (_editMode)
+                                        {
+                                            <div class="form-floating">
+                                                <InputText @bind-Value="@User.Address" class="form-control"
+                                                           aria-required="true"/>
+                                                <label>Address</label>
+                                            </div>
+                                            <div class="form-floating">
+                                                <InputText @bind-Value="@User.TelephoneNr" class="form-control"
+                                                           aria-required="true"/>
+                                                <label>Phone number</label>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <p>
+                                                Address: @User.Address
+                                            </p>
+                                            <p>
+                                                Phone number: @User.TelephoneNr
+                                            </p>
+                                        }
+                                    </div>
+                                </CardText>
+                            </CardBody>
+                        </Card>
+
+                        <Accordion>
+                            <AccordionItem Title="Borrowed books">
+                                <Content>
+                                    @foreach (var borrowedBook in BorrowedBooks)
+                                    {
+                                        var book = borrowedBook.Book!;
+                                        <p>Title: @book.Title Author: @book.Author</p>
+                                    }
+
+                                </Content>
+                            </AccordionItem>
+                        </Accordion>
+
+                        <Accordion>
+                            <AccordionItem Title="Reserved books">
+                                <Content>
+                                    @foreach (var reservedBook in ReservedBooks)
+                                    {
+                                        var book = reservedBook.Book!;
+                                        <p>Title: @book.Title Author: @book.Author</p>
+                                    }
+                                </Content>
+                            </AccordionItem>
+                        </Accordion>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnSaveEdit { get; set; }
+    private User? User { get; set; }
+    private Avatar? Avatar => User!.Avatar ?? new();
+    private List<BorrowedBook> BorrowedBooks => DbApi.GetBorrowedBooks(User!) ?? new();
+    private List<ReservedBook> ReservedBooks => DbApi.GetReservedBooks(User!) ?? new();
+    
+    private bool _editMode = false;
+    
+    private Modal _modal = default!;
+
+    public void Show(User user)
+    {
+        User = user;
+        _editMode = false;
+        _modal.ShowAsync();
+    }
+    
+    private void RemoveUser()
+    {
+        _modal.HideAsync();
+        DbApi.RemoveUser(User!);
+        OnSaveEdit.InvokeAsync();
+    }
+
+    private void ToggleEditMode()
+    {
+        _editMode = !_editMode;
+    }
+
+    private void Save()
+    {
+        _editMode = false;
+        OnSaveEdit.InvokeAsync();
+        DbApi.SaveChanges();
+    }
+
+}

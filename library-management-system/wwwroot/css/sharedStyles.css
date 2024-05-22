@@ -53,3 +53,92 @@
 .common-page-styles .avatar.selected {
     border: 2px solid #007bff;
 }
+
+.common-page-styles .modal-body {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: center;
+    width: 100%;
+}
+
+.common-page-styles .record {
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    gap: 2rem;
+}
+
+.common-page-styles .image-placeholder {
+    display: flex;
+    flex-direction: column;
+    margin-right: 1rem;
+    margin-top: 2rem;
+    overflow: hidden;
+}
+
+.common-page-styles .image {
+    border: 1px solid #3a0647;
+    border-radius: 5px;
+    margin: 1rem;
+    height: auto;
+    max-width: 25rem;
+    object-fit: cover;
+}
+
+.common-page-styles .info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.common-page-styles .description-and-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 30rem;
+    margin-top: 1rem;
+}
+
+.common-page-styles .actions {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+}
+
+.common-page-styles .action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 50%;
+}
+
+@media (max-width: 1200px) {
+    .common-page-styles .modal-body {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .common-page-styles .record {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .common-page-styles .description-and-actions {
+        width: 100%;
+    }
+
+    .common-page-styles .image-placeholder {
+        justify-content: center;
+    }
+}
+

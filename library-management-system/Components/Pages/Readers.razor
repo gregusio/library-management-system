@@ -27,7 +27,7 @@
             @for (var i = _readersPerPage * (_currentPageNumber - 1); i < _readersPerPage * _currentPageNumber && i < ReadersCount; i++)
             {
                 var i1 = i;
-                <div class="single-card">
+                <div class="single-card" @onclick="@(() => OnShowDetails(SelectedReaders![i1]))">
                     <UserRecord User="@(SelectedReaders![i1])"/>
                 </div>
             }
@@ -40,6 +40,7 @@
             
         </div>
         
+        <UserDetailsModal @ref="_userDetailsModal" OnSaveEdit="OnInitializedAsync"></UserDetailsModal>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -58,6 +59,8 @@
     private List<User>? AllReaders { get; set; } = [];
 
     private List<User>? SelectedReaders { get; set; } = [];
+    
+    private UserDetailsModal _userDetailsModal = default!;
 
     protected override Task OnInitializedAsync()
     {
@@ -86,6 +89,11 @@
             SelectedReaders = AllReaders!.Where(reader => reader.Name!.Contains(e.Value!.ToString()!)).ToList();
             _currentPageNumber = 1;
         });
+    }
+    
+    private void OnShowDetails(User user)
+    {
+        _userDetailsModal.Show(user);
     }
 
 }
