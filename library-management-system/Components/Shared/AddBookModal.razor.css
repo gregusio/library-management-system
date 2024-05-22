@@ -11,21 +11,19 @@
 
 .image-select {
     display: flex;
-    flex-grow: 1;
     flex-direction: column;
+    margin-right: 1rem;
+    margin-top: 2rem;
+    overflow: hidden;
 }
 
 .image {
+    border: 1px solid #3a0647;
+    border-radius: 5px;
     margin: 1rem;
-    display: flex;
-    justify-content: center;
-    max-height: 500px;
-}
-
-.image img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    height: auto;
+    max-width: 25rem;
+    object-fit: cover;
 }
 
 .file-select {

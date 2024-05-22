@@ -68,10 +68,10 @@
             </div>
         
             <div class="image-select">
-                <div class="image">
-                    <img src="data:image/jpg;base64, @Convert.ToBase64String(Input.Image)"
-                         alt="Image"/>
-                </div>
+                <img class="image" 
+                     src="data:image/jpg;base64, @Convert.ToBase64String(Input.Image)"
+                     alt="Image"/>
+                
 
                 <div class="file-select">
                     <InputFile OnChange="LoadFile" class="form-control" accept=".jpg, .jpeg, .png"/>
