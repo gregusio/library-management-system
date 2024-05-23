@@ -2,6 +2,7 @@
 @using library_management_system.Services
 
 @inject DbApi DbApi
+@inject AlertService AlertService
 
 <Modal @ref="_modal" Size="ModalSize.ExtraLarge">
     <BodyTemplate>
@@ -237,7 +238,9 @@
 
     private void ReserveBook()
     {
-        
+        var result = DbApi.ReserveBook(User!, Book!);
+        AlertService.ShowOperationResult(result);
+        OnSaveEdit.InvokeAsync();
     }
     
     private void RemoveBook()
