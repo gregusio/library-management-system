@@ -1,0 +1,8 @@
+.book-record {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    align-items: center;
+}
