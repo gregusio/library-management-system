@@ -1,7 +1,7 @@
 .checkbox-wrapper {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-left: 1rem;
 }
 
 .checkbox-wrapper .checkbox-label {
