@@ -85,7 +85,11 @@
     </BodyTemplate>
 </Modal>
 
-<Button Size="Size.ExtraLarge" Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Book</Button>
+<div class="add-book-button">
+    <Tooltip Title="Add book" Placement="TooltipPlacement.Top">
+        <Icon Name="IconName.PlusSquareFill" Color="IconColor.Primary" @onclick="OnShowModalClick"></Icon>
+    </Tooltip>
+</div>
 
 @code {
     [Parameter] public EventCallback OnAdd { get; set; }

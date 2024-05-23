@@ -32,3 +32,10 @@
     margin: 1rem;
     align-items: end;
 }
+
+.add-book-button {
+    display: flex;
+    align-items: end;
+    font-size: 3rem;
+    cursor: pointer;
+}
