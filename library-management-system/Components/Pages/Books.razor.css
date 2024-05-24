@@ -9,3 +9,10 @@
     font-size: 1rem;
     color: #333;
 }
+
+.button-placement {
+    display: flex;
+    align-items: end;
+    font-size: 3rem;
+    cursor: pointer;
+}

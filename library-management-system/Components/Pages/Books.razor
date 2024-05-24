@@ -22,6 +22,22 @@
                         <AddBookModal OnAdd="OnInitializedAsync"></AddBookModal>
                     </Authorized>
                 </AuthorizeView>
+                
+                <AuthorizeView Roles="reader">
+                    <Authorized Context="onlyForReaders">
+                        <div class="button-placement">
+                            <Tooltip Title="Borrowed books" Placement="TooltipPlacement.Top">
+                                <Icon Name="IconName.BookFill" Color="IconColor.Primary" @onclick="ShowBorrowedBooks"></Icon>
+                            </Tooltip>
+                        </div>
+
+                        <div class="button-placement">
+                            <Tooltip Title="Reserved books" Placement="TooltipPlacement.Top">
+                                <Icon Name="IconName.BookHalf" Color="IconColor.Primary" @onclick="ShowReservedBooks"></Icon>
+                            </Tooltip>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
 
                 <div class="checkbox-wrapper">
                     <InputCheckbox id="showFavCheckbox" @bind-Value="@_showFav" @onclick="ShowFav"></InputCheckbox>
@@ -75,12 +91,18 @@
     private List<Book>? SelectedBooks { get; set; } = [];
     
     private List<Book>? FavBooks { get; set; } = [];
+    
+    private List<ReservedBook>? ReservedBooks { get; set; } = [];
+    
+    private List<BorrowedBook>? BorrowedBooks { get; set; } = [];
 
     protected override Task OnInitializedAsync()
     {
         AllBooks = DbApi.GetAllBooks();
         User = AuthService.GetUser(AuthenticationStateProvider).Result ?? new User();
         FavBooks = DbApi.GetFavoriteBooks(User) ?? [];
+        ReservedBooks = DbApi.GetReservedBooks(User) ?? [];
+        BorrowedBooks = DbApi.GetBorrowedBooks(User) ?? [];
         if (AllBooks == null)
         {
             AlertService.ShowWarning("Failed to load books");
@@ -107,7 +129,7 @@
             return;
         }
 
-        SelectedBooks = AllBooks!.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
+        SelectedBooks = SelectedBooks!.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
     }
     
     private void OnShowDetails(Book book)
@@ -118,6 +140,16 @@
     private void ShowFav()
     {
         SelectedBooks = !_showFav ? FavBooks : AllBooks;
+    }
+    
+    private void ShowBorrowedBooks()
+    {
+        SelectedBooks = BorrowedBooks!.Select(b => b.Book).ToList()!;
+    }
+    
+    private void ShowReservedBooks()
+    {
+        SelectedBooks = ReservedBooks!.Select(b => b.Book).ToList()!;
     }
 
 }
