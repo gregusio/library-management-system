@@ -119,21 +119,14 @@
             AllBooks = [];
         }
 
-        switch (CurrState)
+        SelectedBooks = CurrState switch
         {
-            case "all":
-                SelectedBooks = AllBooks;
-                break;
-            case "borrowed":
-                SelectedBooks = BorrowedBooks!.Select(b => b.Book).ToList()!;
-                break;
-            case "reserved":
-                SelectedBooks = ReservedBooks!.Select(b => b.Book).ToList()!;
-                break;
-            case "favorites":
-                SelectedBooks = FavBooks;
-                break;
-        }
+            "all" => AllBooks,
+            "borrowed" => BorrowedBooks!.Select(b => b.Book).ToList()!,
+            "reserved" => ReservedBooks!.Select(b => b.Book).ToList()!,
+            "favorites" => FavBooks,
+            _ => AllBooks
+        };
 
         return base.OnInitializedAsync();
     }
