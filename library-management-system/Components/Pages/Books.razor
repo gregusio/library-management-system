@@ -5,17 +5,17 @@
 @using library_management_system.Services
 @using library_management_system.Components.Shared
 
-@inject DbApi DbApi
-@inject AlertService AlertService
-@inject AuthService AuthService
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject DbApi dbApi
+@inject AlertService alertService
+@inject AuthService authService
+@inject AuthenticationStateProvider authenticationStateProvider
 @inject NavigationManager navigationManager
 
 
 <PageTitle>Books</PageTitle>
 
 <AuthorizeView>
-    <Authorized Context="wholePage">
+    <Authorized Context="authorized">
         <div class="common-page-styles">
             <div class="button-and-input">
                 <AuthorizeView Roles="admin,librarian">
@@ -80,6 +80,7 @@
     </NotAuthorized>
 </AuthorizeView>
 
+
 @code {
     [Parameter] public string CurrState { get; set; } = "all";
 
@@ -106,15 +107,15 @@
 
     protected override Task OnInitializedAsync()
     {
-        User = AuthService.GetUser(AuthenticationStateProvider).Result;
-        AllBooks = DbApi.GetAllBooks();
-        FavBooks = DbApi.GetFavoriteBooks(User!) ?? [];
-        ReservedBooks = DbApi.GetReservedBooks(User!) ?? [];
-        BorrowedBooks = DbApi.GetBorrowedBooks(User!) ?? [];
+        User = authService.GetUser(authenticationStateProvider).Result;
+        AllBooks = dbApi.GetAllBooks();
+        FavBooks = dbApi.GetFavoriteBooks(User!) ?? [];
+        ReservedBooks = dbApi.GetReservedBooks(User!) ?? [];
+        BorrowedBooks = dbApi.GetBorrowedBooks(User!) ?? [];
 
         if (AllBooks == null)
         {
-            AlertService.ShowWarning("Failed to load books");
+            alertService.ShowWarning("Failed to load books");
             AllBooks = [];
         }
 
