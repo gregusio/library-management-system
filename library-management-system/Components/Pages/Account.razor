@@ -10,7 +10,7 @@
 @inject AuthService AuthService
 @inject AlertService AlertService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserManager<User> UserManager
+
 @inject ILogger<Account> Logger
 @inject DbApi DbApi
 
@@ -28,38 +28,11 @@
             <div class="actions">
                 <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangeAvatarClick">Change avatar</Button>
                 <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangeInfoClick">Change info</Button>
-                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangePasswordClick">Change password</Button>
+                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangePasswordClick">Change password</Button>
             </div>
         </div>
 
-        <Modal @ref="_passwordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.Regular" OnHiding="OnHideModalClick">
-            <BodyTemplate>
-                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
-
-                <div class="row">
-                    <EditForm Model="Input" FormName="change-password" OnValidSubmit="OnValidSubmitAsync" method="post">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary class="text-danger" role="alert" />
-                        <div class="form-floating mb-3">
-                            <InputText type="password" @bind-Value="Input.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your old password." />
-                            <label class="form-label">Old password</label>
-                            <ValidationMessage For="() => Input.OldPassword" class="text-danger" />
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText type="password" @bind-Value="Input.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please enter your new password." />
-                            <label class="form-label">New password</label>
-                            <ValidationMessage For="() => Input.NewPassword" class="text-danger" />
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please confirm your new password." />
-                            <label class="form-label">Confirm password</label>
-                            <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-                        </div>
-                        <button type="submit" class="w-100 btn btn-lg btn-primary">Update password</button>
-                    </EditForm>
-                </div>
-            </BodyTemplate>
-        </Modal>
+        <ChangePasswordModal @ref="_changePasswordModal" User="User" />
         
         <Modal @ref="_avatarModal" Title="Change avatar" IsVerticallyCentered="true" Size="ModalSize.Large" OnHiding="OnHideModalClick">
             <BodyTemplate>
@@ -84,39 +57,39 @@
             </FooterTemplate>
         </Modal>
 
-        <Modal @ref="_infoModal" title="Change info" IsVerticallyCentered="true" Size="ModalSize.Regular">
-            <BodyTemplate>
-                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
-
-                <div>
-                    <EditForm Model="Input" method="post" OnValidSubmit="ChangeInfo"
-                              FormName="register">
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="User.Name" class="form-control"
-                                       aria-required="true"/>
-                            <label>Name</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="User.Surname" class="form-control"
-                                       aria-required="true"/>
-                            <label>Surname</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="User.Address" class="form-control"
-                                       aria-required="true"/>
-                            <label>Address</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="User.TelephoneNr" class="form-control"
-                                       aria-required="true"/>
-                            <label>Phone Number</label>
-                        </div>
-
-                        <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-                    </EditForm>
-                </div>
-            </BodyTemplate>
-        </Modal>
+        @* <Modal @ref="_infoModal" title="Change info" IsVerticallyCentered="true" Size="ModalSize.Regular"> *@
+        @*     <BodyTemplate> *@
+        @*         <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/> *@
+        @* *@
+        @*         <div> *@
+        @*             <EditForm Model="Input" method="post" OnValidSubmit="ChangeInfo" *@
+        @*                       FormName="register"> *@
+        @*                 <div class="form-floating mb-3"> *@
+        @*                     <InputText @bind-Value="User.Name" class="form-control" *@
+        @*                                aria-required="true"/> *@
+        @*                     <label>Name</label> *@
+        @*                 </div> *@
+        @*                 <div class="form-floating mb-3"> *@
+        @*                     <InputText @bind-Value="User.Surname" class="form-control" *@
+        @*                                aria-required="true"/> *@
+        @*                     <label>Surname</label> *@
+        @*                 </div> *@
+        @*                 <div class="form-floating mb-3"> *@
+        @*                     <InputText @bind-Value="User.Address" class="form-control" *@
+        @*                                aria-required="true"/> *@
+        @*                     <label>Address</label> *@
+        @*                 </div> *@
+        @*                 <div class="form-floating mb-3"> *@
+        @*                     <InputText @bind-Value="User.TelephoneNr" class="form-control" *@
+        @*                                aria-required="true"/> *@
+        @*                     <label>Phone Number</label> *@
+        @*                 </div> *@
+        @* *@
+        @*                 <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button> *@
+        @*             </EditForm> *@
+        @*         </div> *@
+        @*     </BodyTemplate> *@
+        @* </Modal> *@
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -131,8 +104,7 @@
     private List<Avatar>? Avatars { get; set; } = [];
     private Avatar? SelectedAvatar { get; set; }
 
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private ChangePasswordModal _changePasswordModal = default!;
 
     protected override Task OnInitializedAsync()
     {
@@ -148,9 +120,9 @@
         return base.OnInitializedAsync();
     }
     
-    private async Task OnShowChangePasswordClick()
+    private async Task OnChangePasswordClick()
     {
-        await _passwordModal.ShowAsync();
+        await _changePasswordModal.Show();
     }
     
     private async Task OnShowChangeAvatarClick()
@@ -171,21 +143,7 @@
         AlertService.ClearMessages();
     }
 
-    private async Task OnValidSubmitAsync()
-    {
-        var changePasswordResult = await UserManager.ChangePasswordAsync(User!, Input.OldPassword, Input.NewPassword);
-        if (!changePasswordResult.Succeeded)
-        {
-            AlertService.ShowWarning("Something went wrong. Please try again.");
-            return;
-        }
-
-        Logger.LogInformation("User changed their password successfully.");
-
-        AlertService.ShowSuccess("Your password has been changed.");
-
-        Input = new InputModel();
-    }
+    
     
     private void ChangeAvatar()
     {
@@ -204,23 +162,6 @@
         AlertService.ShowOperationResult(result);
     }
 
-    private sealed class InputModel
-    {
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Current password")]
-        public string OldPassword { get; set; } = "";
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "New password")]
-        public string NewPassword { get; set; } = "";
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm new password")]
-        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; } = "";
-    }
+    
     
 }
