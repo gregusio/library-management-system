@@ -4,10 +4,10 @@
 @using library_management_system.Model
 @using library_management_system.Services
 
-@inject AuthService AuthService
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject DbApi DbApi
-@inject AlertService AlertService
+@inject AuthService authService
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject DbApi dbApi
+@inject AlertService alertService
 
 
 <PageTitle>Activity history</PageTitle>
@@ -35,12 +35,12 @@
 
     protected override Task OnInitializedAsync()
     {
-        User = AuthService.GetUser(AuthenticationStateProvider).Result;
-        UserActivityHistory = DbApi.GetUserActivityHistory(User!);
+        User = authService.GetUser(authenticationStateProvider).Result;
+        UserActivityHistory = dbApi.GetUserActivityHistory(User!);
 
         if (UserActivityHistory == null)
         {
-            AlertService.ShowWarning("Failed to get user activity history.");
+            alertService.ShowWarning("Failed to get user activity history.");
             UserActivityHistory = [];
         }
 
