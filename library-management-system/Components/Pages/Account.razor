@@ -3,16 +3,10 @@
 
 @using library_management_system.Services
 @using library_management_system.Model
-@using Microsoft.AspNetCore.Identity
-@using System.ComponentModel.DataAnnotations
 @using library_management_system.Components.Shared
 
 @inject AuthService AuthService
-@inject AlertService AlertService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
-@inject ILogger<Account> Logger
-@inject DbApi DbApi
 
 
 <PageTitle>Account</PageTitle>
@@ -22,33 +16,30 @@
 
         <div class="account-site">
             <div class="account-info">
-                <UserRecord User="@(User)" />
+                <UserRecord User="User"/>
             </div>
-            
+
             <div class="actions">
                 <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangeAvatarClick">Change avatar</Button>
                 <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangeUserInfoClick">Change info</Button>
                 <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangePasswordClick">Change password</Button>
             </div>
         </div>
-        
-        <ChangeAvatarModal @ref="_changeAvatarModal" User="User" OnAvatarChanged="OnInitializedAsync" />
 
-        <ChangeUserInfoModal @ref="_changeUserInfoModal" User="User" OnInfoChanged="OnInitializedAsync" />
-        
-        <ChangePasswordModal @ref="_changePasswordModal" User="User" />
+        <ChangeAvatarModal @ref="_changeAvatarModal" User="User" OnAvatarChanged="OnInitializedAsync"/>
+
+        <ChangeUserInfoModal @ref="_changeUserInfoModal" User="User" OnInfoChanged="OnInitializedAsync"/>
+
+        <ChangePasswordModal @ref="_changePasswordModal" User="User"/>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
     </NotAuthorized>
 </AuthorizeView>
 
+
 @code {
-    private Modal _passwordModal = default!;
-    private Modal _avatarModal = default!;
-    private Modal _infoModal = default!;
     private User? User { get; set; }
-    private Avatar? SelectedAvatar { get; set; }
 
     private ChangeAvatarModal _changeAvatarModal = default!;
     private ChangeUserInfoModal _changeUserInfoModal = default!;
@@ -57,53 +48,23 @@
     protected override Task OnInitializedAsync()
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
-        
 
         return base.OnInitializedAsync();
     }
-    
+
     private void OnChangePasswordClick()
     {
         _changePasswordModal.Show();
     }
-    
+
     private void OnChangeAvatarClick()
     {
         _changeAvatarModal.Show();
     }
-    
+
     private void OnChangeUserInfoClick()
     {
         _changeUserInfoModal.Show();
     }
-    
-    private async Task OnHideModalClick()
-    {
-        await _passwordModal.HideAsync();
-        await _avatarModal.HideAsync();
-        await _infoModal.HideAsync();
-        AlertService.ClearMessages();
-    }
 
-    
-    
-    private void ChangeAvatar()
-    {
-        User!.Avatar = SelectedAvatar;
-        User.AvatarId = SelectedAvatar!.Id;
-
-        var result = DbApi.SaveChanges();
-        
-        AlertService.ShowOperationResult(result);
-    }
-    
-    private void ChangeInfo()
-    {
-        var result = DbApi.SaveChanges();
-        
-        AlertService.ShowOperationResult(result);
-    }
-
-    
-    
 }
