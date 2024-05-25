@@ -4,17 +4,18 @@
 @using library_management_system.Model
 @using library_management_system.Services
 
-@inject DbApi DbApi
-@inject AlertService AlertService
+@inject DbApi dbApi
+@inject AlertService alertService
 
 
 <PageTitle>Borrow book</PageTitle>
 
 <AuthorizeView Roles="admin,librarian">
     <Authorized>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
         <div class="borrow-page">
             <div class="content">
-
                 <BlazoredTypeahead SearchMethod="GetReadersLocal"
                                    TItem="User"
                                    TValue="User"
@@ -56,11 +57,9 @@
                         <Button Color="ButtonColor.Primary" Size="Size.Medium" @onclick="TryBorrowBook"> Borrow Book </Button>
                     </div>
                 </div>
-                
-                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
             </div>
         </div>
-        
+
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -69,19 +68,20 @@
 
 @code {
     private List<User>? AllReaders { get; set; } = [];
-    private User? SelectedPerson { get; set; }
     private List<Book>? AllBooks { get; set; } = [];
+
+    private User? SelectedPerson { get; set; }
     private Book? SelectedBook { get; set; }
     private DateTime Deadline { get; set; } = DateTime.Now.AddDays(14);
 
     protected override Task OnInitializedAsync()
     {
-        AllReaders = DbApi.GetAllReaders();
-        AllBooks = DbApi.GetAllBooks();
+        AllReaders = dbApi.GetAllReaders();
+        AllBooks = dbApi.GetAllBooks();
 
         if (AllReaders != null && AllBooks != null) return base.OnInitializedAsync();
-        
-        AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
+
+        alertService.ShowWarning("Failed to load data from the database. Please try again later.");
         AllReaders = [];
         AllBooks = [];
 
@@ -102,24 +102,25 @@
     {
         if (SelectedPerson == null || SelectedBook == null)
         {
-            AlertService.ShowInfo("Please select a person and a book");
+            alertService.ShowInfo("Please select a person and a book");
             return;
         }
 
-        var reservedBook = DbApi.GetReservedBook(SelectedPerson, SelectedBook);
+        var reservedBook = dbApi.GetReservedBook(SelectedPerson, SelectedBook);
 
         EOperationResult result;
         if (reservedBook != null)
         {
-            result = DbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
+            result = dbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
 
-            AlertService.ShowOperationResult(result);
-            
+            alertService.ShowOperationResult(result);
+
             return;
         }
 
-        result = DbApi.BorrowBook(SelectedPerson, SelectedBook);
-        
-        AlertService.ShowOperationResult(result);
+        result = dbApi.BorrowBook(SelectedPerson, SelectedBook);
+
+        alertService.ShowOperationResult(result);
     }
+
 }
