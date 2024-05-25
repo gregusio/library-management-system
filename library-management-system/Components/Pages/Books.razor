@@ -1,60 +1,66 @@
-﻿@page "/books"
+﻿@page "/books/{CurrState}"
 @rendermode InteractiveServer
 
 @using library_management_system.Model
 @using library_management_system.Services
 @using library_management_system.Components.Shared
 
-@inject DbApi DbApi
-@inject AlertService AlertService
-@inject AuthService AuthService
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject DbApi dbApi
+@inject AlertService alertService
+@inject AuthService authService
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject NavigationManager navigationManager
 
 
 <PageTitle>Books</PageTitle>
 
 <AuthorizeView>
-    <Authorized Context="wholePage">
+    <Authorized Context="authorized">
         <div class="common-page-styles">
             <div class="button-and-input">
                 <AuthorizeView Roles="admin,librarian">
-                    <Authorized Context="onlyForLibrarians">
-                        <AddBookModal OnAdd="OnInitializedAsync"></AddBookModal>
-                    </Authorized>
-                </AuthorizeView>
-                
-                <AuthorizeView Roles="reader">
-                    <Authorized Context="onlyForReaders">
-                        <div class="button-placement">
-                            <Tooltip Title="Borrowed books" Placement="TooltipPlacement.Top">
-                                <Icon Name="IconName.BookFill" Color="IconColor.Primary" @onclick="ShowBorrowedBooks"></Icon>
-                            </Tooltip>
-                        </div>
-
-                        <div class="button-placement">
-                            <Tooltip Title="Reserved books" Placement="TooltipPlacement.Top">
-                                <Icon Name="IconName.BookHalf" Color="IconColor.Primary" @onclick="ShowReservedBooks"></Icon>
-                            </Tooltip>
-                        </div>
-                    </Authorized>
+                    <div class="button-placement">
+                        <Tooltip Title="Add book" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.PlusSquareFill" Color="IconColor.Primary" @onclick="OnAddBookClick"></Icon>
+                        </Tooltip>
+                    </div>
                 </AuthorizeView>
 
-                <div class="checkbox-wrapper">
-                    <InputCheckbox id="showFavCheckbox" @bind-Value="@_showFav" @onclick="ShowFav"></InputCheckbox>
-                    <label for="showFavCheckbox" class="checkbox-label">Show Favorites</label>
+                <div class="button-placement">
+                    <Tooltip Title="All books" Placement="TooltipPlacement.Top">
+                        <Icon Name="IconName.Book" Color="IconColor.Primary" @onclick="OnAllBooksClick"></Icon>
+                    </Tooltip>
                 </div>
-                
+
+                <div class="button-placement">
+                    <Tooltip Title="Borrowed books" Placement="TooltipPlacement.Top">
+                        <Icon Name="IconName.BookFill" Color="IconColor.Primary" @onclick="OnBorrowedBooksClick"></Icon>
+                    </Tooltip>
+                </div>
+
+                <div class="button-placement">
+                    <Tooltip Title="Reserved books" Placement="TooltipPlacement.Top">
+                        <Icon Name="IconName.BookHalf" Color="IconColor.Primary" @onclick="OnReservedBooksClick"></Icon>
+                    </Tooltip>
+                </div>
+
+                <div class="button-placement">
+                    <Tooltip Title="Favorites books" Placement="TooltipPlacement.Top">
+                        <Icon Name="IconName.HeartFill" Color="IconColor.Danger" @onclick="OnFavoritesBookClick"></Icon>
+                    </Tooltip>
+                </div>
+
                 <InputText class="form-control" placeholder="Search for a book..." style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
             </div>
 
             <div class="cards">
-                @for (var i = _booksPerPage * (_currentPageNumber - 1); i < _booksPerPage * _currentPageNumber && i < BooksCount; i++)
+                @for (var i = FirstIdOnCurrentPage; i < FirstIdOnNextPage && i < BooksCount; i++)
                 {
                     var i1 = i;
+
                     <div class="single-card" @onclick="@(() => OnShowDetails(SelectedBooks![i1]))">
-                        <BookRecord Book="@SelectedBooks![i1]"/>
+                        <BookRecord Book="SelectedBooks![i1]"/>
                     </div>
-                    
                 }
             </div>
 
@@ -64,53 +70,71 @@
                             PageChanged="OnPageChangedAsync"/>
             </div>
         </div>
-        
-        <BookDetailsModal @ref="_bookDetailsModal" OnSaveEdit="OnInitializedAsync" User="User"></BookDetailsModal>
+
+        <AddBookModal @ref="_addBookModal" OnAdd="OnInitializedAsync"/>
+
+        <BookDetailsModal @ref="_bookDetailsModal" OnSaveEdit="OnInitializedAsync" User="User"/>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
     </NotAuthorized>
 </AuthorizeView>
 
+
 @code {
+    [Parameter] public string CurrState { get; set; } = "all";
+
+    private const int BooksPerPage = 4;
+
     private int _currentPageNumber = 1;
-    private const int _booksPerPage = 4;
     private string _searchString = "";
-    private bool _showFav;
-    
+
+    private int FirstIdOnCurrentPage => BooksPerPage * (_currentPageNumber - 1);
+    private int FirstIdOnNextPage => BooksPerPage * _currentPageNumber;
+    private int TotalPages => (BooksCount - 1) / BooksPerPage + 1;
+    private int BooksCount => SelectedBooks!.Count;
+
     private User? User { get; set; }
 
     private BookDetailsModal _bookDetailsModal = default!;
-
-    private int TotalPages => (BooksCount - 1) / _booksPerPage + 1;
-
-    private int BooksCount => SelectedBooks!.Count;
+    private AddBookModal _addBookModal = default!;
 
     private List<Book>? AllBooks { get; set; }
-
     private List<Book>? SelectedBooks { get; set; } = [];
-    
     private List<Book>? FavBooks { get; set; } = [];
-    
     private List<ReservedBook>? ReservedBooks { get; set; } = [];
-    
     private List<BorrowedBook>? BorrowedBooks { get; set; } = [];
 
     protected override Task OnInitializedAsync()
     {
-        AllBooks = DbApi.GetAllBooks();
-        User = AuthService.GetUser(AuthenticationStateProvider).Result ?? new User();
-        FavBooks = DbApi.GetFavoriteBooks(User) ?? [];
-        ReservedBooks = DbApi.GetReservedBooks(User) ?? [];
-        BorrowedBooks = DbApi.GetBorrowedBooks(User) ?? [];
+        User = authService.GetUser(authenticationStateProvider).Result;
+        AllBooks = dbApi.GetAllBooks();
+        FavBooks = dbApi.GetFavoriteBooks(User!) ?? [];
+        ReservedBooks = dbApi.GetReservedBooks(User!) ?? [];
+        BorrowedBooks = dbApi.GetBorrowedBooks(User!) ?? [];
+
         if (AllBooks == null)
         {
-            AlertService.ShowWarning("Failed to load books");
+            alertService.ShowWarning("Failed to load books");
             AllBooks = [];
         }
-        
-        SelectedBooks = AllBooks;
-        
+
+        switch (CurrState)
+        {
+            case "all":
+                SelectedBooks = AllBooks;
+                break;
+            case "borrowed":
+                SelectedBooks = BorrowedBooks!.Select(b => b.Book).ToList()!;
+                break;
+            case "reserved":
+                SelectedBooks = ReservedBooks!.Select(b => b.Book).ToList()!;
+                break;
+            case "favorites":
+                SelectedBooks = FavBooks;
+                break;
+        }
+
         return base.OnInitializedAsync();
     }
 
@@ -131,25 +155,35 @@
 
         SelectedBooks = SelectedBooks!.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
     }
-    
+
     private void OnShowDetails(Book book)
     {
         _bookDetailsModal.Show(book);
     }
-    
-    private void ShowFav()
+
+    private void OnAddBookClick()
     {
-        SelectedBooks = !_showFav ? FavBooks : AllBooks;
+        _addBookModal.Show();
     }
-    
-    private void ShowBorrowedBooks()
+
+    private void OnAllBooksClick()
     {
-        SelectedBooks = BorrowedBooks!.Select(b => b.Book).ToList()!;
+        navigationManager.NavigateTo("/books/all");
     }
-    
-    private void ShowReservedBooks()
+
+    private void OnBorrowedBooksClick()
     {
-        SelectedBooks = ReservedBooks!.Select(b => b.Book).ToList()!;
+        navigationManager.NavigateTo("/books/borrowed");
+    }
+
+    private void OnReservedBooksClick()
+    {
+        navigationManager.NavigateTo("/books/reserved");
+    }
+
+    private void OnFavoritesBookClick()
+    {
+        navigationManager.NavigateTo("/books/favorites");
     }
 
 }
