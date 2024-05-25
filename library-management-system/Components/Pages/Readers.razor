@@ -5,42 +5,43 @@
 @using library_management_system.Services
 @using library_management_system.Components.Shared
 
-@inject DbApi DbApi
-@inject AlertService AlertService
+@inject DbApi dbApi
+@inject AlertService alertService
 
 
 <PageTitle>Readers</PageTitle>
 
 <AuthorizeView Roles="admin,librarian">
-    <Authorized Context="wholePage">
+    <Authorized>
         <div class="common-page-styles">
             <div class="button-and-input">
-
-                <AddUserModal Role="@(ERole.Reader)" OnAdd="OnInitializedAsync"/>
-
+                <Button Size="Size.ExtraLarge" Color="ButtonColor.Primary" @onclick="OnAddReaderClick">Add Reader</Button>
+                
                 <InputText class="form-control" style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
-
             </div>
             
             <div class="cards">
-            
-            @for (var i = _readersPerPage * (_currentPageNumber - 1); i < _readersPerPage * _currentPageNumber && i < ReadersCount; i++)
-            {
-                var i1 = i;
-                <div class="single-card" @onclick="@(() => OnShowDetails(SelectedReaders![i1]))">
-                    <UserRecord User="@(SelectedReaders![i1])"/>
-                </div>
-            }
-
+                @for (var i = FirstIdOnCurrentPage; i < FirstIdOnNextPage && i < ReadersCount; i++)
+                {
+                    var i1 = i;
+                    
+                    <div class="single-card" @onclick="@(() => OnShowDetails(SelectedReaders![i1]))">
+                        <UserRecord User="SelectedReaders![i1]"/>
+                    </div>
+                }
             </div>
             
             <div class="pagination">
-                <Pagination ActivePageNumber="@_currentPageNumber" TotalPages="@TotalPages" PageChanged="OnPageChangedAsync"/>
+                <Pagination ActivePageNumber="@_currentPageNumber" 
+                            TotalPages="@TotalPages" 
+                            PageChanged="OnPageChangedAsync"/>
             </div>
             
         </div>
         
-        <UserDetailsModal @ref="_userDetailsModal" OnSaveEdit="OnInitializedAsync"></UserDetailsModal>
+        <UserDetailsModal @ref="_userDetailsModal" OnSaveEdit="OnInitializedAsync" />
+
+        <AddUserModal @ref="_addUserModal" Role="@(ERole.Reader)" OnAdd="OnInitializedAsync"/>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -48,27 +49,29 @@
 </AuthorizeView>
 
 @code {
+    private const int ReadersPerPage = 4;
+    
     private int _currentPageNumber = 1;
-    private const int _readersPerPage = 4;
     private string? _searchString = "";
 
-    private int TotalPages => (ReadersCount - 1) / _readersPerPage + 1;
-
+    private int FirstIdOnCurrentPage => ReadersPerPage * (_currentPageNumber - 1);
+    private int FirstIdOnNextPage => ReadersPerPage * _currentPageNumber;
+    private int TotalPages => (ReadersCount - 1) / ReadersPerPage + 1;
     private int ReadersCount => SelectedReaders!.Count;
 
     private List<User>? AllReaders { get; set; } = [];
-
     private List<User>? SelectedReaders { get; set; } = [];
     
     private UserDetailsModal _userDetailsModal = default!;
+    private AddUserModal _addUserModal = default!;
 
     protected override Task OnInitializedAsync()
     {
-        AllReaders = DbApi.GetAllReaders();
+        AllReaders = dbApi.GetAllReaders();
 
         if (AllReaders == null)
         {
-            AlertService.ShowWarning("Failed to load readers. Please try again later.");
+            alertService.ShowWarning("Failed to load readers. Please try again later.");
             AllReaders = [];
         }
         
@@ -94,6 +97,11 @@
     private void OnShowDetails(User user)
     {
         _userDetailsModal.Show(user);
+    }
+    
+    private void OnAddReaderClick()
+    {
+        _addUserModal.Show();
     }
 
 }

@@ -92,7 +92,7 @@
     </BodyTemplate>
 </Modal>
 
-<Button Size="Size.ExtraLarge" Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add @(Role.ToString())</Button>
+
 
 @code {
     [Parameter] public ERole Role { get; set; }
@@ -124,9 +124,9 @@
         return base.OnInitializedAsync();
     }
 
-    private async Task OnShowModalClick()
+    public void Show()
     {
-        await _modal.ShowAsync();
+        _modal.ShowAsync();
     }
 
     private async Task OnHideModalClick()

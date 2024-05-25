@@ -15,7 +15,7 @@
     <Authorized>
         <div class="common-page-styles">
             <div class="button-and-input">
-                <AddUserModal Role="@(ERole.Librarian)" OnAdd="OnInitializedAsync"/>
+                <Button Size="Size.ExtraLarge" Color="ButtonColor.Primary" @onclick="OnAddLibrarianClick">Add Librarian</Button>
             </div>
 
             <div class="cards">
@@ -36,7 +36,9 @@
             </div>
         </div>
 
-        <UserDetailsModal @ref="_userDetailsModal" OnSaveEdit="OnInitializedAsync"></UserDetailsModal>
+        <UserDetailsModal @ref="_userDetailsModal" OnSaveEdit="OnInitializedAsync"/>
+
+        <AddUserModal @ref="_addUserModal" Role="@(ERole.Librarian)" OnAdd="OnInitializedAsync"/>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -56,6 +58,7 @@
     private List<User>? AllLibrarians { get; set; } = [];
 
     private UserDetailsModal _userDetailsModal = default!;
+    private AddUserModal _addUserModal = default!;
 
     protected override Task OnInitializedAsync()
     {
@@ -77,6 +80,11 @@
     private void OnShowDetails(User user)
     {
         _userDetailsModal.Show(user);
+    }
+
+    private void OnAddLibrarianClick()
+    {
+        _addUserModal.Show();
     }
 
 }
