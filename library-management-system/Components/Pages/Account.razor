@@ -5,8 +5,8 @@
 @using library_management_system.Model
 @using library_management_system.Components.Shared
 
-@inject AuthService AuthService
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthService authService
+@inject AuthenticationStateProvider authenticationStateProvider
 
 
 <PageTitle>Account</PageTitle>
@@ -47,7 +47,7 @@
 
     protected override Task OnInitializedAsync()
     {
-        User = AuthService.GetUser(AuthenticationStateProvider).Result;
+        User = authService.GetUser(authenticationStateProvider).Result;
 
         return base.OnInitializedAsync();
     }
