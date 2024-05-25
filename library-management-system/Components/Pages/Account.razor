@@ -3,16 +3,10 @@
 
 @using library_management_system.Services
 @using library_management_system.Model
-@using Microsoft.AspNetCore.Identity
-@using System.ComponentModel.DataAnnotations
 @using library_management_system.Components.Shared
 
 @inject AuthService AuthService
-@inject AlertService AlertService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserManager<User> UserManager
-@inject ILogger<Account> Logger
-@inject DbApi DbApi
 
 
 <PageTitle>Account</PageTitle>
@@ -22,205 +16,55 @@
 
         <div class="account-site">
             <div class="account-info">
-                <UserRecord User="@(User)" />
+                <UserRecord User="User"/>
             </div>
-            
+
             <div class="actions">
-                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangeAvatarClick">Change avatar</Button>
-                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangeInfoClick">Change info</Button>
-                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangePasswordClick">Change password</Button>
+                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangeAvatarClick">Change avatar</Button>
+                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangeUserInfoClick">Change info</Button>
+                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangePasswordClick">Change password</Button>
             </div>
         </div>
 
-        <Modal @ref="_passwordModal" title="Change password" IsVerticallyCentered="true" Size="ModalSize.Regular" OnHiding="OnHideModalClick">
-            <BodyTemplate>
-                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+        <ChangeAvatarModal @ref="_changeAvatarModal" User="User" OnAvatarChanged="OnInitializedAsync"/>
 
-                <div class="row">
-                    <EditForm Model="Input" FormName="change-password" OnValidSubmit="OnValidSubmitAsync" method="post">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary class="text-danger" role="alert" />
-                        <div class="form-floating mb-3">
-                            <InputText type="password" @bind-Value="Input.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your old password." />
-                            <label class="form-label">Old password</label>
-                            <ValidationMessage For="() => Input.OldPassword" class="text-danger" />
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText type="password" @bind-Value="Input.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please enter your new password." />
-                            <label class="form-label">New password</label>
-                            <ValidationMessage For="() => Input.NewPassword" class="text-danger" />
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Please confirm your new password." />
-                            <label class="form-label">Confirm password</label>
-                            <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-                        </div>
-                        <button type="submit" class="w-100 btn btn-lg btn-primary">Update password</button>
-                    </EditForm>
-                </div>
-            </BodyTemplate>
-        </Modal>
-        
-        <Modal @ref="_avatarModal" Title="Change avatar" IsVerticallyCentered="true" Size="ModalSize.Large" OnHiding="OnHideModalClick">
-            <BodyTemplate>
-                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+        <ChangeUserInfoModal @ref="_changeUserInfoModal" User="User" OnInfoChanged="OnInitializedAsync"/>
 
-                <div class="common-page-styles">
-                    <div class="avatar-select">
-                        @foreach (var avatar in Avatars!)
-                        {
-                            var isSelected = SelectedAvatar == avatar;
-                            <div class="avatar @(isSelected ? "selected" : "")">
-                                <Button @onclick="() => SelectedAvatar = avatar">
-                                    <img style="width: 100%; height: 100%" src="data:image/jpg;base64, @Convert.ToBase64String(avatar.Image!)" alt="No image"/>
-                                </Button>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </BodyTemplate>
-            <FooterTemplate>
-                <Button Color="ButtonColor.Primary" @onclick="ChangeAvatar">Change avatar</Button>
-            </FooterTemplate>
-        </Modal>
-
-        <Modal @ref="_infoModal" title="Change info" IsVerticallyCentered="true" Size="ModalSize.Regular">
-            <BodyTemplate>
-                <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
-
-                <div>
-                    <EditForm Model="Input" method="post" OnValidSubmit="ChangeInfo"
-                              FormName="register">
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="User.Name" class="form-control"
-                                       aria-required="true"/>
-                            <label>Name</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="User.Surname" class="form-control"
-                                       aria-required="true"/>
-                            <label>Surname</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="User.Address" class="form-control"
-                                       aria-required="true"/>
-                            <label>Address</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="User.TelephoneNr" class="form-control"
-                                       aria-required="true"/>
-                            <label>Phone Number</label>
-                        </div>
-
-                        <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-                    </EditForm>
-                </div>
-            </BodyTemplate>
-        </Modal>
+        <ChangePasswordModal @ref="_changePasswordModal" User="User"/>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
     </NotAuthorized>
 </AuthorizeView>
 
-@code {
-    private Modal _passwordModal = default!;
-    private Modal _avatarModal = default!;
-    private Modal _infoModal = default!;
-    private User? User { get; set; }
-    private List<Avatar>? Avatars { get; set; } = [];
-    private Avatar? SelectedAvatar { get; set; }
 
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+@code {
+    private User? User { get; set; }
+
+    private ChangeAvatarModal _changeAvatarModal = default!;
+    private ChangeUserInfoModal _changeUserInfoModal = default!;
+    private ChangePasswordModal _changePasswordModal = default!;
 
     protected override Task OnInitializedAsync()
     {
         User = AuthService.GetUser(AuthenticationStateProvider).Result;
-        Avatars = DbApi.GetAvatars();
-
-        if (User != null && Avatars != null) return base.OnInitializedAsync();
-        
-        AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
-        User = new User();
-        Avatars = [];
 
         return base.OnInitializedAsync();
     }
-    
-    private async Task OnShowChangePasswordClick()
+
+    private void OnChangePasswordClick()
     {
-        await _passwordModal.ShowAsync();
-    }
-    
-    private async Task OnShowChangeAvatarClick()
-    {
-        await _avatarModal.ShowAsync();
-    }
-    
-    private async Task OnShowChangeInfoClick()
-    {
-        await _infoModal.ShowAsync();
-    }
-    
-    private async Task OnHideModalClick()
-    {
-        await _passwordModal.HideAsync();
-        await _avatarModal.HideAsync();
-        await _infoModal.HideAsync();
-        AlertService.ClearMessages();
+        _changePasswordModal.Show();
     }
 
-    private async Task OnValidSubmitAsync()
+    private void OnChangeAvatarClick()
     {
-        var changePasswordResult = await UserManager.ChangePasswordAsync(User!, Input.OldPassword, Input.NewPassword);
-        if (!changePasswordResult.Succeeded)
-        {
-            AlertService.ShowWarning("Something went wrong. Please try again.");
-            return;
-        }
-
-        Logger.LogInformation("User changed their password successfully.");
-
-        AlertService.ShowSuccess("Your password has been changed.");
-
-        Input = new InputModel();
-    }
-    
-    private void ChangeAvatar()
-    {
-        User!.Avatar = SelectedAvatar;
-        User.AvatarId = SelectedAvatar!.Id;
-
-        var result = DbApi.SaveChanges();
-        
-        AlertService.ShowOperationResult(result);
-    }
-    
-    private void ChangeInfo()
-    {
-        var result = DbApi.SaveChanges();
-        
-        AlertService.ShowOperationResult(result);
+        _changeAvatarModal.Show();
     }
 
-    private sealed class InputModel
+    private void OnChangeUserInfoClick()
     {
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Current password")]
-        public string OldPassword { get; set; } = "";
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "New password")]
-        public string NewPassword { get; set; } = "";
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm new password")]
-        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; } = "";
+        _changeUserInfoModal.Show();
     }
-    
+
 }

@@ -1,0 +1,77 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject AlertService alertService
+@inject DbApi dbApi
+
+
+<Modal @ref="_modal" Title="Change avatar" IsVerticallyCentered="true" Size="ModalSize.Large" OnHiding="OnHideModal">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+        <div class="common-page-styles">
+            <div class="avatar-select">
+                @foreach (var avatar in Avatars!)
+                {
+                    var isSelected = SelectedAvatar == avatar;
+
+                    <div class="avatar @(isSelected ? "selected" : "")">
+                        <Button @onclick="() => SelectedAvatar = avatar">
+                            <img style="width: 100%; height: 100%" src="data:image/jpg;base64, @Convert.ToBase64String(avatar.Image!)" alt="No image"/>
+                        </Button>
+                    </div>
+                }
+            </div>
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="ChangeAvatar">Change avatar</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    [Parameter] public User? User { get; set; }
+    [Parameter] public EventCallback OnAvatarChanged { get; set; }
+
+    private Modal _modal = default!;
+    private List<Avatar>? Avatars { get; set; } = [];
+    private Avatar? SelectedAvatar { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Avatars = dbApi.GetAvatars();
+
+        if (Avatars != null) return base.OnInitializedAsync();
+
+        Avatars = [];
+        alertService.ShowInfo("Something went wrong. Please try again later.");
+
+        return base.OnInitializedAsync();
+    }
+
+    public void Show()
+    {
+        _modal.ShowAsync();
+    }
+
+    private void OnHideModal()
+    {
+        _modal.HideAsync();
+        alertService.ClearMessages();
+    }
+
+    private void ChangeAvatar()
+    {
+        if (SelectedAvatar == null)
+        {
+            alertService.ShowWarning("Please select an avatar.");
+            return;
+        }
+
+        User!.Avatar = SelectedAvatar;
+        var result = dbApi.SaveChanges();
+        alertService.ShowOperationResult(result);
+        OnAvatarChanged.InvokeAsync();
+    }
+
+}
