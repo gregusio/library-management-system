@@ -27,50 +27,16 @@
             
             <div class="actions">
                 <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangeAvatarClick">Change avatar</Button>
-                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnShowChangeInfoClick">Change info</Button>
+                <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangeUserInfoClick">Change info</Button>
                 <Button Color="ButtonColor.Info" Size="Size.ExtraLarge" @onclick="OnChangePasswordClick">Change password</Button>
             </div>
         </div>
         
         <ChangeAvatarModal @ref="_changeAvatarModal" User="User" OnAvatarChanged="OnInitializedAsync" />
 
+        <ChangeUserInfoModal @ref="_changeUserInfoModal" User="User" OnInfoChanged="OnInitializedAsync" />
+        
         <ChangePasswordModal @ref="_changePasswordModal" User="User" />
-        
-        
-
-        @* <Modal @ref="_infoModal" title="Change info" IsVerticallyCentered="true" Size="ModalSize.Regular"> *@
-        @*     <BodyTemplate> *@
-        @*         <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/> *@
-        @* *@
-        @*         <div> *@
-        @*             <EditForm Model="Input" method="post" OnValidSubmit="ChangeInfo" *@
-        @*                       FormName="register"> *@
-        @*                 <div class="form-floating mb-3"> *@
-        @*                     <InputText @bind-Value="User.Name" class="form-control" *@
-        @*                                aria-required="true"/> *@
-        @*                     <label>Name</label> *@
-        @*                 </div> *@
-        @*                 <div class="form-floating mb-3"> *@
-        @*                     <InputText @bind-Value="User.Surname" class="form-control" *@
-        @*                                aria-required="true"/> *@
-        @*                     <label>Surname</label> *@
-        @*                 </div> *@
-        @*                 <div class="form-floating mb-3"> *@
-        @*                     <InputText @bind-Value="User.Address" class="form-control" *@
-        @*                                aria-required="true"/> *@
-        @*                     <label>Address</label> *@
-        @*                 </div> *@
-        @*                 <div class="form-floating mb-3"> *@
-        @*                     <InputText @bind-Value="User.TelephoneNr" class="form-control" *@
-        @*                                aria-required="true"/> *@
-        @*                     <label>Phone Number</label> *@
-        @*                 </div> *@
-        @* *@
-        @*                 <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button> *@
-        @*             </EditForm> *@
-        @*         </div> *@
-        @*     </BodyTemplate> *@
-        @* </Modal> *@
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -85,6 +51,7 @@
     private Avatar? SelectedAvatar { get; set; }
 
     private ChangeAvatarModal _changeAvatarModal = default!;
+    private ChangeUserInfoModal _changeUserInfoModal = default!;
     private ChangePasswordModal _changePasswordModal = default!;
 
     protected override Task OnInitializedAsync()
@@ -105,9 +72,9 @@
         _changeAvatarModal.Show();
     }
     
-    private async Task OnShowChangeInfoClick()
+    private void OnChangeUserInfoClick()
     {
-        await _infoModal.ShowAsync();
+        _changeUserInfoModal.Show();
     }
     
     private async Task OnHideModalClick()
