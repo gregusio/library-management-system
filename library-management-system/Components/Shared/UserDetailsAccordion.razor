@@ -1,0 +1,49 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject DbApi dbApi
+@inject AlertService alertService
+
+
+<Accordion>
+    <AccordionItem Title="Borrowed books">
+        <Content>
+            @foreach (var borrowedBook in BorrowedBooks)
+            {
+                var book = borrowedBook.Book!;
+
+                <div class="book-record">
+                    Title: @book.Title &emsp; Author: @book.Author
+                    <Button Color="ButtonColor.Primary" onclick="@(() => ReturnBook(borrowedBook))">Return</Button>
+                </div>
+            }
+        </Content>
+    </AccordionItem>
+
+    <AccordionItem Title="Reserved books">
+        <Content>
+            @foreach (var book in ReservedBooks.Select(reservedBook => reservedBook.Book!))
+            {
+                <div class="book-record">
+                    Title: @book.Title &emsp; Author: @book.Author
+                </div>
+            }
+        </Content>
+    </AccordionItem>
+</Accordion>
+
+
+@code {
+    [Parameter] public required User User { get; set; }
+
+    private List<BorrowedBook> BorrowedBooks => dbApi.GetBorrowedBooks(User) ?? [];
+    private List<ReservedBook> ReservedBooks => dbApi.GetReservedBooks(User) ?? [];
+
+    private void ReturnBook(BorrowedBook borrowedBook)
+    {
+        var result = dbApi.ReturnBook(borrowedBook);
+        alertService.ShowOperationResult(result);
+        StateHasChanged();
+    }
+
+}
