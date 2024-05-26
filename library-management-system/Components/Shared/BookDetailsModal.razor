@@ -1,26 +1,29 @@
 @using library_management_system.Model
 @using library_management_system.Services
 
-@inject DbApi DbApi
-@inject AlertService AlertService
+@inject DbApi dbApi
+@inject AlertService alertService
 
-<Modal @ref="_modal" Size="ModalSize.ExtraLarge">
+
+<Modal @ref="_modal" Size="ModalSize.ExtraLarge" OnHiding="OnHideModal">
     <BodyTemplate>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
         <div class="common-page-styles">
             <div class="modal-body">
                 <div class="record">
                     <div class="image-placeholder">
-
-                        <img class="image" src="data:image/jpg;base64, @Convert.ToBase64String(BookCover.Image!)" alt="@Book?.Title"/>
+                        <img class="image"
+                             src="data:image/jpg;base64, @Convert.ToBase64String(BookCover.Image!)"
+                             alt="@Book?.Title"/>
 
                         @if (_editMode)
                         {
                             <InputFile style="max-width: 25rem" OnChange="LoadFile" class="form-control" accept=".jpg, .jpeg, .png"/>
                         }
-
                     </div>
 
-                    <div class="">
+                    <div class="description-and-actions">
                         <div class="actions">
                             <div class="action">
                                 @if (IsFav)
@@ -44,169 +47,55 @@
                             </div>
 
                             <AuthorizeView Roles="admin,librarian">
-                                <Authorized>
-                                    @if (_editMode)
-                                    {
-                                        <div class="action">
-                                            <Tooltip Title="Save" Placement="TooltipPlacement.Top">
-                                                <Icon Name="IconName.Save" @onclick="Save"></Icon>
-                                            </Tooltip>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="action">
-                                            <Tooltip Title="Edit" Placement="TooltipPlacement.Top">
-                                                <Icon Name="IconName.PencilSquare" @onclick="ToggleEditMode"></Icon>
-                                            </Tooltip>
-                                        </div>
-                                    }
-                                    
-                                    <div class="action">
-                                        <Tooltip Title="Delete" Placement="TooltipPlacement.Top">
-                                            <Icon Name="IconName.Trash" Color="IconColor.Danger" @onclick="RemoveBook"></Icon>
-                                        </Tooltip>
-                                    </div>
-                                </Authorized>
-                            </AuthorizeView>
-                        </div>
-
-                        <Card>
-                            <CardTitle Style="margin: 1rem">
                                 @if (_editMode)
                                 {
-                                    <div class="form-floating">
-                                        <InputText @bind-Value="@Book!.Title" class="form-control"
-                                                   aria-required="true"/>
-                                        <label>Title</label>
+                                    <div class="action">
+                                        <Tooltip Title="Save" Placement="TooltipPlacement.Top">
+                                            <Icon Name="IconName.Save" @onclick="Save"></Icon>
+                                        </Tooltip>
                                     </div>
                                 }
                                 else
                                 {
-                                    @Book!.Title
+                                    <div class="action">
+                                        <Tooltip Title="Edit" Placement="TooltipPlacement.Top">
+                                            <Icon Name="IconName.PencilSquare" @onclick="ToggleEditMode"></Icon>
+                                        </Tooltip>
+                                    </div>
                                 }
-                            </CardTitle>
-                            <CardBody>
-                                <CardText>
-                                    <div class="info">
-                                        @if (_editMode)
-                                        {
-                                            <div class="form-floating">
-                                                <InputText @bind-Value="@Book!.ISBN" class="form-control"
-                                                           aria-required="true"/>
-                                                <label>ISBN</label>
-                                            </div>
-                                            <div class="form-floating">
-                                                <InputText @bind-Value="@Book.Author" class="form-control"
-                                                           aria-required="true"/>
-                                                <label>Author</label>
-                                            </div>
-                                            <div class="form-floating">
-                                                <InputText @bind-Value="@Book.Publisher" class="form-control"
-                                                           aria-required="true"/>
-                                                <label>Book publisher</label>
-                                            </div>
-                                            <div class="form-floating">
-                                                <InputDate @bind-Value="@Book.PublishDate" class="form-control"
-                                                           aria-required="true"/>
-                                                <label>Publish date</label>
-                                            </div>
-                                            <div class="form-floating">
-                                                <InputSelect @bind-Value="@Book.Category" class="form-control"
-                                                             aria-required="true">
-                                                    @foreach (var category in Enum.GetValues<ECategory>())
-                                                    {
-                                                        <option value="@category">@category</option>
-                                                    }
-                                                </InputSelect>
-                                                <label>Category</label>
-                                            </div>
-                                            <div class="form-floating">
-                                                <InputNumber @bind-Value="@BookInventory.AvailableCopies" class="form-control"
-                                                             aria-required="true"/>
-                                                <label>Available</label>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <p>ISBN: @Book!.ISBN</p>
-                                            <p>Author: @Book.Author</p>
-                                            <p>Publisher: @Book.Publisher</p>
-                                            <p>Publish Date: @Book.PublishDate</p>
-                                            <p>Category: @Book.Category</p>
-                                            <p>Available: @BookInventory.AvailableCopies</p>
-                                        }
-                                    </div>
-                                </CardText>
-                            </CardBody>
-                        </Card>
 
-                        <Accordion>
-                            <AccordionItem Title="Description">
-                                <Content>
-                                    @if (_editMode)
-                                    {
-                                        @* <InputTextArea Placeholder="Description" @bind-Value="@Book.Description"></InputTextArea> *@
-                                    }
-                                    else
-                                    {
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                                            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                                            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                                            voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                                            cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                        </p>
-                                    }
+                                <div class="action">
+                                    <Tooltip Title="Delete" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.Trash" Color="IconColor.Danger" @onclick="RemoveBook"></Icon>
+                                    </Tooltip>
+                                </div>
+                            </AuthorizeView>
+                        </div>
 
-                                </Content>
-                            </AccordionItem>
-                        </Accordion>
+                        <BookInfoCard Book="Book" EditMode="_editMode" ShowBookCover="false" />
 
-                        <Accordion>
-                            <AccordionItem>
-                                <TitleTemplate>
-                                    <div class="title-with-rating">
-                                        <span>Reviews</span>
-                                        <RatingComponent Rating="4.5"></RatingComponent>
-                                    </div>
-                                </TitleTemplate>
-                                <Content>
-                                    <div class="scrollable">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                                        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                                        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                                        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                                        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                    </div>
-                                </Content>
-                            </AccordionItem>
-                        </Accordion>
+                        <BookDetailsAccordion EditMode="_editMode" />
                     </div>
                 </div>
-
             </div>
         </div>
     </BodyTemplate>
 </Modal>
 
+
 @code {
     [Parameter] public EventCallback OnSaveEdit { get; set; }
     [Parameter] public User? User { get; set; }
     
-    private Book? Book { get; set; }
-    private BookCover BookCover => Book!.BookCover ?? new BookCover();
-    private BookInventory BookInventory => DbApi.GetBookInventory(Book!) ?? new BookInventory();
-    private bool IsFav => DbApi.IsBookFavorite(User!, Book!); 
     private bool _editMode = false;
     
     private Modal _modal = default!;
 
+    private Book? Book { get; set; }
+    private BookCover BookCover => Book!.BookCover ?? new BookCover();
+    private BookInventory BookInventory => dbApi.GetBookInventory(Book!) ?? new BookInventory();
+    private bool IsFav => dbApi.IsBookFavorite(User!, Book!);
+    
     public void Show(Book? book)
     {
         if (book == null)
@@ -214,39 +103,40 @@
             Book = new Book();
             return;
         }
-        
+
         Book = book;
         _editMode = false;
         _modal.ShowAsync();
     }
     
+    private void OnHideModal()
+    {
+        _modal.HideAsync();
+        alertService.ClearMessages();
+    }
+
     private void HeartClicked()
     {
-        if (!IsFav)
-        {
-            var result = DbApi.FavoriteBook(User!, Book!);
-            Console.WriteLine(result == EOperationResult.Success ? "Book added to favorites" : "Failed to add book to favorites");
-        }
-        else
-        {
-            var result = DbApi.RemoveFavoriteBook(User!, Book!);
-            Console.WriteLine(result == EOperationResult.Success ? "Book removed from favorites" : "Failed to remove book from favorites");
-        }
-        
+        var result = IsFav ? dbApi.RemoveFavoriteBook(User!, Book!) : dbApi.FavoriteBook(User!, Book!);
+
+        alertService.ShowOperationResult(result);
+
         OnSaveEdit.InvokeAsync();
     }
 
     private void ReserveBook()
     {
-        var result = DbApi.ReserveBook(User!, Book!);
-        AlertService.ShowOperationResult(result);
+        var result = dbApi.ReserveBook(User!, Book!);
+        alertService.ShowOperationResult(result);
+
         OnSaveEdit.InvokeAsync();
     }
-    
+
     private void RemoveBook()
     {
-        var result = DbApi.RemoveBook(Book!);
-        Console.WriteLine(result == EOperationResult.Success ? "Book removed" : "Failed to remove book");
+        var result = dbApi.RemoveBook(Book!);
+        alertService.ShowOperationResult(result);
+
         _modal.HideAsync();
         OnSaveEdit.InvokeAsync();
     }
@@ -260,15 +150,16 @@
     {
         _editMode = false;
         OnSaveEdit.InvokeAsync();
-        DbApi.SaveChanges();
+        dbApi.SaveChanges();
     }
-    
+
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
         var file = e.File;
-        
+
         using var ms = new MemoryStream();
         await file.OpenReadStream().CopyToAsync(ms);
         BookCover.Image = ms.ToArray();
     }
+
 }
