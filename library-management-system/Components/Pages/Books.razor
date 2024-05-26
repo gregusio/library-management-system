@@ -59,7 +59,7 @@
                     var i1 = i;
 
                     <div class="single-card" @onclick="@(() => OnShowDetails(SelectedBooks![i1]))">
-                        <BookRecord Book="SelectedBooks![i1]"/>
+                        <BookInfoCard Book="SelectedBooks![i1]" ShowBookCover="true" />
                     </div>
                 }
             </div>
