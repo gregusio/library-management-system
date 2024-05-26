@@ -91,7 +91,7 @@
 .common-page-styles .info {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 5px;
     width: 100%;
 }
 
