@@ -89,7 +89,7 @@
 
 
 @code {
-    [Parameter] public EventCallback OnAdd { get; set; }
+    [Parameter] public required EventCallback OnAdd { get; set; }
 
     private Modal _modal = default!;
     private AddBookInputModel Input { get; set; } = new();

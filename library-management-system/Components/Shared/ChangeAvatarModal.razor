@@ -30,8 +30,8 @@
 </Modal>
 
 @code {
-    [Parameter] public User? User { get; set; }
-    [Parameter] public EventCallback OnAvatarChanged { get; set; }
+    [Parameter] public required User User { get; set; }
+    [Parameter] public required EventCallback OnAvatarChanged { get; set; }
 
     private Modal _modal = default!;
     private List<Avatar>? Avatars { get; set; } = [];
@@ -68,7 +68,7 @@
             return;
         }
 
-        User!.Avatar = SelectedAvatar;
+        User.Avatar = SelectedAvatar;
         var result = dbApi.SaveChanges();
         alertService.ShowOperationResult(result);
         OnAvatarChanged.InvokeAsync();

@@ -11,7 +11,7 @@
 
         <div>
             <div class="form-floating mb-3">
-                <InputText @bind-Value="User!.Name" class="form-control"
+                <InputText @bind-Value="User.Name" class="form-control"
                            aria-required="true"/>
                 <label>Name</label>
             </div>
@@ -41,8 +41,8 @@
 
 
 @code {
-    [Parameter] public User? User { get; set; }
-    [Parameter] public EventCallback OnInfoChanged { get; set; }
+    [Parameter] public required User User { get; set; }
+    [Parameter] public required EventCallback OnInfoChanged { get; set; }
 
     private Modal _modal = default!;
 

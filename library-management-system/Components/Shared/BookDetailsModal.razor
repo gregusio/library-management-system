@@ -84,8 +84,8 @@
 
 
 @code {
-    [Parameter] public EventCallback OnSaveEdit { get; set; }
-    [Parameter] public User? User { get; set; }
+    [Parameter] public required EventCallback OnSaveEdit { get; set; }
+    [Parameter] public required User User { get; set; }
     
     private bool _editMode = false;
     
@@ -94,7 +94,7 @@
     private Book? Book { get; set; }
     private BookCover BookCover => Book!.BookCover ?? new BookCover();
     private BookInventory BookInventory => dbApi.GetBookInventory(Book!) ?? new BookInventory();
-    private bool IsFav => dbApi.IsBookFavorite(User!, Book!);
+    private bool IsFav => dbApi.IsBookFavorite(User, Book!);
     
     public void Show(Book? book)
     {
@@ -117,7 +117,7 @@
 
     private void HeartClicked()
     {
-        var result = IsFav ? dbApi.RemoveFavoriteBook(User!, Book!) : dbApi.FavoriteBook(User!, Book!);
+        var result = IsFav ? dbApi.RemoveFavoriteBook(User, Book!) : dbApi.FavoriteBook(User, Book!);
 
         alertService.ShowOperationResult(result);
 
@@ -126,7 +126,7 @@
 
     private void ReserveBook()
     {
-        var result = dbApi.ReserveBook(User!, Book!);
+        var result = dbApi.ReserveBook(User, Book!);
         alertService.ShowOperationResult(result);
 
         OnSaveEdit.InvokeAsync();

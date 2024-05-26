@@ -56,7 +56,7 @@
 </Modal>
 
 @code {
-    [Parameter] public EventCallback OnSaveEdit { get; set; }
+    [Parameter] public required EventCallback OnSaveEdit { get; set; }
 
     private bool _editMode = false;
 
