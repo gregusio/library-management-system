@@ -1,16 +1,21 @@
 @using library_management_system.Model
 @using library_management_system.Services
 
-@inject DbApi DbApi
-@inject AlertService AlertService
+@inject DbApi dbApi
+@inject AlertService alertService
 
-<Modal @ref="_modal" Size="ModalSize.ExtraLarge">
+
+<Modal @ref="_modal" Size="ModalSize.ExtraLarge" OnHiding="OnHideModal">
     <BodyTemplate>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
         <div class="common-page-styles">
             <div class="modal-body">
                 <div class="record">
                     <div class="image-placeholder">
-                        <img class="image" src="data:image/jpg;base64, @Convert.ToBase64String(Avatar!.Image!)" alt="@User!.Name"/>
+                        <img class="image"
+                             src="data:image/jpg;base64, @Convert.ToBase64String(Avatar.Image!)"
+                             alt="@User!.Name"/>
                     </div>
 
                     <div class="description-and-actions">
@@ -31,7 +36,7 @@
                                     </Tooltip>
                                 </div>
                             }
-                            
+
                             <div class="action">
                                 <Tooltip Title="Remove" Placement="TooltipPlacement.Top">
                                     <Icon Name="IconName.Trash" Color="IconColor.Danger" @onclick="RemoveUser"></Icon>
@@ -39,86 +44,9 @@
                             </div>
                         </div>
 
-                        <Card>
-                            <CardTitle Style="margin: 1rem">
-                                @if (_editMode)
-                                {
-                                    <div class="info">
-                                        <div class="form-floating">
-                                            <InputText @bind-Value="@User.Name" class="form-control"
-                                                       aria-required="true"/>
-                                            <label>Title</label>
-                                        </div>
-                                    
-                                        <div class="form-floating">
-                                            <InputText @bind-Value="@User.Surname" class="form-control"
-                                                       aria-required="true"/>
-                                            <label>Surname</label>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @User.Name @User.Surname
-                                }
-                            </CardTitle>
-                            <CardBody>
-                                <CardText>
-                                    <div class="info">
-                                        @if (_editMode)
-                                        {
-                                            <div class="form-floating">
-                                                <InputText @bind-Value="@User.Address" class="form-control"
-                                                           aria-required="true"/>
-                                                <label>Address</label>
-                                            </div>
-                                            <div class="form-floating">
-                                                <InputText @bind-Value="@User.TelephoneNr" class="form-control"
-                                                           aria-required="true"/>
-                                                <label>Phone number</label>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <p>
-                                                Address: @User.Address
-                                            </p>
-                                            <p>
-                                                Phone number: @User.TelephoneNr
-                                            </p>
-                                        }
-                                    </div>
-                                </CardText>
-                            </CardBody>
-                        </Card>
+                        <UserInfoCard User="User" EditMode="_editMode" ShowAvatar="false"></UserInfoCard>
 
-                        <Accordion>
-                            <AccordionItem Title="Borrowed books">
-                                <Content>
-                                    @foreach (var borrowedBook in BorrowedBooks)
-                                    {
-                                        var book = borrowedBook.Book!;
-                                        <div class="book-record">
-                                            Title: @book.Title &emsp; Author: @book.Author
-                                            <Button Color="ButtonColor.Primary" onclick="@(() => ReturnBook(borrowedBook))">Return</Button>
-                                        </div>
-                                    }
-
-                                </Content>
-                            </AccordionItem>
-                        </Accordion>
-
-                        <Accordion>
-                            <AccordionItem Title="Reserved books">
-                                <Content>
-                                    @foreach (var reservedBook in ReservedBooks)
-                                    {
-                                        var book = reservedBook.Book!;
-                                        <p>Title: @book.Title Author: @book.Author</p>
-                                    }
-                                </Content>
-                            </AccordionItem>
-                        </Accordion>
+                        <UserDetailsAccordion User="User"/>
                     </div>
                 </div>
 
@@ -129,14 +57,13 @@
 
 @code {
     [Parameter] public EventCallback OnSaveEdit { get; set; }
-    private User? User { get; set; }
-    private Avatar? Avatar => User!.Avatar ?? new();
-    private List<BorrowedBook> BorrowedBooks => DbApi.GetBorrowedBooks(User!) ?? new();
-    private List<ReservedBook> ReservedBooks => DbApi.GetReservedBooks(User!) ?? new();
-    
+
     private bool _editMode = false;
-    
+
     private Modal _modal = default!;
+
+    private User? User { get; set; }
+    private Avatar Avatar => User!.Avatar ?? new Avatar();
 
     public void Show(User user)
     {
@@ -144,11 +71,17 @@
         _editMode = false;
         _modal.ShowAsync();
     }
-    
+
+    private void OnHideModal()
+    {
+        _modal.HideAsync();
+        alertService.ClearMessages();
+    }
+
     private void RemoveUser()
     {
         _modal.HideAsync();
-        DbApi.RemoveUser(User!);
+        dbApi.RemoveUser(User!);
         OnSaveEdit.InvokeAsync();
     }
 
@@ -161,14 +94,7 @@
     {
         _editMode = false;
         OnSaveEdit.InvokeAsync();
-        DbApi.SaveChanges();
-    }
-    
-    private void ReturnBook(BorrowedBook borrowedBook)
-    {
-        var result = DbApi.ReturnBook(borrowedBook);
-        AlertService.ShowOperationResult(result);
-        StateHasChanged();
+        dbApi.SaveChanges();
     }
 
 }

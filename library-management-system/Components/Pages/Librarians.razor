@@ -24,7 +24,7 @@
                     var i1 = i;
 
                     <div class="single-card" @onclick="@(() => OnShowDetails(AllLibrarians![i1]))">
-                        <UserRecord User="AllLibrarians![i1]"/>
+                        <UserInfoCard User="AllLibrarians![i1]" ShowAvatar="true" />
                     </div>
                 }
             </div>
