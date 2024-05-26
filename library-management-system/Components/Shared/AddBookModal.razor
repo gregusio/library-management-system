@@ -1,54 +1,60 @@
-@using System.ComponentModel.DataAnnotations
 @using library_management_system.Model
 @using library_management_system.Services
 
-@inject AlertService AlertService
-@inject DbApi DbApi
+@inject AlertService alertService
+@inject DbApi dbApi
 
 
-<Modal @ref="_modal" title="Add book" IsVerticallyCentered="true" Size="ModalSize.Large">
+<Modal @ref="_modal" title="Add book" IsVerticallyCentered="true" Size="ModalSize.Large" OnHiding="OnHideModal">
     <BodyTemplate>
-        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
         <div class="book-modal">
             <div class="form">
                 <EditForm Model="Input" method="post" OnValidSubmit="AddBook"
-                          FormName="register">
+                          FormName="add-book">
                     <DataAnnotationsValidator/>
                     <ValidationSummary class="text-danger" role="alert"/>
+
                     <div class="form-floating mb-3">
                         <InputText @bind-Value="Input.ISBN" class="form-control"
                                    aria-required="true"/>
                         <label>ISBN</label>
                         <ValidationMessage For="() => Input.ISBN" class="text-danger"/>
                     </div>
+
                     <div class="form-floating mb-3">
                         <InputText @bind-Value="Input.Title" class="form-control"
                                    aria-required="true"/>
                         <label>Title</label>
                         <ValidationMessage For="() => Input.Title" class="text-danger"/>
                     </div>
+
                     <div class="form-floating mb-3">
                         <InputText @bind-Value="Input.Author" class="form-control"
                                    aria-required="true"/>
                         <label>Author</label>
                         <ValidationMessage For="() => Input.Author" class="text-danger"/>
                     </div>
+
                     <div class="form-floating mb-3">
                         <InputText @bind-Value="Input.Publisher" class="form-control"
                                    aria-required="true"/>
                         <label>Publisher</label>
                         <ValidationMessage For="() => Input.Publisher" class="text-danger"/>
                     </div>
+
                     <div class="form-floating mb-3">
                         <InputDate @bind-Value="Input.PublishDate" class="form-control"
                                    aria-required="true"/>
                         <label>Publish Date</label>
                         <ValidationMessage For="() => Input.PublishDate" class="text-danger"/>
                     </div>
+
                     <div class="form-floating mb-3">
                         <InputSelect @bind-Value="Input.Category" class="form-control"
                                      aria-required="true" placeholder="name@example.com">
-                            @foreach(var category in Enum.GetValues(typeof(ECategory)))
+                            @foreach (var category in Enum.GetValues(typeof(ECategory)))
                             {
                                 <option value="@category">@category</option>
                             }
@@ -56,50 +62,48 @@
                         <label>Category</label>
                         <ValidationMessage For="() => Input.Category" class="text-danger"/>
                     </div>
+
                     <div class="form-floating mb-3">
                         <InputNumber @bind-Value="Input.Amount" class="form-control"
                                      aria-required="true" placeholder="password"/>
                         <label>Amount</label>
                         <ValidationMessage For="() => Input.Amount" class="text-danger"/>
                     </div>
-                
+
                     <button type="submit" class="w-100 btn btn-lg btn-primary">Add Book</button>
                 </EditForm>
             </div>
-        
+
             <div class="image-select">
-                <img class="image" 
+                <img class="image"
                      src="data:image/jpg;base64, @Convert.ToBase64String(Input.Image)"
                      alt="Image"/>
-                
 
                 <div class="file-select">
                     <InputFile OnChange="LoadFile" class="form-control" accept=".jpg, .jpeg, .png"/>
                 </div>
-                
             </div>
-            
         </div>
-        
-
     </BodyTemplate>
 </Modal>
-
 
 
 @code {
     [Parameter] public EventCallback OnAdd { get; set; }
 
     private Modal _modal = default!;
-
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
-
-    private static byte[] DefaultImage { get; set; } = File.ReadAllBytes("Images/BookCovers/default-cover.jpg");
+    private AddBookInputModel Input { get; set; } = new();
+    
+    private const string DefaultImagePath = "Images/BookCovers/default-cover.jpg";
+    private static byte[] DefaultImage { get; set; } = File.ReadAllBytes(DefaultImagePath);
 
     protected override Task OnInitializedAsync()
     {
-        Input.Image = DefaultImage;
-        
+        Input = new AddBookInputModel
+        {
+            Image = DefaultImage
+        };
+
         return base.OnInitializedAsync();
     }
 
@@ -108,10 +112,10 @@
         _modal.ShowAsync();
     }
 
-    private async Task OnHideModalClick()
+    private void OnHideModal()
     {
-        await _modal.HideAsync();
-        AlertService.ClearMessages();
+        _modal.HideAsync();
+        alertService.ClearMessages();
     }
 
     public async Task AddBook(EditContext editContext)
@@ -120,7 +124,7 @@
         {
             Image = Input.Image
         };
-        
+
         var newBook = new Book
         {
             ISBN = Input.ISBN,
@@ -132,53 +136,28 @@
             BookCover = newCover
         };
 
-        var result = DbApi.AddBook(newBook, Input.Amount, newCover);
-        
+        var result = dbApi.AddBook(newBook, Input.Amount, newCover);
+
         if (result == EOperationResult.Success)
         {
-            AlertService.ShowSuccess("Book added successfully");
-            Input = new InputModel();
+            alertService.ShowSuccess("Book added successfully");
+            Input = new AddBookInputModel();
         }
         else
         {
-            AlertService.ShowWarning("Failed to add book");
+            alertService.ShowWarning("Failed to add book");
         }
-        
+
         await OnAdd.InvokeAsync();
     }
 
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
         var file = e.File;
-        
+
         using var ms = new MemoryStream();
         await file.OpenReadStream().CopyToAsync(ms);
         Input.Image = ms.ToArray();
-        
-    }
-
-    private sealed class InputModel
-    {
-        [Required] 
-        [Display(Name = "ISBN")]
-        [StringLength(13, MinimumLength = 13, ErrorMessage = "ISBN must be 13 characters")]
-        public string ISBN { get; set; } = "";
-
-        [Required] [Display(Name = "Title")] public string Title { get; set; } = "";
-
-        [Required] [Display(Name = "Author")] public string Author { get; set; } = "";
-
-        [Display(Name = "Publisher")] public string Publisher { get; set; } = "";
-
-        [Display(Name = "Publish Date")] public DateTime PublishDate { get; set; } = DateTime.Now;
-        
-        [Display(Name = "Category")] public ECategory Category { get; set; } = ECategory.Fantasy;
-        
-        [Display(Name = "Amount")] 
-        [Range(1, int.MaxValue, ErrorMessage = "Amount must be greater than 0")]
-        public int Amount { get; set; }
-
-        [Required] [Display(Name = "Image")] public byte[] Image { get; set; } = DefaultImage;
     }
 
 }
