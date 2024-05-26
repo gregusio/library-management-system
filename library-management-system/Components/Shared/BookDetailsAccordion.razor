@@ -1,0 +1,50 @@
+<Accordion>
+    <AccordionItem Title="Description">
+        <Content>
+            @if (EditMode)
+            {
+                @* <InputTextArea Placeholder="Description" @bind-Value="@Book.Description"></InputTextArea> *@
+            }
+            else
+            {
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                    voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            }
+        </Content>
+    </AccordionItem>
+
+    <AccordionItem>
+        <TitleTemplate>
+            <div class="title-with-rating">
+                <span>Reviews</span>
+                <RatingComponent Rating="4.5"></RatingComponent>
+            </div>
+        </TitleTemplate>
+
+        <Content>
+            <div class="scrollable">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </div>
+        </Content>
+    </AccordionItem>
+</Accordion>
+
+
+@code {
+    [Parameter] public required bool EditMode { get; set; }
+    
+}
