@@ -2,125 +2,120 @@ using library_management_system.Model;
 
 namespace library_management_system.Services;
 
-public class DbApi(DataDbContext db)
+public class DbApi(DbSearchService searchService, DbInsertService insertService, DbRemoveService removeService, DbUpdateService updateService)
 {
     public List<User>? GetAllReaders()
     {
-        return new DbSearchService(db).GetAllReaders();
+        return searchService.GetAllReaders();
     }
 
     public List<User>? GetAllLibrarians()
     {
-        return new DbSearchService(db).GetAllLibrarians();
-    }
-
-    public Book? GetBook(int id)
-    {
-        return new DbSearchService(db).GetBook(id);
+        return searchService.GetAllLibrarians();
     }
     
     public BookInventory? GetBookInventory(Book book)
     {
-        return new DbSearchService(db).GetBookInventory(book);
+        return searchService.GetBookInventory(book);
     }
 
     public List<Book>? GetAllBooks()
     {
-        return new DbSearchService(db).GetAllBooks();
+        return searchService.GetAllBooks();
     }
 
     public List<BorrowedBook>? GetBorrowedBooks(User reader)
     {
-        return new DbSearchService(db).GetBorrowedBooks(reader);
+        return searchService.GetBorrowedBooks(reader);
     }
 
     public List<ReservedBook>? GetReservedBooks(User reader)
     {
-        return new DbSearchService(db).GetReservedBooks(reader);
+        return searchService.GetReservedBooks(reader);
     }
 
     public ReservedBook? GetReservedBook(User reader, Book book)
     {
-        return new DbSearchService(db).GetReservedBook(reader, book);
+        return searchService.GetReservedBook(reader, book);
     }
     
     public List<(string?, DateTime?)>? GetUserActivityHistory(User user)
     {
-        return new DbSearchService(db).GetUserActivityHistory(user);
+        return searchService.GetUserActivityHistory(user);
     }
     
     public List<Avatar>? GetAvatars()
     {
-        return new DbSearchService(db).GetAvatars();
+        return searchService.GetAvatars();
     }
     
     public List<Book>? GetFavoriteBooks(User user)
     {
-        return new DbSearchService(db).GetFavoriteBooks(user);
+        return searchService.GetFavoriteBooks(user);
     }
 
     public bool IsBookFavorite(User user, Book book)
     {
-        return new DbSearchService(db).IsBookFavorite(user, book);
+        return searchService.IsBookFavorite(user, book);
     }
     
-    public EOperationResult AddBook(Book book, int quantity, BookCover bookCover)
+    public async Task<EOperationResult> AddBook(Book book, int quantity, BookCover bookCover)
     {
-        return new DbInsertService(db).AddBook(book, quantity, bookCover);
+        return await insertService.AddBook(book, quantity, bookCover);
     }
 
-    public EOperationResult BorrowBook(User user, Book book)
+    public async Task<EOperationResult> BorrowBook(User user, Book book)
     {
-        return new DbInsertService(db).BorrowBook(user, book);
+        return await insertService.BorrowBook(user, book);
     }
     
-    public EOperationResult ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
+    public async Task<EOperationResult> ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
     {
-        return new DbInsertService(db).ChangeReservedToBorrowed(user, reservedBook);
+        return await insertService.ChangeReservedToBorrowed(user, reservedBook);
     }
 
-    public EOperationResult ReserveBook(User user, Book book)
+    public async Task<EOperationResult> ReserveBook(User user, Book book)
     {
-        return new DbInsertService(db).ReserveBook(user, book);
+        return await insertService.ReserveBook(user, book);
     }
     
-    public EOperationResult FavoriteBook(User user, Book book)
+    public async Task<EOperationResult> FavoriteBook(User user, Book book)
     {
-        return new DbInsertService(db).FavoriteBook(user, book);
+        return await insertService.FavoriteBook(user, book);
     }
 
     public EOperationResult RemoveUser(User user)
     {
-        return new DbRemoveService(db).RemoveUser(user);
+        return removeService.RemoveUser(user);
     }
 
     public EOperationResult RemoveBook(Book book)
     {
-        return new DbRemoveService(db).RemoveBook(book);
+        return removeService.RemoveBook(book);
     }
 
     public EOperationResult ReturnBook(BorrowedBook borrowedBook)
     {
-        return new DbRemoveService(db).ReturnBook(borrowedBook);
+        return removeService.ReturnBook(borrowedBook);
     }
 
     public EOperationResult RemoveReservedBook(ReservedBook reservedBook)
     {
-        return new DbRemoveService(db).RemoveReservedBook(reservedBook);
+        return removeService.RemoveReservedBook(reservedBook);
     }
     
     public EOperationResult RemoveFavoriteBook(User user, Book book)
     {
-        return new DbRemoveService(db).RemoveFavoriteBook(user, book);
+        return removeService.RemoveFavoriteBook(user, book);
     }
 
     public EOperationResult SaveChanges()
     {
-        return new DbUpdateService(db).SaveChanges();
+        return updateService.SaveChanges();
     }
 
     public EOperationResult PostponeBorrowedBook(BorrowedBook borrowedBook)
     {
-        return new DbUpdateService(db).PostponeBorrowedBook(borrowedBook);
+        return updateService.PostponeBorrowedBook(borrowedBook);
     }
 }
