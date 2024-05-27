@@ -109,12 +109,12 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
         return removeService.RemoveFavoriteBook(user, book);
     }
 
-    public EOperationResult SaveChanges()
+    public Task<EOperationResult> SaveChanges()
     {
         return updateService.SaveChanges();
     }
 
-    public EOperationResult PostponeBorrowedBook(BorrowedBook borrowedBook)
+    public Task<EOperationResult> PostponeBorrowedBook(BorrowedBook borrowedBook)
     {
         return updateService.PostponeBorrowedBook(borrowedBook);
     }
