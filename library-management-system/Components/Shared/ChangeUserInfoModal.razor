@@ -57,11 +57,11 @@
         alertService.ClearMessages();
     }
 
-    private void ChangeInfo()
+    private async Task ChangeInfo()
     {
-        var result = dbApi.SaveChanges();
+        var result = await dbApi.SaveChanges();
         alertService.ShowOperationResult(result);
-        OnInfoChanged.InvokeAsync();
+        await OnInfoChanged.InvokeAsync();
     }
 
 }

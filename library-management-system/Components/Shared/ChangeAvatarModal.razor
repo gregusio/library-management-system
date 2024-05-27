@@ -58,7 +58,7 @@
         alertService.ClearMessages();
     }
 
-    private void ChangeAvatar()
+    private async Task ChangeAvatar()
     {
         if (SelectedAvatar == null)
         {
@@ -67,9 +67,9 @@
         }
 
         User.Avatar = SelectedAvatar;
-        var result = dbApi.SaveChanges();
+        var result = await dbApi.SaveChanges();
         alertService.ShowOperationResult(result);
-        OnAvatarChanged.InvokeAsync();
+        await OnAvatarChanged.InvokeAsync();
     }
 
 }
