@@ -60,7 +60,9 @@
     private async Task ChangeInfo()
     {
         var result = await dbApi.SaveChanges();
-        alertService.ShowOperationResult(result);
+        var message = result == EOperationResult.Success ? "Info changed successfully" : "Failed to change info";
+        alertService.ShowOperationResult(result, message);
+        
         await OnInfoChanged.InvokeAsync();
     }
 
