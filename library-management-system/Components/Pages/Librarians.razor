@@ -60,16 +60,14 @@
     private UserDetailsModal _userDetailsModal = default!;
     private AddUserModal _addUserModal = default!;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        AllLibrarians = dbApi.GetAllLibrarians();
+        AllLibrarians = await dbApi.GetAllLibrarians();
 
-        if (AllLibrarians != null) return base.OnInitializedAsync();
+        if (AllLibrarians != null) return;
 
         alertService.ShowWarning("Something went wrong while fetching librarians");
         AllLibrarians = new List<User>();
-
-        return base.OnInitializedAsync();
     }
 
     private async Task OnPageChangedAsync(int newPageNumber)
@@ -82,9 +80,9 @@
         _userDetailsModal.Show(user);
     }
 
-    private void OnAddLibrarianClick()
+    private async Task OnAddLibrarianClick()
     {
-        _addUserModal.Show();
+        await _addUserModal.Show();
     }
 
 }

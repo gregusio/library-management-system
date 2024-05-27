@@ -65,9 +65,9 @@
     private UserDetailsModal _userDetailsModal = default!;
     private AddUserModal _addUserModal = default!;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        AllReaders = dbApi.GetAllReaders();
+        AllReaders = await dbApi.GetAllReaders();
 
         if (AllReaders == null)
         {
@@ -76,8 +76,6 @@
         }
         
         SelectedReaders = AllReaders;
-
-        return base.OnInitializedAsync();
     }
 
     private async Task OnPageChangedAsync(int newPageNumber)
@@ -99,9 +97,9 @@
         _userDetailsModal.Show(user);
     }
     
-    private void OnAddReaderClick()
+    private async Task OnAddReaderClick()
     {
-        _addUserModal.Show();
+        await _addUserModal.Show();
     }
 
 }

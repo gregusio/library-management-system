@@ -93,20 +93,15 @@
 
     private Book? Book { get; set; }
     private BookCover BookCover => Book!.BookCover ?? new BookCover();
-    private BookInventory BookInventory => dbApi.GetBookInventory(Book!) ?? new BookInventory();
-    private bool IsFav => dbApi.IsBookFavorite(User, Book!);
+    private bool IsFav { get; set; }
     
-    public void Show(Book? book)
+    public async Task Show(Book book)
     {
-        if (book == null)
-        {
-            Book = new Book();
-            return;
-        }
-
         Book = book;
+        IsFav = await dbApi.IsBookFavorite(User, Book!);
+        
         _editMode = false;
-        _modal.ShowAsync();
+        await _modal.ShowAsync();
     }
     
     private void OnHideModal()

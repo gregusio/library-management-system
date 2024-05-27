@@ -74,18 +74,16 @@
     private Book? SelectedBook { get; set; }
     private DateTime Deadline { get; set; } = DateTime.Now.AddDays(14);
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        AllReaders = dbApi.GetAllReaders();
-        AllBooks = dbApi.GetAllBooks();
+        AllReaders = await dbApi.GetAllReaders();
+        AllBooks = await dbApi.GetAllBooks();
 
-        if (AllReaders != null && AllBooks != null) return base.OnInitializedAsync();
+        if (AllReaders != null && AllBooks != null) return;
 
         alertService.ShowWarning("Failed to load data from the database. Please try again later.");
         AllReaders = [];
         AllBooks = [];
-
-        return base.OnInitializedAsync();
     }
 
     private async Task<IEnumerable<User>> GetReadersLocal(string searchText)
@@ -106,7 +104,7 @@
             return;
         }
 
-        var reservedBook = dbApi.GetReservedBook(SelectedPerson, SelectedBook);
+        var reservedBook = await dbApi.GetReservedBook(SelectedPerson, SelectedBook);
 
         EOperationResult result;
         if (reservedBook != null)

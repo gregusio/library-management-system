@@ -36,8 +36,14 @@
 @code {
     [Parameter] public required User User { get; set; }
 
-    private List<BorrowedBook> BorrowedBooks => dbApi.GetBorrowedBooks(User) ?? [];
-    private List<ReservedBook> ReservedBooks => dbApi.GetReservedBooks(User) ?? [];
+    private List<BorrowedBook> BorrowedBooks { get; set; } = null!;
+    private List<ReservedBook> ReservedBooks { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        BorrowedBooks = await dbApi.GetBorrowedBooks(User) ?? [];
+        ReservedBooks = await dbApi.GetReservedBooks(User) ?? [];
+    }
 
     private async Task ReturnBook(BorrowedBook borrowedBook)
     {

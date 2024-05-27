@@ -37,16 +37,14 @@
     private List<Avatar>? Avatars { get; set; } = [];
     private Avatar? SelectedAvatar { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        Avatars = dbApi.GetAvatars();
+        Avatars = await dbApi.GetAvatars();
 
-        if (Avatars != null) return base.OnInitializedAsync();
+        if (Avatars != null) return;
 
         Avatars = [];
         alertService.ShowInfo("Something went wrong. Please try again later.");
-
-        return base.OnInitializedAsync();
     }
 
     public void Show()

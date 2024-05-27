@@ -99,11 +99,11 @@
     private BookInventory? BookInventory { get; set; }
     private BookCover? BookCover => Book.BookCover;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        BookInventory = dbApi.GetBookInventory(Book);
+        BookInventory = await dbApi.GetBookInventory(Book);
 
-        if (BookInventory != null) return base.OnInitializedAsync();
+        if (BookInventory != null) return;
 
         BookInventory = new BookInventory
         {
@@ -115,8 +115,6 @@
         };
 
         alertService.ShowInfo("Book Inventory not found, something went wrong.");
-
-        return base.OnInitializedAsync();
     }
 
 }
