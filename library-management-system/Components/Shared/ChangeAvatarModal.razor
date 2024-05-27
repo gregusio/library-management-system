@@ -69,7 +69,7 @@
         User.Avatar = SelectedAvatar;
         
         var result = await dbApi.SaveChanges();
-        var message = result == EOperationResult.Success ? "Avatar changed successfully." : "Failed to change avatar.";
+        var message = result == EOperationResult.Success ? "Avatar changed successfully." : result.GetMessage();
         alertService.ShowOperationResult(result, message);
         
         await OnAvatarChanged.InvokeAsync();
