@@ -104,21 +104,9 @@
             return;
         }
 
-        var reservedBook = await dbApi.GetReservedBook(SelectedPerson, SelectedBook);
-
-        EOperationResult result;
-        string message;
-        if (reservedBook != null)
-        {
-            result = await dbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
-            message = result == EOperationResult.Success ? "Reserved book borrowed successfully" : result.GetMessage();
-            alertService.ShowOperationResult(result, message);
-            return;
-        }
-
-        result = await dbApi.BorrowBook(SelectedPerson, SelectedBook);
-        message = result == EOperationResult.Success ? "Book borrowed successfully" : result.GetMessage();
-
+        var result = await dbApi.BorrowBook(SelectedPerson, SelectedBook, Deadline);
+        var message = result == EOperationResult.Success ? "Book borrowed successfully" : result.GetMessage();
+        
         alertService.ShowOperationResult(result, message);
     }
 
