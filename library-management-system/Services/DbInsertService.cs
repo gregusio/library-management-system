@@ -5,23 +5,6 @@ namespace library_management_system.Services;
 
 public class DbInsertService(DataDbContext db, DbRemoveService removeService)
 {
-    private async Task<EOperationResult> AddBookCover(BookCover bookCover)
-    {
-        try
-        {
-            await db.BookCovers.AddAsync(bookCover);
-
-            await db.SaveChangesAsync();
-
-            return EOperationResult.Success;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return EOperationResult.DatabaseError;
-        }
-    }
-    
     private async Task<(EOperationResult, ReservedBook?)> IsBookReserved(User user, Book book)
     {
         try
@@ -40,27 +23,42 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
         }
     }
 
-    public async Task<EOperationResult> AddBook(Book book, int quantity, BookCover bookCover)
+    public async Task<EOperationResult> AddBook(AddBookInputModel input)
     {
         try
         {
-            var result = await AddBookCover(bookCover);
-
-            if (result == EOperationResult.DatabaseError) return EOperationResult.DatabaseError;
-
-            await db.Books.AddAsync(book);
-
-            await db.BookInventories.AddAsync(new BookInventory
+            var bookCover = new BookCover
             {
-                BookId = book.Id,
+                Image = input.Image
+            };
+            
+            await db.BookCovers.AddAsync(bookCover);
+            
+            var book = new Book
+            {
+                Title = input.Title,
+                Author = input.Author,
+                BookCover = bookCover,
+                Category = input.Category,
+                ISBN = input.ISBN,
+                PublishDate = input.PublishDate,
+                Publisher = input.Publisher
+            };
+            
+            await db.Books.AddAsync(book);
+            
+            var bookInventory = new BookInventory
+            {
                 Book = book,
-                AvailableCopies = quantity,
+                AvailableCopies = input.Amount,
                 BorrowedCopies = 0,
                 ReservedCopies = 0
-            });
-
+            };
+            
+            await db.BookInventories.AddAsync(bookInventory);
+            
             await db.SaveChangesAsync();
-
+            
             return EOperationResult.Success;
         }
         catch (Exception e)
