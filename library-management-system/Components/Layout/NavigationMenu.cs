@@ -9,8 +9,6 @@ public class NavigationMenu
         return
         [
             ("books/all", "Books", IconName.Book),
-            ("reserved-books", "Reserved", IconName.Bookmark),
-            ("borrowed-books", "Borrowed", IconName.Book),
             ("activity-history", "History", IconName.Activity)
         ];
     }
