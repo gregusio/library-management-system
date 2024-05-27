@@ -15,11 +15,11 @@ public enum EOperationResult
 
 public static class OperationResultExtensions
 {
-    public static string GetMessage(this EOperationResult result, string successMsg = "Operation successful")
+    public static string GetMessage(this EOperationResult result)
     {
         return result switch
         {
-            EOperationResult.Success => successMsg,
+            EOperationResult.Success => "Success",
             EOperationResult.DatabaseError => "Database error",
             EOperationResult.NoAvailableCopies => "No available copies",
             EOperationResult.UnexpectedError => "Unexpected error",

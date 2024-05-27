@@ -5,6 +5,8 @@
 @inject AlertService alertService
 
 
+<Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
 <Accordion>
     <AccordionItem Title="Borrowed books">
         <Content>
@@ -48,7 +50,10 @@
     private async Task ReturnBook(BorrowedBook borrowedBook)
     {
         var result = await dbApi.ReturnBook(borrowedBook);
-        alertService.ShowOperationResult(result);
+        var message = result == EOperationResult.Success ? "Book returned successfully" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await OnInitializedAsync();
         StateHasChanged();
     }
 

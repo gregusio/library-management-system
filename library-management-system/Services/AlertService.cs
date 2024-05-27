@@ -12,9 +12,10 @@ public class AlertService
         Messages.Clear();
     }
 
-    public void ShowOperationResult(EOperationResult result)
+    public void ShowOperationResult(EOperationResult result, string successMsg = "Success")
     {
-        ShowMessage(result.GetToastType(), result.GetMessage());
+        var message = result == EOperationResult.Success ? successMsg : result.GetMessage();
+        ShowMessage(result.GetToastType(), message);
     }
 
     public void ShowInfo(string message)
