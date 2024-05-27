@@ -137,15 +137,12 @@
         };
 
         var result = await dbApi.AddBook(newBook, Input.Amount, newCover);
+        var message = result == EOperationResult.Success ? "Book added successfully" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
 
         if (result == EOperationResult.Success)
         {
-            alertService.ShowSuccess("Book added successfully");
             Input = new AddBookInputModel();
-        }
-        else
-        {
-            alertService.ShowWarning("Failed to add book");
         }
 
         await OnAdd.InvokeAsync();
