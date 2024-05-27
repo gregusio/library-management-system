@@ -26,6 +26,17 @@
                 </div>
             }
         </AuthorizeView>
+        
+        <AuthorizeView Roles="admin">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/librarians">
+                    <div class="me-3">
+                        <span class="bi" aria-hidden="true"></span>
+                        <Icon Style="margin-right: 5px" Name="IconName.People"></Icon>Librarians
+                    </div>
+                </NavLink>
+            </div>
+        </AuthorizeView>
 
         <AuthorizeView Roles="reader">
             @foreach (var (href, buttonName, iconName) in NavigationMenu.GetForReader())
