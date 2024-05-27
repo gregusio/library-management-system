@@ -98,7 +98,7 @@
         return await Task.FromResult(AllBooks!.Where(book => book.Title!.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
-    private void TryBorrowBook()
+    private async Task TryBorrowBook()
     {
         if (SelectedPerson == null || SelectedBook == null)
         {
@@ -111,14 +111,14 @@
         EOperationResult result;
         if (reservedBook != null)
         {
-            result = dbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
+            result = await dbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
 
             alertService.ShowOperationResult(result);
 
             return;
         }
 
-        result = dbApi.BorrowBook(SelectedPerson, SelectedBook);
+        result = await dbApi.BorrowBook(SelectedPerson, SelectedBook);
 
         alertService.ShowOperationResult(result);
     }
