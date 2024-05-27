@@ -64,14 +64,9 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
         return insertService.AddBook(book, quantity, bookCover);
     }
 
-    public Task<EOperationResult> BorrowBook(User user, Book book)
+    public Task<EOperationResult> BorrowBook(User user, Book book, DateTime deadline)
     {
-        return insertService.BorrowBook(user, book);
-    }
-    
-    public Task<EOperationResult> ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
-    {
-        return insertService.ChangeReservedToBorrowed(user, reservedBook);
+        return insertService.BorrowBook(user, book, deadline);
     }
 
     public Task<EOperationResult> ReserveBook(User user, Book book)
