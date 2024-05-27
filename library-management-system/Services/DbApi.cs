@@ -84,27 +84,27 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
         return await insertService.FavoriteBook(user, book);
     }
 
-    public EOperationResult RemoveUser(User user)
+    public Task<EOperationResult> RemoveUser(User user)
     {
         return removeService.RemoveUser(user);
     }
 
-    public EOperationResult RemoveBook(Book book)
+    public Task<EOperationResult> RemoveBook(Book book)
     {
         return removeService.RemoveBook(book);
     }
 
-    public EOperationResult ReturnBook(BorrowedBook borrowedBook)
+    public Task<EOperationResult> ReturnBook(BorrowedBook borrowedBook)
     {
         return removeService.ReturnBook(borrowedBook);
     }
 
-    public EOperationResult RemoveReservedBook(ReservedBook reservedBook)
+    public Task<EOperationResult> RemoveReservedBook(ReservedBook reservedBook)
     {
         return removeService.RemoveReservedBook(reservedBook);
     }
     
-    public EOperationResult RemoveFavoriteBook(User user, Book book)
+    public Task<EOperationResult> RemoveFavoriteBook(User user, Book book)
     {
         return removeService.RemoveFavoriteBook(user, book);
     }
