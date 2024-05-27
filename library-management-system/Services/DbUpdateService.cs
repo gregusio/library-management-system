@@ -9,7 +9,7 @@ public class DbUpdateService(DataDbContext db)
         try
         {
             await db.SaveChangesAsync();
-            
+
             return EOperationResult.Success;
         }
         catch (Exception e)
@@ -23,15 +23,12 @@ public class DbUpdateService(DataDbContext db)
     {
         try
         {
-            if(borrowedBook.RenewalCount >= 2)
-            {
-                return EOperationResult.RenewalLimitReached;
-            }
-            
+            if (borrowedBook.RenewalCount >= 2) return EOperationResult.RenewalLimitReached;
+
             borrowedBook.RenewalCount++;
-            
+
             borrowedBook.Deadline = borrowedBook.Deadline.AddDays(7);
-            
+
             await db.UserActivityHistories.AddAsync(new UserActivityHistory
             {
                 UserId = borrowedBook.UserId,
@@ -39,9 +36,9 @@ public class DbUpdateService(DataDbContext db)
                 Activity = "Postponed borrowing deadline for book " + borrowedBook.Book!.Title,
                 ActivityTime = DateTime.Now
             });
-            
+
             await db.SaveChangesAsync();
-            
+
             return EOperationResult.Success;
         }
         catch (Exception e)

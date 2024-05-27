@@ -11,9 +11,7 @@ public class DbInitializer(UserManager<User> userManager, RoleManager<IdentityRo
         var adminPassword = "Admin123#";
 
         if (await roleManager.FindByNameAsync("admin") == null)
-        {
             await roleManager.CreateAsync(new IdentityRole("admin"));
-        }
 
         if (await userManager.FindByEmailAsync(adminEmail) == null)
         {
@@ -32,10 +30,7 @@ public class DbInitializer(UserManager<User> userManager, RoleManager<IdentityRo
 
             var result = await userManager.CreateAsync(admin, adminPassword);
 
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(admin, "admin");
-            }
+            if (result.Succeeded) await userManager.AddToRoleAsync(admin, "admin");
         }
     }
 }

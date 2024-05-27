@@ -103,8 +103,8 @@ public class DbSearchService(DataDbContext db)
         try
         {
             return await db.ReservedBooks
-                .FirstOrDefaultAsync(reservedBook => reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
-
+                .FirstOrDefaultAsync(reservedBook =>
+                    reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
         }
         catch (Exception e)
         {
@@ -112,14 +112,14 @@ public class DbSearchService(DataDbContext db)
             return null;
         }
     }
-    
+
     public async Task<List<(string?, DateTime?)>?> GetUserActivityHistory(User user)
     {
         try
         {
             var activities = await db.UserActivityHistories
                 .Where(activity => activity.UserId == user.Id)
-                .Select(activity => new { activity.Activity , activity.ActivityTime })
+                .Select(activity => new { activity.Activity, activity.ActivityTime })
                 .ToListAsync();
 
             return activities
@@ -145,7 +145,7 @@ public class DbSearchService(DataDbContext db)
             return null;
         }
     }
-    
+
     public async Task<List<Book>?> GetFavoriteBooks(User user)
     {
         try
@@ -162,7 +162,7 @@ public class DbSearchService(DataDbContext db)
             return null;
         }
     }
-    
+
     public async Task<bool> IsBookFavorite(User user, Book book)
     {
         try
