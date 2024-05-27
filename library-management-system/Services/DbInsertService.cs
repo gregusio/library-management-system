@@ -1,31 +1,18 @@
 using library_management_system.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Services;
 
 public class DbInsertService(DataDbContext db)
 {
-    public EOperationResult AddBook(Book book, int quantity, BookCover bookCover)
+    private async Task<EOperationResult> AddBookCover(BookCover bookCover)
     {
         try
         {
-            if (!AddBookCover(bookCover))
-            {
-                return EOperationResult.DatabaseError;
-            }
-            
-            db.Books.Add(book);
-            
-            db.BookInventories.Add(new BookInventory
-            {
-                BookId = book.Id,
-                Book = book,
-                AvailableCopies = quantity,
-                BorrowedCopies = 0,
-                ReservedCopies = 0
-            });
-            
-            db.SaveChanges();
-            
+            await db.BookCovers.AddAsync(bookCover);
+
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception e)
@@ -34,45 +21,50 @@ public class DbInsertService(DataDbContext db)
             return EOperationResult.DatabaseError;
         }
     }
-    
-    private bool AddBookCover(BookCover bookCover)
+
+    public async Task<EOperationResult> AddBook(Book book, int quantity, BookCover bookCover)
     {
         try
         {
-            db.BookCovers.Add(bookCover);
-            
-            db.SaveChanges();
-            
-            return true;
+            var result = await AddBookCover(bookCover);
+
+            if (result == EOperationResult.DatabaseError) return EOperationResult.DatabaseError;
+
+            await db.Books.AddAsync(book);
+
+            await db.BookInventories.AddAsync(new BookInventory
+            {
+                BookId = book.Id,
+                Book = book,
+                AvailableCopies = quantity,
+                BorrowedCopies = 0,
+                ReservedCopies = 0
+            });
+
+            await db.SaveChangesAsync();
+
+            return EOperationResult.Success;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return false;
+            return EOperationResult.DatabaseError;
         }
     }
 
-    public EOperationResult BorrowBook(User user, Book book)
+    public async Task<EOperationResult> BorrowBook(User user, Book book)
     {
         try
         {
-            if(user.BorrowedBooksCount >= 5)
-            {
-                return EOperationResult.BorrowedBookLimitExceeded;
-            }
-            
-            var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == book.Id);
-        
-            if(bookInventory == null)
-            {
-                return EOperationResult.UnexpectedError;
-            }
-            
-            if(bookInventory.AvailableCopies == 0)
-            {
-                return EOperationResult.NoAvailableCopies;
-            }
-            
+            if (user.BorrowedBooksCount >= 5) return EOperationResult.BorrowedBookLimitExceeded;
+
+            var bookInventory =
+                await db.BookInventories.FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
+
+            if (bookInventory == null) return EOperationResult.UnexpectedError;
+
+            if (bookInventory.AvailableCopies == 0) return EOperationResult.NoAvailableCopies;
+
             var borrowedBook = new BorrowedBook
             {
                 UserId = user.Id,
@@ -83,22 +75,22 @@ public class DbInsertService(DataDbContext db)
                 RenewalCount = 0
             };
 
-            db.BorrowedBooks.Add(borrowedBook);
-            
+            await db.BorrowedBooks.AddAsync(borrowedBook);
+
             bookInventory.AvailableCopies--;
             bookInventory.BorrowedCopies++;
             user.BorrowedBooksCount++;
-            
-            db.UserActivityHistories.Add(new UserActivityHistory
+
+            await db.UserActivityHistories.AddAsync(new UserActivityHistory
             {
                 UserId = user.Id,
                 User = user,
                 Activity = $"Borrowed a book - title: {book.Title}, author: {book.Author}",
                 ActivityTime = DateTime.Now
             });
-            
-            db.SaveChanges();
-            
+
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception)
@@ -107,23 +99,22 @@ public class DbInsertService(DataDbContext db)
         }
     }
 
-    public EOperationResult ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
+    public async Task<EOperationResult> ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
     {
         try
         {
             db.ReservedBooks.Remove(reservedBook);
-            
-            var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == reservedBook.BookId);
-            
-            if (bookInventory == null)
-            {
-                return EOperationResult.UnexpectedError;
-            }
-            
+
+            var bookInventory =
+                await db.BookInventories.FirstOrDefaultAsync(bookInventory =>
+                    bookInventory.BookId == reservedBook.BookId);
+
+            if (bookInventory == null) return EOperationResult.UnexpectedError;
+
             bookInventory.ReservedCopies--;
             bookInventory.AvailableCopies++;
 
-            return BorrowBook(user, reservedBook.Book!);
+            return await BorrowBook(user, reservedBook.Book!);
         }
         catch (Exception)
         {
@@ -131,26 +122,18 @@ public class DbInsertService(DataDbContext db)
         }
     }
 
-    public EOperationResult ReserveBook(User user, Book book)
+    public async Task<EOperationResult> ReserveBook(User user, Book book)
     {
         try
         {
-            if(user.ReservedBooksCount >= 5)
-            {
-                return EOperationResult.ReservedBookLimitExceeded;
-            }
-            
-            var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == book.Id);
-            if (bookInventory == null)
-            {
-                return EOperationResult.UnexpectedError;
-            }
-        
-            if (bookInventory.AvailableCopies == 0)
-            {
-                return EOperationResult.NoAvailableCopies;
-            }
-        
+            if (user.ReservedBooksCount >= 5) return EOperationResult.ReservedBookLimitExceeded;
+
+            var bookInventory =
+                await db.BookInventories.FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
+            if (bookInventory == null) return EOperationResult.UnexpectedError;
+
+            if (bookInventory.AvailableCopies == 0) return EOperationResult.NoAvailableCopies;
+
             var reservedBook = new ReservedBook
             {
                 UserId = user.Id,
@@ -158,23 +141,23 @@ public class DbInsertService(DataDbContext db)
                 BookId = book.Id,
                 Book = book
             };
-            
-            db.ReservedBooks.Add(reservedBook);
-            
+
+            await db.ReservedBooks.AddAsync(reservedBook);
+
             bookInventory.AvailableCopies--;
             bookInventory.ReservedCopies++;
             user.ReservedBooksCount++;
-            
-            db.UserActivityHistories.Add(new UserActivityHistory
+
+            await db.UserActivityHistories.AddAsync(new UserActivityHistory
             {
                 UserId = user.Id,
                 User = user,
                 Activity = $"Reserved a book - title: {book.Title}, author: {book.Author}",
                 ActivityTime = DateTime.Now
             });
-            
-            db.SaveChanges();
-            
+
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception)
@@ -182,8 +165,8 @@ public class DbInsertService(DataDbContext db)
             return EOperationResult.DatabaseError;
         }
     }
-    
-    public EOperationResult FavoriteBook(User user, Book book)
+
+    public async Task<EOperationResult> FavoriteBook(User user, Book book)
     {
         try
         {
@@ -194,11 +177,11 @@ public class DbInsertService(DataDbContext db)
                 BookId = book.Id,
                 Book = book
             };
-            
-            db.FavoriteBooks.Add(favoriteBook);
-            
-            db.SaveChanges();
-            
+
+            await db.FavoriteBooks.AddAsync(favoriteBook);
+
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception e)
