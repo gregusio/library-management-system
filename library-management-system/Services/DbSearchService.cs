@@ -5,13 +5,14 @@ namespace library_management_system.Services;
 
 public class DbSearchService(DataDbContext db)
 {
-    public List<User>? GetAllReaders()
+    public async Task<List<User>?> GetAllReaders()
     {
         try
         {
-            return db.Users
+            return await db.Users
                 .Include(user => user.Avatar)
-                .Where(user => user.Role == ERole.Reader).ToList();
+                .Where(user => user.Role == ERole.Reader)
+                .ToListAsync();
         }
         catch (Exception e)
         {
@@ -20,13 +21,14 @@ public class DbSearchService(DataDbContext db)
         }
     }
 
-    public List<User>? GetAllLibrarians()
+    public async Task<List<User>?> GetAllLibrarians()
     {
         try
         {
-            return db.Users
+            return await db.Users
                 .Include(user => user.Avatar)
-                .Where(user => user.Role == ERole.Librarian).ToList();
+                .Where(user => user.Role == ERole.Librarian)
+                .ToListAsync();
         }
         catch (Exception e)
         {
@@ -35,13 +37,13 @@ public class DbSearchService(DataDbContext db)
         }
     }
 
-    public List<Book>? GetAllBooks()
+    public async Task<List<Book>?> GetAllBooks()
     {
         try
         {
-            return db.Books
+            return await db.Books
                 .Include(b => b.BookCover)
-                .ToList();
+                .ToListAsync();
         }
         catch (Exception e)
         {
@@ -50,11 +52,12 @@ public class DbSearchService(DataDbContext db)
         }
     }
 
-    public Book? GetBook(int id)
+    public async Task<BookInventory?> GetBookInventory(Book book)
     {
         try
         {
-            return db.Books.FirstOrDefault(book => book.Id == id);
+            return await db.BookInventories
+                .FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
         }
         catch (Exception e)
         {
@@ -63,28 +66,14 @@ public class DbSearchService(DataDbContext db)
         }
     }
 
-    public BookInventory? GetBookInventory(Book book)
+    public async Task<List<BorrowedBook>?> GetBorrowedBooks(User reader)
     {
         try
         {
-            return db.BookInventories
-                .FirstOrDefault(bookInventory => bookInventory.BookId == book.Id);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return null;
-        }
-    }
-
-    public List<BorrowedBook>? GetBorrowedBooks(User reader)
-    {
-        try
-        {
-            return db.BorrowedBooks
+            return await db.BorrowedBooks
                 .Include(b => b.Book)
                 .Where(borrowedBook => borrowedBook.UserId == reader.Id)
-                .ToList();
+                .ToListAsync();
         }
         catch (Exception e)
         {
@@ -93,14 +82,14 @@ public class DbSearchService(DataDbContext db)
         }
     }
 
-    public List<ReservedBook>? GetReservedBooks(User reader)
+    public async Task<List<ReservedBook>?> GetReservedBooks(User reader)
     {
         try
         {
-            return db.ReservedBooks
+            return await db.ReservedBooks
                 .Include(b => b.Book)
                 .Where(reservedBook => reservedBook.UserId == reader.Id)
-                .ToList();
+                .ToListAsync();
         }
         catch (Exception e)
         {
@@ -109,12 +98,12 @@ public class DbSearchService(DataDbContext db)
         }
     }
 
-    public ReservedBook? GetReservedBook(User reader, Book book)
+    public async Task<ReservedBook?> GetReservedBook(User reader, Book book)
     {
         try
         {
-            return db.ReservedBooks
-                .FirstOrDefault(reservedBook => reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
+            return await db.ReservedBooks
+                .FirstOrDefaultAsync(reservedBook => reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
 
         }
         catch (Exception e)
@@ -124,14 +113,16 @@ public class DbSearchService(DataDbContext db)
         }
     }
     
-    public List<(string?, DateTime?)>? GetUserActivityHistory(User user)
+    public async Task<List<(string?, DateTime?)>?> GetUserActivityHistory(User user)
     {
         try
         {
-            return db.UserActivityHistories
+            var activities = await db.UserActivityHistories
                 .Where(activity => activity.UserId == user.Id)
                 .Select(activity => new { activity.Activity , activity.ActivityTime })
-                .AsEnumerable()
+                .ToListAsync();
+
+            return activities
                 .Select(x => (x.Activity, x.ActivityTime))
                 .ToList();
         }
@@ -142,11 +133,11 @@ public class DbSearchService(DataDbContext db)
         }
     }
 
-    public List<Avatar>? GetAvatars()
+    public async Task<List<Avatar>?> GetAvatars()
     {
         try
         {
-            return db.Avatars.ToList();
+            return await db.Avatars.ToListAsync();
         }
         catch (Exception e)
         {
@@ -155,15 +146,15 @@ public class DbSearchService(DataDbContext db)
         }
     }
     
-    public List<Book>? GetFavoriteBooks(User user)
+    public async Task<List<Book>?> GetFavoriteBooks(User user)
     {
         try
         {
-            return db.FavoriteBooks
+            return (await db.FavoriteBooks
                 .Include(favoriteBook => favoriteBook.Book)
                 .Where(favoriteBook => favoriteBook.UserId == user.Id)
                 .Select(favoriteBook => favoriteBook.Book)
-                .ToList()!;
+                .ToListAsync())!;
         }
         catch (Exception e)
         {
@@ -172,12 +163,12 @@ public class DbSearchService(DataDbContext db)
         }
     }
     
-    public bool IsBookFavorite(User user, Book book)
+    public async Task<bool> IsBookFavorite(User user, Book book)
     {
         try
         {
-            return db.FavoriteBooks
-                .Any(favoriteBook => favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
+            return await db.FavoriteBooks
+                .AnyAsync(favoriteBook => favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
         }
         catch (Exception e)
         {

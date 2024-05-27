@@ -4,84 +4,84 @@ namespace library_management_system.Services;
 
 public class DbApi(DbSearchService searchService, DbInsertService insertService, DbRemoveService removeService, DbUpdateService updateService)
 {
-    public List<User>? GetAllReaders()
+    public Task<List<User>?> GetAllReaders()
     {
         return searchService.GetAllReaders();
     }
 
-    public List<User>? GetAllLibrarians()
+    public Task<List<User>?> GetAllLibrarians()
     {
         return searchService.GetAllLibrarians();
     }
     
-    public BookInventory? GetBookInventory(Book book)
+    public Task<BookInventory?> GetBookInventory(Book book)
     {
         return searchService.GetBookInventory(book);
     }
 
-    public List<Book>? GetAllBooks()
+    public Task<List<Book>?> GetAllBooks()
     {
         return searchService.GetAllBooks();
     }
 
-    public List<BorrowedBook>? GetBorrowedBooks(User reader)
+    public Task<List<BorrowedBook>?> GetBorrowedBooks(User reader)
     {
         return searchService.GetBorrowedBooks(reader);
     }
 
-    public List<ReservedBook>? GetReservedBooks(User reader)
+    public Task<List<ReservedBook>?> GetReservedBooks(User reader)
     {
         return searchService.GetReservedBooks(reader);
     }
 
-    public ReservedBook? GetReservedBook(User reader, Book book)
+    public Task<ReservedBook?> GetReservedBook(User reader, Book book)
     {
         return searchService.GetReservedBook(reader, book);
     }
     
-    public List<(string?, DateTime?)>? GetUserActivityHistory(User user)
+    public Task<List<(string?, DateTime?)>?> GetUserActivityHistory(User user)
     {
         return searchService.GetUserActivityHistory(user);
     }
     
-    public List<Avatar>? GetAvatars()
+    public Task<List<Avatar>?> GetAvatars()
     {
         return searchService.GetAvatars();
     }
     
-    public List<Book>? GetFavoriteBooks(User user)
+    public Task<List<Book>?> GetFavoriteBooks(User user)
     {
         return searchService.GetFavoriteBooks(user);
     }
 
-    public bool IsBookFavorite(User user, Book book)
+    public Task<bool> IsBookFavorite(User user, Book book)
     {
         return searchService.IsBookFavorite(user, book);
     }
     
-    public async Task<EOperationResult> AddBook(Book book, int quantity, BookCover bookCover)
+    public Task<EOperationResult> AddBook(Book book, int quantity, BookCover bookCover)
     {
-        return await insertService.AddBook(book, quantity, bookCover);
+        return insertService.AddBook(book, quantity, bookCover);
     }
 
-    public async Task<EOperationResult> BorrowBook(User user, Book book)
+    public Task<EOperationResult> BorrowBook(User user, Book book)
     {
-        return await insertService.BorrowBook(user, book);
+        return insertService.BorrowBook(user, book);
     }
     
-    public async Task<EOperationResult> ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
+    public Task<EOperationResult> ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
     {
-        return await insertService.ChangeReservedToBorrowed(user, reservedBook);
+        return insertService.ChangeReservedToBorrowed(user, reservedBook);
     }
 
-    public async Task<EOperationResult> ReserveBook(User user, Book book)
+    public Task<EOperationResult> ReserveBook(User user, Book book)
     {
-        return await insertService.ReserveBook(user, book);
+        return insertService.ReserveBook(user, book);
     }
     
-    public async Task<EOperationResult> FavoriteBook(User user, Book book)
+    public Task<EOperationResult> FavoriteBook(User user, Book book)
     {
-        return await insertService.FavoriteBook(user, book);
+        return insertService.FavoriteBook(user, book);
     }
 
     public Task<EOperationResult> RemoveUser(User user)
