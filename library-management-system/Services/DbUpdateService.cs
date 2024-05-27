@@ -4,12 +4,12 @@ namespace library_management_system.Services;
 
 public class DbUpdateService(DataDbContext db)
 {
-    public EOperationResult SaveChanges()
+    public async Task<EOperationResult> SaveChanges()
     {
         try
         {
-            db.SaveChanges();
-            
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception e)
@@ -19,29 +19,26 @@ public class DbUpdateService(DataDbContext db)
         }
     }
 
-    public EOperationResult PostponeBorrowedBook(BorrowedBook borrowedBook)
+    public async Task<EOperationResult> PostponeBorrowedBook(BorrowedBook borrowedBook)
     {
         try
         {
-            if(borrowedBook.RenewalCount >= 2)
-            {
-                return EOperationResult.RenewalLimitReached;
-            }
-            
+            if (borrowedBook.RenewalCount >= 2) return EOperationResult.RenewalLimitReached;
+
             borrowedBook.RenewalCount++;
-            
+
             borrowedBook.Deadline = borrowedBook.Deadline.AddDays(7);
-            
-            db.UserActivityHistories.Add(new UserActivityHistory
+
+            await db.UserActivityHistories.AddAsync(new UserActivityHistory
             {
                 UserId = borrowedBook.UserId,
                 User = borrowedBook.User,
                 Activity = "Postponed borrowing deadline for book " + borrowedBook.Book!.Title,
                 ActivityTime = DateTime.Now
             });
-            
-            db.SaveChanges();
-            
+
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception e)

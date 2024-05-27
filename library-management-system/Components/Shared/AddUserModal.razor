@@ -110,9 +110,9 @@
 
     private List<Avatar>? Avatars { get; set; }
 
-    protected override Task OnInitializedAsync()
+    public async Task Show()
     {
-        Avatars = dbApi.GetAvatars();
+        Avatars = await dbApi.GetAvatars();
 
         if (Avatars == null)
         {
@@ -121,13 +121,8 @@
         }
 
         Input.Avatar = Avatars.First();
-
-        return base.OnInitializedAsync();
-    }
-
-    public void Show()
-    {
-        _modal.ShowAsync();
+        
+        await _modal.ShowAsync();
     }
 
     private void OnHideModal()

@@ -37,16 +37,14 @@
     private List<Avatar>? Avatars { get; set; } = [];
     private Avatar? SelectedAvatar { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        Avatars = dbApi.GetAvatars();
+        Avatars = await dbApi.GetAvatars();
 
-        if (Avatars != null) return base.OnInitializedAsync();
+        if (Avatars != null) return;
 
         Avatars = [];
         alertService.ShowInfo("Something went wrong. Please try again later.");
-
-        return base.OnInitializedAsync();
     }
 
     public void Show()
@@ -60,7 +58,7 @@
         alertService.ClearMessages();
     }
 
-    private void ChangeAvatar()
+    private async Task ChangeAvatar()
     {
         if (SelectedAvatar == null)
         {
@@ -69,9 +67,9 @@
         }
 
         User.Avatar = SelectedAvatar;
-        var result = dbApi.SaveChanges();
+        var result = await dbApi.SaveChanges();
         alertService.ShowOperationResult(result);
-        OnAvatarChanged.InvokeAsync();
+        await OnAvatarChanged.InvokeAsync();
     }
 
 }

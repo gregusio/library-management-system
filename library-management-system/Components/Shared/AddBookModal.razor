@@ -136,7 +136,7 @@
             BookCover = newCover
         };
 
-        var result = dbApi.AddBook(newBook, Input.Amount, newCover);
+        var result = await dbApi.AddBook(newBook, Input.Amount, newCover);
 
         if (result == EOperationResult.Success)
         {

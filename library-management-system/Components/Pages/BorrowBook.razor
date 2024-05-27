@@ -74,18 +74,16 @@
     private Book? SelectedBook { get; set; }
     private DateTime Deadline { get; set; } = DateTime.Now.AddDays(14);
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        AllReaders = dbApi.GetAllReaders();
-        AllBooks = dbApi.GetAllBooks();
+        AllReaders = await dbApi.GetAllReaders();
+        AllBooks = await dbApi.GetAllBooks();
 
-        if (AllReaders != null && AllBooks != null) return base.OnInitializedAsync();
+        if (AllReaders != null && AllBooks != null) return;
 
         alertService.ShowWarning("Failed to load data from the database. Please try again later.");
         AllReaders = [];
         AllBooks = [];
-
-        return base.OnInitializedAsync();
     }
 
     private async Task<IEnumerable<User>> GetReadersLocal(string searchText)
@@ -98,7 +96,7 @@
         return await Task.FromResult(AllBooks!.Where(book => book.Title!.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
-    private void TryBorrowBook()
+    private async Task TryBorrowBook()
     {
         if (SelectedPerson == null || SelectedBook == null)
         {
@@ -106,19 +104,19 @@
             return;
         }
 
-        var reservedBook = dbApi.GetReservedBook(SelectedPerson, SelectedBook);
+        var reservedBook = await dbApi.GetReservedBook(SelectedPerson, SelectedBook);
 
         EOperationResult result;
         if (reservedBook != null)
         {
-            result = dbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
+            result = await dbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
 
             alertService.ShowOperationResult(result);
 
             return;
         }
 
-        result = dbApi.BorrowBook(SelectedPerson, SelectedBook);
+        result = await dbApi.BorrowBook(SelectedPerson, SelectedBook);
 
         alertService.ShowOperationResult(result);
     }

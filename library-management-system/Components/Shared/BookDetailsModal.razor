@@ -93,20 +93,15 @@
 
     private Book? Book { get; set; }
     private BookCover BookCover => Book!.BookCover ?? new BookCover();
-    private BookInventory BookInventory => dbApi.GetBookInventory(Book!) ?? new BookInventory();
-    private bool IsFav => dbApi.IsBookFavorite(User, Book!);
+    private bool IsFav { get; set; }
     
-    public void Show(Book? book)
+    public async Task Show(Book book)
     {
-        if (book == null)
-        {
-            Book = new Book();
-            return;
-        }
-
         Book = book;
+        IsFav = await dbApi.IsBookFavorite(User, Book!);
+        
         _editMode = false;
-        _modal.ShowAsync();
+        await _modal.ShowAsync();
     }
     
     private void OnHideModal()
@@ -115,30 +110,30 @@
         alertService.ClearMessages();
     }
 
-    private void HeartClicked()
+    private async Task HeartClicked()
     {
-        var result = IsFav ? dbApi.RemoveFavoriteBook(User, Book!) : dbApi.FavoriteBook(User, Book!);
+        var result = IsFav ? await dbApi.RemoveFavoriteBook(User, Book!) : await dbApi.FavoriteBook(User, Book!);
 
         alertService.ShowOperationResult(result);
 
-        OnSaveEdit.InvokeAsync();
+        await OnSaveEdit.InvokeAsync();
     }
 
-    private void ReserveBook()
+    private async Task ReserveBook()
     {
-        var result = dbApi.ReserveBook(User, Book!);
+        var result = await dbApi.ReserveBook(User, Book!);
         alertService.ShowOperationResult(result);
 
-        OnSaveEdit.InvokeAsync();
+        await OnSaveEdit.InvokeAsync();
     }
 
-    private void RemoveBook()
+    private async Task RemoveBook()
     {
-        var result = dbApi.RemoveBook(Book!);
+        var result = await dbApi.RemoveBook(Book!);
         alertService.ShowOperationResult(result);
 
-        _modal.HideAsync();
-        OnSaveEdit.InvokeAsync();
+        await _modal.HideAsync();
+        await OnSaveEdit.InvokeAsync();
     }
 
     private void ToggleEditMode()

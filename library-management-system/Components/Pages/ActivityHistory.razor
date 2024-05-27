@@ -33,10 +33,10 @@
     private User? User { get; set; }
     private List<(string?, DateTime?)>? UserActivityHistory { get; set; } = [];
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         User = authService.GetUser(authenticationStateProvider).Result;
-        UserActivityHistory = dbApi.GetUserActivityHistory(User!);
+        UserActivityHistory = await dbApi.GetUserActivityHistory(User!);
 
         if (UserActivityHistory == null)
         {
@@ -45,8 +45,6 @@
         }
 
         UserActivityHistory.Reverse();
-
-        return base.OnInitializedAsync();
     }
 
 }
