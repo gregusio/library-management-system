@@ -59,9 +59,9 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
         return searchService.IsBookFavorite(user, book);
     }
     
-    public Task<EOperationResult> AddBook(Book book, int quantity, BookCover bookCover)
+    public Task<EOperationResult> AddBook(AddBookInputModel input)
     {
-        return insertService.AddBook(book, quantity, bookCover);
+        return insertService.AddBook(input);
     }
 
     public Task<EOperationResult> BorrowBook(User user, Book book, DateTime deadline)

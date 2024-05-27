@@ -120,23 +120,7 @@
 
     public async Task AddBook(EditContext editContext)
     {
-        var newCover = new BookCover
-        {
-            Image = Input.Image
-        };
-
-        var newBook = new Book
-        {
-            ISBN = Input.ISBN,
-            Title = Input.Title,
-            Author = Input.Author,
-            Publisher = Input.Publisher,
-            PublishDate = Input.PublishDate,
-            Category = Input.Category,
-            BookCover = newCover
-        };
-
-        var result = await dbApi.AddBook(newBook, Input.Amount, newCover);
+        var result = await dbApi.AddBook(Input);
         var message = result == EOperationResult.Success ? "Book added successfully" : result.GetMessage();
         alertService.ShowOperationResult(result, message);
 
