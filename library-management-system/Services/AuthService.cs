@@ -12,7 +12,7 @@ public class AuthService(UserManager<User> userManager)
         var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
         var userClaim = authState.User;
         if (!userClaim.Identity!.IsAuthenticated) return null;
-        
+
         var user = userManager.Users.Include(u => u.Avatar).FirstOrDefault(u => u.Email == userClaim.Identity.Name);
         return user;
     }
