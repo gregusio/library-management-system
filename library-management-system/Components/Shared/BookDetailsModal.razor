@@ -117,7 +117,7 @@
 
     private async Task HeartClicked()
     {
-        var result = IsFav ? dbApi.RemoveFavoriteBook(User, Book!) : await dbApi.FavoriteBook(User, Book!);
+        var result = IsFav ? await dbApi.RemoveFavoriteBook(User, Book!) : await dbApi.FavoriteBook(User, Book!);
 
         alertService.ShowOperationResult(result);
 
@@ -132,13 +132,13 @@
         await OnSaveEdit.InvokeAsync();
     }
 
-    private void RemoveBook()
+    private async Task RemoveBook()
     {
-        var result = dbApi.RemoveBook(Book!);
+        var result = await dbApi.RemoveBook(Book!);
         alertService.ShowOperationResult(result);
 
-        _modal.HideAsync();
-        OnSaveEdit.InvokeAsync();
+        await _modal.HideAsync();
+        await OnSaveEdit.InvokeAsync();
     }
 
     private void ToggleEditMode()

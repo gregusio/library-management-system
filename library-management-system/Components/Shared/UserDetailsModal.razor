@@ -78,11 +78,11 @@
         alertService.ClearMessages();
     }
 
-    private void RemoveUser()
+    private async Task RemoveUser()
     {
-        _modal.HideAsync();
-        dbApi.RemoveUser(User!);
-        OnSaveEdit.InvokeAsync();
+        await _modal.HideAsync();
+        await dbApi.RemoveUser(User!);
+        await OnSaveEdit.InvokeAsync();
     }
 
     private void ToggleEditMode()

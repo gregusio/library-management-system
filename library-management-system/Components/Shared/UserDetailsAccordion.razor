@@ -39,9 +39,9 @@
     private List<BorrowedBook> BorrowedBooks => dbApi.GetBorrowedBooks(User) ?? [];
     private List<ReservedBook> ReservedBooks => dbApi.GetReservedBooks(User) ?? [];
 
-    private void ReturnBook(BorrowedBook borrowedBook)
+    private async Task ReturnBook(BorrowedBook borrowedBook)
     {
-        var result = dbApi.ReturnBook(borrowedBook);
+        var result = await dbApi.ReturnBook(borrowedBook);
         alertService.ShowOperationResult(result);
         StateHasChanged();
     }
