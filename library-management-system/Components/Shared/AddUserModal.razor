@@ -142,6 +142,8 @@
 
         if (!result.Succeeded)
         {
+            const string message = "User creation failed. Please try again.";
+            alertService.ShowInfo(message);
             return;
         }
 
@@ -153,8 +155,6 @@
         }
 
         if (role.Name != null) await userManager.AddToRoleAsync(user, role.Name);
-
-        logger.LogInformation("User created a new account with password.");
 
         alertService.ShowSuccess("User created a new account with password.");
 
