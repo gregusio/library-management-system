@@ -113,9 +113,19 @@
     private async Task HeartClicked()
     {
         var result = IsFav ? await dbApi.RemoveFavoriteBook(User, Book!) : await dbApi.FavoriteBook(User, Book!);
+        string message;
+        if (result == EOperationResult.Success)
+        {
+            message = IsFav ? "Book removed from favorites" : "Book added to favorites";
+        }
+        else
+        {
+            message = result.GetMessage();
+        }
+        
         IsFav = !IsFav;
         
-        alertService.ShowOperationResult(result);
+        alertService.ShowOperationResult(result, message);
         
         await OnSaveEdit.InvokeAsync();
     }
@@ -123,7 +133,8 @@
     private async Task ReserveBook()
     {
         var result = await dbApi.ReserveBook(User, Book!);
-        alertService.ShowOperationResult(result);
+        var message = result == EOperationResult.Success ? "Book reserved" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
 
         await OnSaveEdit.InvokeAsync();
     }
@@ -131,8 +142,10 @@
     private async Task RemoveBook()
     {
         var result = await dbApi.RemoveBook(Book!);
-        alertService.ShowOperationResult(result);
-
+        var message = result == EOperationResult.Success ? "Book removed" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await Task.Delay(1000);
         await _modal.HideAsync();
         await OnSaveEdit.InvokeAsync();
     }
@@ -142,11 +155,15 @@
         _editMode = !_editMode;
     }
 
-    private void Save()
+    private async Task Save()
     {
         _editMode = false;
-        OnSaveEdit.InvokeAsync();
-        dbApi.SaveChanges();
+        
+        var result = await dbApi.SaveChanges();
+        var message = result == EOperationResult.Success ? "Info saved" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await OnSaveEdit.InvokeAsync();
     }
 
     private async Task LoadFile(InputFileChangeEventArgs e)
