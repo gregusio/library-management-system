@@ -80,9 +80,13 @@
 
     private async Task RemoveUser()
     {
-        await _modal.HideAsync();
-        await dbApi.RemoveUser(User!);
+        var result = await dbApi.RemoveUser(User!);
+        var message = result == EOperationResult.Success ? "User removed successfully" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await Task.Delay(1000);
         await OnSaveEdit.InvokeAsync();
+        await _modal.HideAsync();
     }
 
     private void ToggleEditMode()
@@ -90,11 +94,15 @@
         _editMode = !_editMode;
     }
 
-    private void Save()
+    private async Task Save()
     {
         _editMode = false;
-        OnSaveEdit.InvokeAsync();
-        dbApi.SaveChanges();
+        
+        var result = await dbApi.SaveChanges();
+        var message = result == EOperationResult.Success ? "User info changed successfully" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await OnSaveEdit.InvokeAsync();
     }
 
 }
