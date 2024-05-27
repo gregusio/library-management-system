@@ -14,33 +14,7 @@ public class AlertService
 
     public void ShowOperationResult(EOperationResult result)
     {
-        switch (result)
-        {
-            case EOperationResult.Success:
-                ShowSuccess("Success");
-                return;
-            case EOperationResult.DatabaseError:
-                ShowWarning("Database error");
-                return;
-            case EOperationResult.UnexpectedError:
-                ShowWarning("Unexpected error");
-                return;
-            case EOperationResult.NoAvailableCopies:
-                ShowInfo("No available copies");
-                return;
-            case EOperationResult.BorrowedBookLimitExceeded:
-                ShowInfo("Borrowed book limit exceeded");
-                return;
-            case EOperationResult.ReservedBookLimitExceeded:
-                ShowInfo("Reserved book limit exceeded");
-                return;
-            case EOperationResult.RenewalLimitReached:
-                ShowInfo("Renewal limit reached");
-                return;
-            default:
-                ShowInfo("Unknown error");
-                break;
-        }
+        ShowMessage(result.GetToastType(), result.GetMessage());
     }
 
     public void ShowInfo(string message)
@@ -65,20 +39,12 @@ public class AlertService
 
     private static ToastMessage CreateToastMessage(ToastType toastType, string message)
     {
-        return toastType switch
+        return new ToastMessage
         {
-            ToastType.Info => new ToastMessage
-            {
-                Type = toastType, Title = "Info", HelpText = $"{DateTime.Now}", Message = message
-            },
-            ToastType.Success => new ToastMessage
-            {
-                Type = toastType, Title = "Success", HelpText = $"{DateTime.Now}", Message = message
-            },
-            _ => new ToastMessage
-            {
-                Type = toastType, Title = "Warning", HelpText = $"{DateTime.Now}", Message = message
-            }
+            Type = toastType,
+            Title = toastType.ToString(),
+            HelpText = $"{DateTime.Now}",
+            Message = message
         };
     }
 }
