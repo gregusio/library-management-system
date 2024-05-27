@@ -10,7 +10,9 @@ public enum EOperationResult
     UnexpectedError,
     BorrowedBookLimitExceeded,
     ReservedBookLimitExceeded,
-    RenewalLimitReached
+    RenewalLimitReached,
+    BookNotReserved,
+    BookReserved
 }
 
 public static class OperationResultExtensions

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Services;
 
-public class DbInsertService(DataDbContext db)
+public class DbInsertService(DataDbContext db, DbRemoveService removeService)
 {
     private async Task<EOperationResult> AddBookCover(BookCover bookCover)
     {
@@ -19,6 +19,24 @@ public class DbInsertService(DataDbContext db)
         {
             Console.WriteLine(e);
             return EOperationResult.DatabaseError;
+        }
+    }
+    
+    private async Task<(EOperationResult, ReservedBook?)> IsBookReserved(User user, Book book)
+    {
+        try
+        {
+            var reservedBook = await db.ReservedBooks.FirstOrDefaultAsync(reservedBook =>
+                reservedBook.UserId == user.Id && reservedBook.BookId == book.Id);
+
+            if (reservedBook == null) return (EOperationResult.BookNotReserved, null);
+
+            return (EOperationResult.BookReserved, reservedBook);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return (EOperationResult.DatabaseError, null);
         }
     }
 
@@ -52,12 +70,19 @@ public class DbInsertService(DataDbContext db)
         }
     }
 
-    public async Task<EOperationResult> BorrowBook(User user, Book book)
+    public async Task<EOperationResult> BorrowBook(User user, Book book, DateTime deadline)
     {
         try
         {
             if (user.BorrowedBooksCount >= 5) return EOperationResult.BorrowedBookLimitExceeded;
-
+            
+            var (bookStatus, reservedBook) = await IsBookReserved(user, book);
+            if (bookStatus == EOperationResult.BookReserved)
+            {
+                var result = await removeService.RemoveReservedBook(reservedBook!);
+                if (result != EOperationResult.Success) return result;
+            }
+            
             var bookInventory =
                 await db.BookInventories.FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
 
@@ -71,7 +96,7 @@ public class DbInsertService(DataDbContext db)
                 User = user,
                 BookId = book.Id,
                 Book = book,
-                Deadline = DateTime.Now.AddDays(30),
+                Deadline = deadline,
                 RenewalCount = 0
             };
 
@@ -92,29 +117,6 @@ public class DbInsertService(DataDbContext db)
             await db.SaveChangesAsync();
 
             return EOperationResult.Success;
-        }
-        catch (Exception)
-        {
-            return EOperationResult.DatabaseError;
-        }
-    }
-
-    public async Task<EOperationResult> ChangeReservedToBorrowed(User user, ReservedBook reservedBook)
-    {
-        try
-        {
-            db.ReservedBooks.Remove(reservedBook);
-
-            var bookInventory =
-                await db.BookInventories.FirstOrDefaultAsync(bookInventory =>
-                    bookInventory.BookId == reservedBook.BookId);
-
-            if (bookInventory == null) return EOperationResult.UnexpectedError;
-
-            bookInventory.ReservedCopies--;
-            bookInventory.AvailableCopies++;
-
-            return await BorrowBook(user, reservedBook.Book!);
         }
         catch (Exception)
         {
