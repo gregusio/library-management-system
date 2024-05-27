@@ -113,9 +113,10 @@
     private async Task HeartClicked()
     {
         var result = IsFav ? await dbApi.RemoveFavoriteBook(User, Book!) : await dbApi.FavoriteBook(User, Book!);
-
+        IsFav = !IsFav;
+        
         alertService.ShowOperationResult(result);
-
+        
         await OnSaveEdit.InvokeAsync();
     }
 
