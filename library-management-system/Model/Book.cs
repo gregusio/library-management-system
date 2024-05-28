@@ -21,4 +21,7 @@ public class Book
     [Required] public int BookCoverId { get; init; }
 
     [Required] public BookCover? BookCover { get; init; }
+    
+    [StringLength(100)]
+    public string? Description { get; set; }
 }
