@@ -10,3 +10,12 @@
     overflow-y: auto;
     max-height: 15rem;
 }
+
+.review {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #ccc;
+    padding: 1rem;
+}

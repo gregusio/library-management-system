@@ -1,11 +1,16 @@
 @using library_management_system.Model
+@using library_management_system.Services
+
+@inject DbApi dbApi
+
+
 <Accordion>
     <AccordionItem Title="Description">
         <Content>
             @if (EditMode)
             {
                 <InputTextArea @bind-Value="Book.Description" class="form-control"
-                               aria-required="true" placeholder="About a book" rows="5" />
+                               aria-required="true" placeholder="About a book" rows="5"/>
             }
             else
             {
@@ -14,26 +19,24 @@
         </Content>
     </AccordionItem>
 
-    <AccordionItem>
+    <AccordionItem >
         <TitleTemplate>
             <div class="title-with-rating">
                 <span>Reviews</span>
-                <RatingComponent Rating="4.5"></RatingComponent>
+                <RatingComponent Rating="AverageRating"></RatingComponent>
+                <span>(@NumberOfRatings)</span>
             </div>
         </TitleTemplate>
 
         <Content>
             <div class="scrollable">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                @foreach (var (name, rating) in Ratings)
+                {
+                    <div class="review">
+                        <span>@name</span>
+                        <RatingComponent Rating="rating"></RatingComponent>
+                    </div>
+                }
             </div>
         </Content>
     </AccordionItem>
@@ -43,5 +46,22 @@
 @code {
     [Parameter] public required bool EditMode { get; set; }
     [Parameter] public required Book Book { get; set; }
-    
+
+    private double AverageRating { get; set; }
+    private int NumberOfRatings { get; set; }
+    private List<(string, int)> Ratings { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AverageRating = await dbApi.GetBookAverageRating(Book);
+        Ratings = await dbApi.GetBookAllRatings(Book);
+        NumberOfRatings = Ratings.Count;
+    }
+
+    public async Task UpdateFields()
+    {
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
 }

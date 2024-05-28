@@ -72,9 +72,13 @@
                             </AuthorizeView>
                         </div>
 
-                        <BookInfoCard Book="Book" EditMode="_editMode" ShowBookCover="false" />
+                        <div class="rating">
+                            <RatingComponent User="User" Book="Book" Rating="UserRating" IsInteractive="true" RatingChanged="UpdateFields"/>
+                        </div>
 
-                        <BookDetailsAccordion Book="Book" EditMode="_editMode" />
+                        <BookInfoCard Book="Book" EditMode="_editMode" ShowBookCover="false"/>
+
+                        <BookDetailsAccordion @ref="_bookDetailsAccordion" Book="Book" EditMode="_editMode"/>
                     </div>
                 </div>
             </div>
@@ -86,24 +90,36 @@
 @code {
     [Parameter] public required EventCallback OnSaveEdit { get; set; }
     [Parameter] public required User User { get; set; }
-    
+
     private bool _editMode = false;
-    
+
     private Modal _modal = default!;
 
     private Book? Book { get; set; }
     private BookCover BookCover => Book!.BookCover ?? new BookCover();
     private bool IsFav { get; set; }
-    
+    private int UserRating { get; set; }
+    private double AverageRating { get; set; }
+
+    private BookDetailsAccordion _bookDetailsAccordion = default!;
+
     public async Task Show(Book book)
     {
         Book = book;
         IsFav = await dbApi.IsBookFavorite(User, Book!);
-        
+        UserRating = await dbApi.GetBookUserRating(User, Book!);
+
         _editMode = false;
         await _modal.ShowAsync();
     }
-    
+
+    private async Task UpdateFields()
+    {
+        UserRating = await dbApi.GetBookUserRating(User, Book!);
+        StateHasChanged();
+        await _bookDetailsAccordion.UpdateFields();
+    }
+
     private void OnHideModal()
     {
         _modal.HideAsync();
@@ -122,11 +138,11 @@
         {
             message = result.GetMessage();
         }
-        
+
         IsFav = !IsFav;
-        
+
         alertService.ShowOperationResult(result, message);
-        
+
         await OnSaveEdit.InvokeAsync();
     }
 
@@ -144,7 +160,7 @@
         var result = await dbApi.RemoveBook(Book!);
         var message = result == EOperationResult.Success ? "Book removed" : result.GetMessage();
         alertService.ShowOperationResult(result, message);
-        
+
         await Task.Delay(1000);
         await _modal.HideAsync();
         await OnSaveEdit.InvokeAsync();
@@ -158,11 +174,11 @@
     private async Task Save()
     {
         _editMode = false;
-        
+
         var result = await dbApi.SaveChanges();
         var message = result == EOperationResult.Success ? "Info saved" : result.GetMessage();
         alertService.ShowOperationResult(result, message);
-        
+
         await OnSaveEdit.InvokeAsync();
     }
 
