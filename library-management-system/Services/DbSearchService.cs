@@ -176,4 +176,57 @@ public class DbSearchService(DataDbContext db)
             return false;
         }
     }
+
+    public async Task<double> GetBookAverageRating(Book book)
+    {
+        try
+        {
+            var reviews = await db.UsersBookRatings
+                .Where(review => review.BookId == book.Id)
+                .Select(review => review.Rating)
+                .ToListAsync();
+
+            return reviews.Count == 0 ? 0 : reviews.Average();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return 0;
+        }
+    }
+    
+    public async Task<List<(string, int)>> GetBookAllRatings(Book book)
+    {
+        try
+        {
+            var list = await db.UsersBookRatings
+                .Where(review => review.BookId == book.Id)
+                .Select(review => new { review.User!.Name, review.Rating })
+                .ToListAsync();
+            
+            return list.Select(y => (y.Name, y.Rating)).ToList()!;
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new List<(string, int)>();
+        }
+    }
+    
+    public async Task<int> GetBookUserRating(User user, Book book)
+    {
+        try
+        {
+            var review = await db.UsersBookRatings
+                .FirstOrDefaultAsync(review => review.UserId == user.Id && review.BookId == book.Id);
+
+            return review?.Rating ?? 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return 0;
+        }
+    }
 }

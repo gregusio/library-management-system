@@ -59,6 +59,21 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
         return searchService.IsBookFavorite(user, book);
     }
     
+    public Task<double> GetBookAverageRating(Book book)
+    {
+        return searchService.GetBookAverageRating(book);
+    }
+    
+    public Task<List<(string, int)>> GetBookAllRatings(Book book)
+    {
+        return searchService.GetBookAllRatings(book);
+    }
+    
+    public Task<int> GetBookUserRating(User user, Book book)
+    {
+        return searchService.GetBookUserRating(user, book);
+    }
+    
     public Task<EOperationResult> AddBook(AddBookInputModel input)
     {
         return insertService.AddBook(input);
@@ -77,6 +92,11 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
     public Task<EOperationResult> FavoriteBook(User user, Book book)
     {
         return insertService.FavoriteBook(user, book);
+    }
+    
+    public Task<EOperationResult> AddBookRating(User user, Book book, int rating)
+    {
+        return insertService.AddBookRating(user, book, rating);
     }
 
     public Task<EOperationResult> RemoveUser(User user)

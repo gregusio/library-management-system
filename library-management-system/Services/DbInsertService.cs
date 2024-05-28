@@ -191,4 +191,32 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
             return EOperationResult.DatabaseError;
         }
     }
+
+    public async Task<EOperationResult> AddBookRating(User user, Book book, int rating)
+    {
+        try
+        {
+            if(await db.UsersBookRatings.AnyAsync(review => review.UserId == user.Id && review.BookId == book.Id))
+                db.UsersBookRatings.RemoveRange(db.UsersBookRatings.Where(review => review.UserId == user.Id && review.BookId == book.Id));
+            
+            var review = new UsersBookRating
+            {
+                UserId = user.Id,
+                User = user,
+                BookId = book.Id,
+                Rating = rating
+            };
+
+            await db.UsersBookRatings.AddAsync(review);
+
+            await db.SaveChangesAsync();
+
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
+        }
+    }
 }
