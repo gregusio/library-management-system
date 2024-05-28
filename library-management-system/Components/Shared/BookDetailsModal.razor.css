@@ -3,3 +3,10 @@
     border-bottom: 1px solid #ccc; /* Example style */
     border-radius: 0; /* Makes input fields look like underlined text */
 }
+
+.rating {
+    display: flex;
+    justify-content: center;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
