@@ -42,7 +42,8 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
                 Category = input.Category,
                 ISBN = input.ISBN,
                 PublishDate = input.PublishDate,
-                Publisher = input.Publisher
+                Publisher = input.Publisher,
+                Description = input.Description
             };
             
             await db.Books.AddAsync(book);

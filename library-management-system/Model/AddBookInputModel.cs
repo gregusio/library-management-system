@@ -26,4 +26,7 @@ public class AddBookInputModel
     [Required]
     [Display(Name = "Image")]
     public byte[] Image { get; set; } = File.ReadAllBytes("Images/BookCovers/default-cover.jpg");
+    
+    [Display(Name = "Description")]
+    public string Description { get; set; } = "";
 }
