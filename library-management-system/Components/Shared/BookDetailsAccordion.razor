@@ -1,19 +1,15 @@
+@using library_management_system.Model
 <Accordion>
     <AccordionItem Title="Description">
         <Content>
             @if (EditMode)
             {
-                @* <InputTextArea Placeholder="Description" @bind-Value="@Book.Description"></InputTextArea> *@
+                <InputTextArea @bind-Value="Book.Description" class="form-control"
+                               aria-required="true" placeholder="About a book" rows="5" />
             }
             else
             {
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                    laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                    voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
+                <p>@Book.Description</p>
             }
         </Content>
     </AccordionItem>
@@ -46,5 +42,6 @@
 
 @code {
     [Parameter] public required bool EditMode { get; set; }
+    [Parameter] public required Book Book { get; set; }
     
 }
