@@ -18,6 +18,8 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDb
     public required DbSet<Avatar> Avatars { get; init; }
 
     public required DbSet<BookCover> BookCovers { get; init; }
+    
+    public required DbSet<UsersBookRating> UsersBookRatings { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
