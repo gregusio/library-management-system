@@ -127,6 +127,9 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
     {
         try
         {
+            var (bookStatus, _) = await IsBookReserved(user, book);
+            if (bookStatus == EOperationResult.BookReserved) return EOperationResult.BookReserved;
+            
             if (user.ReservedBooksCount >= 5) return EOperationResult.ReservedBookLimitExceeded;
 
             var bookInventory =

@@ -28,6 +28,7 @@ public static class OperationResultExtensions
             EOperationResult.BorrowedBookLimitExceeded => "Borrowed book limit exceeded!",
             EOperationResult.ReservedBookLimitExceeded => "Reserved book limit exceeded!",
             EOperationResult.RenewalLimitReached => "Renewal limit reached",
+            EOperationResult.BookReserved => "Book is already reserved",
             _ => "Unknown error"
         };
     }
@@ -43,6 +44,7 @@ public static class OperationResultExtensions
             EOperationResult.BorrowedBookLimitExceeded => ToastType.Info,
             EOperationResult.ReservedBookLimitExceeded => ToastType.Info,
             EOperationResult.RenewalLimitReached => ToastType.Info,
+            EOperationResult.BookReserved => ToastType.Info,
             _ => ToastType.Info
         };
     }

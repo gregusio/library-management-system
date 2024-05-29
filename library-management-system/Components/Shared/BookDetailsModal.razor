@@ -40,11 +40,22 @@
                                 }
                             </div>
 
-                            <div class="action">
-                                <Tooltip Title="Reserve" Placement="TooltipPlacement.Top">
-                                    <Icon Name="IconName.Cart" @onclick="ReserveBook"></Icon>
-                                </Tooltip>
-                            </div>
+                            @if (IsBookNotReserved())
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Reserve" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.Cart" @onclick="ReserveBook"></Icon>
+                                    </Tooltip>
+                                </div>
+                            }
+                            else if (IsBookReserved())
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Remove reservation" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.CartFill" @onclick="DeleteReservation"></Icon>
+                                    </Tooltip>
+                                </div>
+                            }
                             
                             @if (IsBookDeadlinePassed())
                             {
@@ -114,10 +125,13 @@
     private Book? Book { get; set; }
     private BookCover BookCover => Book!.BookCover ?? new BookCover();
     private bool IsFav { get; set; }
+    private bool IsReserved { get; set; }
     private int UserRating { get; set; }
     private double AverageRating { get; set; }
     private string _borrowedState = "borrowed";
     private string _reservedState = "reserved";
+    private string _allState = "all";
+    private string _favState = "favorites";
     
     private BorrowedBook? BorrowedBook { get; set; }
     private ReservedBook? ReservedBook { get; set; }
@@ -128,6 +142,7 @@
     {
         Book = book;
         IsFav = await dbApi.IsBookFavorite(User, Book!);
+        IsReserved = await dbApi.IsBookReserved(User, Book);
         UserRating = await dbApi.GetBookUserRating(User, Book!);
         BorrowedBook = borrowedBook;
         ReservedBook = reservedBook;
@@ -156,17 +171,26 @@
         if (result == EOperationResult.Success)
         {
             message = IsFav ? "Book removed from favorites" : "Book added to favorites";
+            IsFav = !IsFav;
         }
         else
         {
             message = result.GetMessage();
         }
 
-        IsFav = !IsFav;
-
         alertService.ShowOperationResult(result, message);
 
         await OnSaveEdit.InvokeAsync();
+    }
+    
+    private bool IsBookReserved()
+    {
+        return CurrState == _reservedState && IsReserved;
+    }
+    
+    private bool IsBookNotReserved()
+    {
+        return (CurrState == _allState || CurrState == _favState) && !IsReserved;
     }
 
     private async Task ReserveBook()
@@ -175,7 +199,27 @@
         var message = result == EOperationResult.Success ? "Book reserved" : result.GetMessage();
         alertService.ShowOperationResult(result, message);
 
+        if (result == EOperationResult.Success)
+        {
+            IsReserved = !IsReserved;
+        }
+        
         await OnSaveEdit.InvokeAsync();
+    }
+
+    private async Task DeleteReservation()
+    {
+        var result = await dbApi.RemoveReservedBook(ReservedBook!);
+        var message = result == EOperationResult.Success ? "Reservation removed" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+
+        if (result == EOperationResult.Success)
+        {
+            IsReserved = !IsReserved;
+        }
+        
+        await OnSaveEdit.InvokeAsync();
+        await _modal.HideAsync();
     }
     
     private bool IsBookDeadlinePassed()

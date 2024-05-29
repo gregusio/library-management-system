@@ -112,6 +112,12 @@ public class DbSearchService(DataDbContext db)
             return null;
         }
     }
+    
+    public Task<bool> IsBookReserved(User user, Book book)
+    {
+        return db.ReservedBooks
+            .AnyAsync(reservedBook => reservedBook.UserId == user.Id && reservedBook.BookId == book.Id);
+    }
 
     public async Task<List<(string?, DateTime?)>?> GetUserActivityHistory(User user)
     {
