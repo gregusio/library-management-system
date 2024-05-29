@@ -1,10 +1,7 @@
 ﻿@using library_management_system.Services
-@using library_management_system.Model
-@using Microsoft.EntityFrameworkCore.ChangeTracking.Internal
-@using Microsoft.AspNetCore.Components.Authorization
 
-@inject AuthService AuthService
-@inject NavigationManager NavigationManager
+@inject AuthService authService
+@inject NavigationManager navigationManager
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -12,60 +9,71 @@
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-
         <AuthorizeView Roles="admin,librarian">
-            <Authorized>
-                @foreach (var (href, buttonName, iconName) in _navigationMenu!.GetForLibrarian())
-                {
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link" href=@href>
-                            <div class="me-3">
-                                <span class="bi" aria-hidden="true"></span>
-                                <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
-                            </div>
-
-                        </NavLink>
+            @foreach (var (href, buttonName, iconName) in NavigationMenu.GetForLibrarian())
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href=@href>
+                        <div class="me-3">
+                            <span class="bi" aria-hidden="true"></span>
+                            <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
+                        </div>
+                    </NavLink>
+                </div>
+            }
+        </AuthorizeView>
+        
+        <AuthorizeView Roles="admin">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/librarians">
+                    <div class="me-3">
+                        <span class="bi" aria-hidden="true"></span>
+                        <Icon Style="margin-right: 5px" Name="IconName.People"></Icon>Librarians
                     </div>
-                }
-            </Authorized>
+                </NavLink>
+            </div>
         </AuthorizeView>
 
         <AuthorizeView Roles="reader">
-            <Authorized>
-                @foreach (var (href, buttonName, iconName) in _navigationMenu!.GetForReader())
-                {
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link" href=@href>
-                            <div class="me-3">
-                                <span class="bi" aria-hidden="true"></span>
-                                <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
-                            </div>
-
-                        </NavLink>
-                    </div>
-                }
-
-
-            </Authorized>
-
+            @foreach (var (href, buttonName, iconName) in NavigationMenu.GetForReader())
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href=@href>
+                        <div class="me-3">
+                            <span class="bi" aria-hidden="true"></span>
+                            <Icon Style="margin-right: 5px" Name="@iconName"></Icon>@buttonName
+                        </div>
+                    </NavLink>
+                </div>
+            }
         </AuthorizeView>
 
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="account">
+                        <div class="me-3">
+                            <span class="bi" aria-hidden="true"></span>
+                            <Icon Style="margin-right: 5px" Name="IconName.EmojiSmile"></Icon>Account
+                        </div>
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
                     <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="" />
+                        <AntiforgeryToken/>
+                        <input type="hidden" name="ReturnUrl" value=""/>
                         <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                            <span class="bi" aria-hidden="true"></span> Logout
                         </button>
                     </form>
                 </div>
             </Authorized>
+
             <NotAuthorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="auth">
@@ -73,16 +81,13 @@
                             <span class="bi" aria-hidden="true"></span>
                             <Icon Style="margin-right: 5px" Name="IconName.Airplane"></Icon>Login
                         </div>
-
                     </NavLink>
                 </div>
             </NotAuthorized>
-
-
         </AuthorizeView>
-
     </nav>
 </div>
+
 
 @code {
     private NavigationMenu _navigationMenu = new();

@@ -1,20 +1,17 @@
 using library_management_system.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Services;
 
 public class DbRemoveService(DataDbContext db)
 {
-    public EOperationResult RemoveUser(string id)
+    public async Task<EOperationResult> RemoveUser(User user)
     {
         try
         {
-            var user = db.Users.FirstOrDefault(user => user.Id == id);
-            if (user != null)
-            {
-                db.Users.Remove(user);
-                db.SaveChanges();
-            }
-            
+            db.Users.Remove(user);
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception e)
@@ -24,17 +21,13 @@ public class DbRemoveService(DataDbContext db)
         }
     }
 
-    public EOperationResult RemoveBook(int id)
+    public async Task<EOperationResult> RemoveBook(Book book)
     {
         try
         {
-            var book = db.Books.FirstOrDefault(book => book.Id == id);
-            if (book != null)
-            {
-                db.Books.Remove(book);
-                db.SaveChanges();
-            }
-            
+            db.Books.Remove(book);
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception e)
@@ -44,13 +37,15 @@ public class DbRemoveService(DataDbContext db)
         }
     }
 
-    public EOperationResult ReturnBook(BorrowedBook borrowedBook)
+    public async Task<EOperationResult> ReturnBook(BorrowedBook borrowedBook)
     {
         try
         {
-            var book = db.Books.FirstOrDefault(book => book.Id == borrowedBook.BookId);
-            var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == borrowedBook.BookId);
-        
+            var book = await db.Books.FirstOrDefaultAsync(book => book.Id == borrowedBook.BookId);
+            var bookInventory =
+                await db.BookInventories.FirstOrDefaultAsync(bookInventory =>
+                    bookInventory.BookId == borrowedBook.BookId);
+
             if (book != null && bookInventory != null)
             {
                 bookInventory.AvailableCopies += 1;
@@ -58,8 +53,20 @@ public class DbRemoveService(DataDbContext db)
             }
 
             db.BorrowedBooks.Remove(borrowedBook);
-            db.SaveChanges();
-            
+
+            await db.UserActivityHistories.AddAsync(new UserActivityHistory
+            {
+                UserId = borrowedBook.UserId,
+                Activity = $"Returned book - title: {book?.Title}, author: {book?.Author}",
+                ActivityTime = DateTime.Now
+            });
+
+            var user = await db.Users.FirstOrDefaultAsync(user => user.Id == borrowedBook.UserId);
+            if (user == null) return EOperationResult.DatabaseError;
+            user.BorrowedBooksCount -= 1;
+
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception e)
@@ -69,13 +76,15 @@ public class DbRemoveService(DataDbContext db)
         }
     }
 
-    public EOperationResult RemoveReservedBook(ReservedBook reservedBook)
+    public async Task<EOperationResult> RemoveReservedBook(ReservedBook reservedBook)
     {
         try
         {
-            var book = db.Books.FirstOrDefault(book => book.Id == reservedBook.BookId);
-            var bookInventory = db.BookInventories.FirstOrDefault(bookInventory => bookInventory.BookId == reservedBook.BookId);
-        
+            var book = await db.Books.FirstOrDefaultAsync(book => book.Id == reservedBook.BookId);
+            var bookInventory =
+                await db.BookInventories.FirstOrDefaultAsync(bookInventory =>
+                    bookInventory.BookId == reservedBook.BookId);
+
             if (book != null && bookInventory != null)
             {
                 bookInventory.AvailableCopies += 1;
@@ -83,8 +92,40 @@ public class DbRemoveService(DataDbContext db)
             }
 
             db.ReservedBooks.Remove(reservedBook);
-            db.SaveChanges();
-            
+
+            await db.UserActivityHistories.AddAsync(new UserActivityHistory
+            {
+                UserId = reservedBook.UserId,
+                Activity = $"Removed reservation - title: {book?.Title}, author: {book?.Author}",
+                ActivityTime = DateTime.Now
+            });
+
+            var user = await db.Users.FirstOrDefaultAsync(user => user.Id == reservedBook.UserId);
+            if (user == null) return EOperationResult.DatabaseError;
+            user.ReservedBooksCount -= 1;
+
+            await db.SaveChangesAsync();
+
+            return EOperationResult.Success;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return EOperationResult.DatabaseError;
+        }
+    }
+
+    public async Task<EOperationResult> RemoveFavoriteBook(User user, Book book)
+    {
+        try
+        {
+            var favoriteBook = await db.FavoriteBooks.FirstOrDefaultAsync(favoriteBook =>
+                favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
+            if (favoriteBook == null) return EOperationResult.Success;
+
+            db.FavoriteBooks.Remove(favoriteBook);
+            await db.SaveChangesAsync();
+
             return EOperationResult.Success;
         }
         catch (Exception e)

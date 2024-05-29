@@ -1,0 +1,27 @@
+@switch (Type)
+{
+    case StarType.Full:
+        <Icon Name="IconName.StarFill" Color="IconColor.Info"></Icon>
+        break;
+    case StarType.Half:
+        <Icon Name="IconName.StarHalf" Color="IconColor.Info"></Icon>
+        break;
+    case StarType.Empty:
+        <Icon Name="IconName.Star"></Icon>
+        break;
+    default:
+        <Icon Name="IconName.Star"></Icon>
+        break;
+}
+
+@code {
+    [Parameter] public StarType Type { get; set; } = StarType.Empty;
+
+    public enum StarType
+    {
+        Full,
+        Half,
+        Empty
+    }
+
+}

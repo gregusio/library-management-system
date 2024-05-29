@@ -7,7 +7,7 @@ public class BookInventory
 {
     [Key] public int Id { get; init; }
 
-    [Required, ForeignKey("Book")] public int BookId { get; init; }
+    [Required] [ForeignKey("Book")] public int BookId { get; init; }
 
     public Book? Book { get; init; }
 

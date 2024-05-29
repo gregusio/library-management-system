@@ -1,0 +1,120 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject DbApi dbApi
+@inject AuthService authService
+@inject AlertService alertService
+@inject AuthenticationStateProvider authenticationStateProvider
+
+
+<Card>
+    @if (ShowBookCover)
+    {
+        <img class="image-style"
+             src="data:image/jpg;base64, @Convert.ToBase64String(BookCover!.Image!)"
+             alt="Card image cap"/>
+    }
+
+    <CardTitle Style="margin: 1rem">
+        @if (EditMode)
+        {
+            <div class="form-floating">
+                <InputText @bind-Value="@Book.Title" class="form-control"
+                           aria-required="true"/>
+                <label>Title</label>
+            </div>
+        }
+        else
+        {
+            @Book.Title
+        }
+    </CardTitle>
+
+    <CardBody>
+        <CardText>
+            <div class="info">
+                @if (EditMode)
+                {
+                    <div class="form-floating">
+                        <InputText @bind-Value="@Book.ISBN" class="form-control"
+                                   aria-required="true"/>
+                        <label>ISBN</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <InputText @bind-Value="@Book.Author" class="form-control"
+                                   aria-required="true"/>
+                        <label>Author</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <InputText @bind-Value="@Book.Publisher" class="form-control"
+                                   aria-required="true"/>
+                        <label>Book publisher</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <InputDate @bind-Value="@Book.PublishDate" class="form-control"
+                                   aria-required="true"/>
+                        <label>Publish date</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <InputSelect @bind-Value="@Book.Category" class="form-control"
+                                     aria-required="true">
+                            @foreach (var category in Enum.GetValues<ECategory>())
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        </InputSelect>
+                        <label>Category</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <InputNumber @bind-Value="@BookInventory!.AvailableCopies" class="form-control"
+                                     aria-required="true"/>
+                        <label>Available</label>
+                    </div>
+                }
+                else
+                {
+                    <p>ISBN: @Book.ISBN</p>
+                    <p>Author: @Book.Author</p>
+                    <p>Publisher: @Book.Publisher</p>
+                    <p>Publish Date: @Book.PublishDate</p>
+                    <p>Category: @Book.Category</p>
+                    <p>Available: @BookInventory!.AvailableCopies</p>
+                }
+            </div>
+        </CardText>
+    </CardBody>
+</Card>
+
+
+@code {
+    [Parameter] public required Book Book { get; set; }
+    [Parameter] public bool EditMode { get; set; }
+    [Parameter] public required bool ShowBookCover { get; set; }
+
+    private BookInventory? BookInventory { get; set; }
+    private BookCover? BookCover => Book.BookCover;
+
+    protected override async Task OnInitializedAsync()
+    {
+        BookInventory = await dbApi.GetBookInventory(Book);
+
+        if (BookInventory != null) return;
+
+        BookInventory = new BookInventory
+        {
+            BookId = Book.Id,
+            Book = Book,
+            AvailableCopies = 0,
+            BorrowedCopies = 0,
+            ReservedCopies = 0
+        };
+
+        alertService.ShowInfo("Book Inventory not found, something went wrong.");
+    }
+
+}

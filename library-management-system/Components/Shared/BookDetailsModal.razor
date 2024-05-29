@@ -1,0 +1,280 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject DbApi dbApi
+@inject AlertService alertService
+
+
+<Modal @ref="_modal" Size="ModalSize.ExtraLarge" OnHiding="OnHideModal">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+        <div class="common-page-styles">
+            <div class="modal-body">
+                <div class="record">
+                    <div class="image-placeholder">
+                        <img class="image"
+                             src="data:image/jpg;base64, @Convert.ToBase64String(BookCover.Image!)"
+                             alt="@Book?.Title"/>
+
+                        @if (_editMode)
+                        {
+                            <InputFile style="max-width: 25rem" OnChange="LoadFile" class="form-control" accept=".jpg, .jpeg, .png"/>
+                        }
+                    </div>
+
+                    <div class="description-and-actions">
+                        <div class="actions">
+                            <div class="action">
+                                @if (IsFav)
+                                {
+                                    <Tooltip Title="Remove from favorites" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.HeartFill" Color="IconColor.Danger" @onclick="HeartClicked"></Icon>
+                                    </Tooltip>
+                                }
+                                else
+                                {
+                                    <Tooltip Title="Add to favorites" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.Heart" @onclick="HeartClicked"></Icon>
+                                    </Tooltip>
+                                }
+                            </div>
+
+                            @if (IsBookNotReserved())
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Reserve" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.Cart" @onclick="ReserveBook"></Icon>
+                                    </Tooltip>
+                                </div>
+                            }
+                            else if (IsBookReserved())
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Remove reservation" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.CartFill" @onclick="DeleteReservation"></Icon>
+                                    </Tooltip>
+                                </div>
+                            }
+                            
+                            @if (IsBookDeadlinePassed())
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Postpone" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.FastForward" @onclick="PostponeBook"></Icon>
+                                    </Tooltip>
+                                </div>   
+                            }
+                            else if (IsBookDeadlineNotPassed())
+                            {
+                                <div class="action">
+                                    @BorrowedBook!.Deadline.ToShortDateString()
+                                </div>
+                            }
+
+                            <AuthorizeView Roles="admin,librarian">
+                                @if (_editMode)
+                                {
+                                    <div class="action">
+                                        <Tooltip Title="Save" Placement="TooltipPlacement.Top">
+                                            <Icon Name="IconName.Save" @onclick="Save"></Icon>
+                                        </Tooltip>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="action">
+                                        <Tooltip Title="Edit" Placement="TooltipPlacement.Top">
+                                            <Icon Name="IconName.PencilSquare" @onclick="ToggleEditMode"></Icon>
+                                        </Tooltip>
+                                    </div>
+                                }
+
+                                <div class="action">
+                                    <Tooltip Title="Delete" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.Trash" Color="IconColor.Danger" @onclick="RemoveBook"></Icon>
+                                    </Tooltip>
+                                </div>
+                            </AuthorizeView>
+                        </div>
+
+                        <div class="rating">
+                            <RatingComponent User="User" Book="Book" Rating="UserRating" IsInteractive="true" RatingChanged="UpdateFields"/>
+                        </div>
+
+                        <BookInfoCard Book="Book" EditMode="_editMode" ShowBookCover="false"/>
+
+                        <BookDetailsAccordion @ref="_bookDetailsAccordion" Book="Book" EditMode="_editMode"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+
+@code {
+    [Parameter] public required EventCallback OnSaveEdit { get; set; }
+    [Parameter] public required User User { get; set; }
+    [Parameter] public required string CurrState { get; set; }
+
+    private bool _editMode = false;
+
+    private Modal _modal = default!;
+
+    private Book? Book { get; set; }
+    private BookCover BookCover => Book!.BookCover ?? new BookCover();
+    private bool IsFav { get; set; }
+    private bool IsReserved { get; set; }
+    private int UserRating { get; set; }
+    private double AverageRating { get; set; }
+    private string _borrowedState = "borrowed";
+    private string _reservedState = "reserved";
+    private string _allState = "all";
+    private string _favState = "favorites";
+    
+    private BorrowedBook? BorrowedBook { get; set; }
+    private ReservedBook? ReservedBook { get; set; }
+
+    private BookDetailsAccordion _bookDetailsAccordion = default!;
+
+    public async Task Show(Book book, BorrowedBook? borrowedBook, ReservedBook? reservedBook)
+    {
+        Book = book;
+        IsFav = await dbApi.IsBookFavorite(User, Book!);
+        IsReserved = await dbApi.IsBookReserved(User, Book);
+        UserRating = await dbApi.GetBookUserRating(User, Book!);
+        BorrowedBook = borrowedBook;
+        ReservedBook = reservedBook;
+
+        _editMode = false;
+        await _modal.ShowAsync();
+    }
+
+    private async Task UpdateFields()
+    {
+        UserRating = await dbApi.GetBookUserRating(User, Book!);
+        StateHasChanged();
+        await _bookDetailsAccordion.UpdateFields();
+    }
+
+    private void OnHideModal()
+    {
+        _modal.HideAsync();
+        alertService.ClearMessages();
+    }
+
+    private async Task HeartClicked()
+    {
+        var result = IsFav ? await dbApi.RemoveFavoriteBook(User, Book!) : await dbApi.FavoriteBook(User, Book!);
+        string message;
+        if (result == EOperationResult.Success)
+        {
+            message = IsFav ? "Book removed from favorites" : "Book added to favorites";
+            IsFav = !IsFav;
+        }
+        else
+        {
+            message = result.GetMessage();
+        }
+
+        alertService.ShowOperationResult(result, message);
+
+        await OnSaveEdit.InvokeAsync();
+    }
+    
+    private bool IsBookReserved()
+    {
+        return CurrState == _reservedState && IsReserved;
+    }
+    
+    private bool IsBookNotReserved()
+    {
+        return (CurrState == _allState || CurrState == _favState) && !IsReserved;
+    }
+
+    private async Task ReserveBook()
+    {
+        var result = await dbApi.ReserveBook(User, Book!);
+        var message = result == EOperationResult.Success ? "Book reserved" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+
+        if (result == EOperationResult.Success)
+        {
+            IsReserved = !IsReserved;
+        }
+        
+        await OnSaveEdit.InvokeAsync();
+    }
+
+    private async Task DeleteReservation()
+    {
+        var result = await dbApi.RemoveReservedBook(ReservedBook!);
+        var message = result == EOperationResult.Success ? "Reservation removed" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+
+        if (result == EOperationResult.Success)
+        {
+            IsReserved = !IsReserved;
+        }
+        
+        await OnSaveEdit.InvokeAsync();
+        await _modal.HideAsync();
+    }
+    
+    private bool IsBookDeadlinePassed()
+    {
+        return CurrState == _borrowedState && BorrowedBook!.Deadline < DateTime.Now;
+    }
+    
+    private bool IsBookDeadlineNotPassed()
+    {
+        return CurrState == _borrowedState && BorrowedBook!.Deadline >= DateTime.Now;
+    }
+
+    private async Task PostponeBook()
+    {
+        var result = await dbApi.PostponeBorrowedBook(BorrowedBook!);
+        var message = result == EOperationResult.Success ? "Book postponed" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await OnSaveEdit.InvokeAsync();
+    }
+
+    private async Task RemoveBook()
+    {
+        var result = await dbApi.RemoveBook(Book!);
+        var message = result == EOperationResult.Success ? "Book removed" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+
+        await Task.Delay(1000);
+        await _modal.HideAsync();
+        await OnSaveEdit.InvokeAsync();
+    }
+
+    private void ToggleEditMode()
+    {
+        _editMode = !_editMode;
+    }
+
+    private async Task Save()
+    {
+        _editMode = false;
+
+        var result = await dbApi.SaveChanges();
+        var message = result == EOperationResult.Success ? "Info saved" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+
+        await OnSaveEdit.InvokeAsync();
+    }
+
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        using var ms = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(ms);
+        BookCover.Image = ms.ToArray();
+    }
+
+}

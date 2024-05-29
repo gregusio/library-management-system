@@ -7,13 +7,13 @@ public class ReservedBook
 {
     [Key] public int Id { get; init; }
 
-    [ForeignKey("User")] 
+    [ForeignKey("User")]
     [StringLength(30)]
     public string? UserId { get; init; }
-    
+
     public User? User { get; init; }
 
     [ForeignKey("Book")] public int BookId { get; init; }
-    
+
     public Book? Book { get; init; }
 }

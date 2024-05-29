@@ -1,0 +1,108 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject DbApi dbApi
+@inject AlertService alertService
+
+
+<Modal @ref="_modal" Size="ModalSize.ExtraLarge" OnHiding="OnHideModal">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+        <div class="common-page-styles">
+            <div class="modal-body">
+                <div class="record">
+                    <div class="image-placeholder">
+                        <img class="image"
+                             src="data:image/jpg;base64, @Convert.ToBase64String(Avatar.Image!)"
+                             alt="@User!.Name"/>
+                    </div>
+
+                    <div class="description-and-actions">
+                        <div class="actions">
+                            @if (_editMode)
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Save" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.Save" @onclick="Save"></Icon>
+                                    </Tooltip>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Edit" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.PencilSquare" @onclick="ToggleEditMode"></Icon>
+                                    </Tooltip>
+                                </div>
+                            }
+
+                            <div class="action">
+                                <Tooltip Title="Remove" Placement="TooltipPlacement.Top">
+                                    <Icon Name="IconName.Trash" Color="IconColor.Danger" @onclick="RemoveUser"></Icon>
+                                </Tooltip>
+                            </div>
+                        </div>
+
+                        <UserInfoCard User="User" EditMode="_editMode" ShowAvatar="false"></UserInfoCard>
+
+                        <UserDetailsAccordion User="User"/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+@code {
+    [Parameter] public required EventCallback OnSaveEdit { get; set; }
+
+    private bool _editMode = false;
+
+    private Modal _modal = default!;
+
+    private User? User { get; set; }
+    private Avatar Avatar => User!.Avatar ?? new Avatar();
+
+    public void Show(User user)
+    {
+        User = user;
+        _editMode = false;
+        _modal.ShowAsync();
+    }
+
+    private void OnHideModal()
+    {
+        _modal.HideAsync();
+        alertService.ClearMessages();
+    }
+
+    private async Task RemoveUser()
+    {
+        var result = await dbApi.RemoveUser(User!);
+        var message = result == EOperationResult.Success ? "User removed successfully" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await Task.Delay(1000);
+        await OnSaveEdit.InvokeAsync();
+        await _modal.HideAsync();
+    }
+
+    private void ToggleEditMode()
+    {
+        _editMode = !_editMode;
+    }
+
+    private async Task Save()
+    {
+        _editMode = false;
+        
+        var result = await dbApi.SaveChanges();
+        var message = result == EOperationResult.Success ? "User info changed successfully" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await OnSaveEdit.InvokeAsync();
+    }
+
+}

@@ -5,30 +5,17 @@ namespace library_management_system.Services;
 
 public class AlertService
 {
-    public List<ToastMessage> Messages { get; } = new();
+    public List<ToastMessage> Messages { get; } = [];
 
     public void ClearMessages()
     {
         Messages.Clear();
     }
 
-    public void ShowOperationResult(EOperationResult result)
+    public void ShowOperationResult(EOperationResult result, string successMsg = "Success")
     {
-        switch (result)
-        {
-            case EOperationResult.Success:
-                ShowSuccess("Book borrowed");
-                return;
-            case EOperationResult.DatabaseError:
-                ShowWarning("Database error");
-                return;
-            case EOperationResult.UnexpectedError:
-                ShowWarning("Unexpected error");
-                return;
-            case EOperationResult.NoAvailableCopies:
-                ShowInfo("No available copies");
-                return;
-        }
+        var message = result == EOperationResult.Success ? successMsg : result.GetMessage();
+        ShowMessage(result.GetToastType(), message);
     }
 
     public void ShowInfo(string message)
@@ -51,34 +38,14 @@ public class AlertService
         Messages.Add(CreateToastMessage(toastType, message));
     }
 
-    private ToastMessage CreateToastMessage(ToastType toastType, string message)
+    private static ToastMessage CreateToastMessage(ToastType toastType, string message)
     {
-        switch (toastType)
+        return new ToastMessage
         {
-            case ToastType.Info:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Info",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-            case ToastType.Success:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Success",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-            default:
-                return new ToastMessage
-                {
-                    Type = toastType,
-                    Title = "Warning",
-                    HelpText = $"{DateTime.Now}",
-                    Message = message
-                };
-        }
+            Type = toastType,
+            Title = toastType.ToString(),
+            HelpText = $"{DateTime.Now}",
+            Message = message
+        };
     }
 }

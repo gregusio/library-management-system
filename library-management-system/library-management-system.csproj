@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Images\BookCovers\" />
     <Folder Include="tmp\" />
   </ItemGroup>
 

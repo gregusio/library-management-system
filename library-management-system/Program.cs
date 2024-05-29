@@ -16,6 +16,10 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddTransient<DbSearchService>();
+builder.Services.AddTransient<DbInsertService>();
+builder.Services.AddTransient<DbRemoveService>();
+builder.Services.AddTransient<DbUpdateService>();
 builder.Services.AddTransient<DbApi>();
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddTransient<AlertService>();
@@ -49,7 +53,7 @@ builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 // var folder = Environment.SpecialFolder.LocalApplicationData;
 // var path = Environment.GetFolderPath(folder);
 
-var dbPath = "./tmp/library.db";
+const string dbPath = "./tmp/library.db";
 
 builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));

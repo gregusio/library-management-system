@@ -1,0 +1,80 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject DbApi dbApi
+
+
+@if (IsInteractive)
+{
+    <div class="stars" @onmouseleave="ResetRating">
+        @for (var i = 1; i <= 5; i++)
+        {
+            var starIndex = i; // Capture the loop variable
+            <div class="star" @onmouseover="@(() => HoverRating(starIndex))" @onclick="@(() => SetRating(starIndex))">
+                <StarComponent Type="@(_starTypes.Count >= i ? _starTypes[i - 1] : StarComponent.StarType.Empty)"/>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="stars">
+        @foreach (var starType in _starTypes)
+        {
+            <StarComponent Type="@starType"/>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public User? User { get; set; }
+    [Parameter] public Book? Book { get; set; }
+    [Parameter] public double Rating { get; set; } = 0;
+    [Parameter] public bool IsInteractive { get; set; }
+    [Parameter] public EventCallback RatingChanged { get; set; }
+
+    private double _originalRating;
+    private readonly List<StarComponent.StarType> _starTypes = [];
+
+    protected override void OnParametersSet()
+    {
+        _originalRating = Rating;
+        UpdateStarTypes();
+    }
+
+    private void UpdateStarTypes()
+    {
+        _starTypes.Clear();
+        var fullStars = (int)Math.Floor(Rating);
+        var hasHalfStar = Rating % 1 >= 0.5;
+        var emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+        _starTypes.AddRange(Enumerable.Repeat(StarComponent.StarType.Full, fullStars));
+        if (hasHalfStar)
+        {
+            _starTypes.Add(StarComponent.StarType.Half);
+        }
+
+        _starTypes.AddRange(Enumerable.Repeat(StarComponent.StarType.Empty, emptyStars));
+    }
+
+    private void HoverRating(int starIndex)
+    {
+        Rating = starIndex;
+        UpdateStarTypes();
+    }
+
+    private void ResetRating()
+    {
+        Rating = _originalRating;
+        UpdateStarTypes();
+    }
+
+    private async Task SetRating(int starIndex)
+    {
+        _originalRating = Rating = starIndex;
+        await dbApi.AddBookRating(User!, Book!, (int)Rating);
+        UpdateStarTypes();
+        await RatingChanged.InvokeAsync();
+    }
+}

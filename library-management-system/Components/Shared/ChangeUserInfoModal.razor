@@ -1,0 +1,69 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject AlertService alertService
+@inject DbApi dbApi
+
+
+<Modal @ref="_modal" title="Change info" IsVerticallyCentered="true" Size="ModalSize.Regular" OnHiding="OnHideModal">
+    <BodyTemplate>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
+
+        <div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="User.Name" class="form-control"
+                           aria-required="true"/>
+                <label>Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="User.Surname" class="form-control"
+                           aria-required="true"/>
+                <label>Surname</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="User.Address" class="form-control"
+                           aria-required="true"/>
+                <label>Address</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="User.TelephoneNr" class="form-control"
+                           aria-required="true"/>
+                <label>Phone Number</label>
+            </div>
+
+            <button class="w-100 btn btn-lg btn-primary" @onclick="ChangeInfo">Save</button>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+
+@code {
+    [Parameter] public required User User { get; set; }
+    [Parameter] public required EventCallback OnInfoChanged { get; set; }
+
+    private Modal _modal = default!;
+
+    public void Show()
+    {
+        _modal.ShowAsync();
+    }
+
+    private void OnHideModal()
+    {
+        _modal.HideAsync();
+        alertService.ClearMessages();
+    }
+
+    private async Task ChangeInfo()
+    {
+        var result = await dbApi.SaveChanges();
+        var message = result == EOperationResult.Success ? "Info changed successfully" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
+        await OnInfoChanged.InvokeAsync();
+    }
+
+}

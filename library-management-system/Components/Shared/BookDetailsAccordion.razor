@@ -1,0 +1,67 @@
+@using library_management_system.Model
+@using library_management_system.Services
+
+@inject DbApi dbApi
+
+
+<Accordion>
+    <AccordionItem Title="Description">
+        <Content>
+            @if (EditMode)
+            {
+                <InputTextArea @bind-Value="Book.Description" class="form-control"
+                               aria-required="true" placeholder="About a book" rows="5"/>
+            }
+            else
+            {
+                <p>@Book.Description</p>
+            }
+        </Content>
+    </AccordionItem>
+
+    <AccordionItem >
+        <TitleTemplate>
+            <div class="title-with-rating">
+                <span>Reviews</span>
+                <RatingComponent Rating="AverageRating"></RatingComponent>
+                <span>(@NumberOfRatings)</span>
+            </div>
+        </TitleTemplate>
+
+        <Content>
+            <div class="scrollable">
+                @foreach (var (name, rating) in Ratings)
+                {
+                    <div class="review">
+                        <span>@name</span>
+                        <RatingComponent Rating="rating"></RatingComponent>
+                    </div>
+                }
+            </div>
+        </Content>
+    </AccordionItem>
+</Accordion>
+
+
+@code {
+    [Parameter] public required bool EditMode { get; set; }
+    [Parameter] public required Book Book { get; set; }
+
+    private double AverageRating { get; set; }
+    private int NumberOfRatings { get; set; }
+    private List<(string, int)> Ratings { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AverageRating = await dbApi.GetBookAverageRating(Book);
+        Ratings = await dbApi.GetBookAllRatings(Book);
+        NumberOfRatings = Ratings.Count;
+    }
+
+    public async Task UpdateFields()
+    {
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+}

@@ -5,29 +5,40 @@
 @using library_management_system.Model
 @using library_management_system.Components.Shared
 
-@inject DbApi DbApi
-@inject AlertService AlertService
+@inject DbApi dbApi
+@inject AlertService alertService
 
 
 <PageTitle>Librarians</PageTitle>
 
 <AuthorizeView Roles="admin">
     <Authorized>
+        <div class="common-page-styles">
+            <div class="button-and-input">
+                <Button Size="Size.ExtraLarge" Color="ButtonColor.Primary" @onclick="OnAddLibrarianClick">Add Librarian</Button>
+            </div>
 
-        <h1>Librarians</h1>
+            <div class="cards">
+                @for (var i = FirstIdOnCurrentPage; i < FirstIdOnNextPage && i < LibrariansCount; i++)
+                {
+                    var i1 = i;
 
-        <AddUserModal Role="@(ERole.Librarian)" OnAdd="OnInitializedAsync"/>
+                    <div class="single-card" @onclick="@(() => OnShowDetails(AllLibrarians![i1]))">
+                        <UserInfoCard User="AllLibrarians![i1]" ShowAvatar="true" />
+                    </div>
+                }
+            </div>
 
-        @for (var i = _librariansPerPage * (_currentPageNumber - 1); i < _librariansPerPage * _currentPageNumber && i < LibrariansCount; i++)
-        {
-            var i1 = i;
-            <UserRecord User="@AllLibrarians![i1]"/>
-        }
+            <div class="pagination">
+                <Pagination ActivePageNumber="@_currentPageNumber"
+                            TotalPages="TotalPages"
+                            PageChanged="OnPageChangedAsync"/>
+            </div>
+        </div>
 
-        <Pagination ActivePageNumber="@_currentPageNumber"
-                    TotalPages="@(LibrariansCount / _librariansPerPage)"
-                    PageChanged="OnPageChangedAsync"/>
+        <UserDetailsModal @ref="_userDetailsModal" OnSaveEdit="OnInitializedAsync"/>
 
+        <AddUserModal @ref="_addUserModal" Role="@(ERole.Librarian)" OnAdd="OnInitializedAsync"/>
     </Authorized>
     <NotAuthorized>
         <h1>Not authorized</h1>
@@ -35,29 +46,43 @@
 </AuthorizeView>
 
 @code {
+    private const int LibrariansPerPage = 4;
+
     private int _currentPageNumber = 1;
-    private readonly int _librariansPerPage = 4;
 
+    private int FirstIdOnCurrentPage => LibrariansPerPage * (_currentPageNumber - 1);
+    private int FirstIdOnNextPage => LibrariansPerPage * _currentPageNumber;
     private int LibrariansCount => AllLibrarians!.Count;
+    private int TotalPages => (LibrariansCount - 1) / LibrariansPerPage + 1;
 
-    private List<User>? AllLibrarians { get; set; } = new();
+    private List<User>? AllLibrarians { get; set; } = [];
 
-    protected override Task OnInitializedAsync()
+    private UserDetailsModal _userDetailsModal = default!;
+    private AddUserModal _addUserModal = default!;
+
+    protected override async Task OnInitializedAsync()
     {
-        AllLibrarians = DbApi.GetAllLibrarians();
+        AllLibrarians = await dbApi.GetAllLibrarians();
 
-        if (AllLibrarians == null)
-        {
-            AlertService.ShowWarning("Something went wrong while fetching librarians");
-            AllLibrarians = new List<User>();
-        }
+        if (AllLibrarians != null) return;
 
-        return base.OnInitializedAsync();
+        alertService.ShowWarning("Something went wrong while fetching librarians");
+        AllLibrarians = new List<User>();
     }
 
     private async Task OnPageChangedAsync(int newPageNumber)
     {
         await Task.Run(() => { _currentPageNumber = newPageNumber; });
+    }
+
+    private void OnShowDetails(User user)
+    {
+        _userDetailsModal.Show(user);
+    }
+
+    private async Task OnAddLibrarianClick()
+    {
+        await _addUserModal.Show();
     }
 
 }

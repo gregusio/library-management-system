@@ -4,50 +4,61 @@
 @using library_management_system.Model
 @using library_management_system.Services
 
-@inject DbApi DbApi
-@inject AlertService AlertService
+@inject DbApi dbApi
+@inject AlertService alertService
 
 
 <PageTitle>Borrow book</PageTitle>
 
 <AuthorizeView Roles="admin,librarian">
     <Authorized>
+        <Toasts class="p-3" Messages="alertService.Messages" Placement="ToastsPlacement.TopRight"/>
 
-        <h3>BorrowBook</h3>
+        <div class="borrow-page">
+            <div class="content">
+                <BlazoredTypeahead SearchMethod="GetReadersLocal"
+                                   TItem="User"
+                                   TValue="User"
+                                   @bind-Value="SelectedPerson"
+                                   placeholder="Search by first name...">
+                    <SelectedTemplate Context="person">
+                        @{
+                            <text>@person.Name @person.Surname</text>
+                        }
+                    </SelectedTemplate>
+                    <ResultTemplate Context="person">
+                        @person.Name @person.Surname (email: @person.Email)
+                    </ResultTemplate>
+                </BlazoredTypeahead>
 
-        <BlazoredTypeahead SearchMethod="GetReadersLocal"
-                           TItem="User"
-                           TValue="User"
-                           @bind-Value="SelectedPerson"
-                           placeholder="Search by first name...">
-            <SelectedTemplate Context="person">
-                @{
-                    <text>@person.Name @person.Surname</text>
-                }
-            </SelectedTemplate>
-            <ResultTemplate Context="person">
-                @person.Name @person.Surname (Id: @person.Id)
-            </ResultTemplate>
-        </BlazoredTypeahead>
+                <BlazoredTypeahead SearchMethod="GetBooksLocal"
+                                   TItem="Book"
+                                   TValue="Book"
+                                   @bind-Value="SelectedBook"
+                                   placeholder="Search by title...">
+                    <SelectedTemplate Context="book">
+                        @{
+                            <text>@book.Title @book.Author</text>
+                        }
+                    </SelectedTemplate>
+                    <ResultTemplate Context="book">
+                        @book.Title @book.Author (ISBN: @book.ISBN)
+                    </ResultTemplate>
+                </BlazoredTypeahead>
 
-        <BlazoredTypeahead SearchMethod="GetBooksLocal"
-                           TItem="Book"
-                           TValue="Book"
-                           @bind-Value="SelectedBook"
-                           placeholder="Search by title...">
-            <SelectedTemplate Context="book">
-                @{
-                    <text>@book.Title @book.Author</text>
-                }
-            </SelectedTemplate>
-            <ResultTemplate Context="book">
-                @book.Title @book.Author (Id: @book.Id)
-            </ResultTemplate>
-        </BlazoredTypeahead>
+                <div class="last-row">
+                    <div class="form-floating mb-3">
+                        <InputDate @bind-Value="Deadline" class="form-control" style="height: 5rem"
+                                   aria-required="true"/>
+                        <label>Deadline</label>
+                    </div>
 
-        <Button Color="ButtonColor.Primary" Size="Size.Large" @onclick="TryBorrowBook"> Borrow Book </Button>
-
-        <Toasts class="p-3" Messages="AlertService.Messages" Placement="ToastsPlacement.TopRight"/>
+                    <div class="button-container">
+                        <Button Color="ButtonColor.Primary" Size="Size.Medium" @onclick="TryBorrowBook"> Borrow Book </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </Authorized>
     <NotAuthorized>
@@ -56,24 +67,23 @@
 </AuthorizeView>
 
 @code {
-    private List<User>? AllReaders { get; set; } = new();
+    private List<User>? AllReaders { get; set; } = [];
+    private List<Book>? AllBooks { get; set; } = [];
+
     private User? SelectedPerson { get; set; }
-    private List<Book>? AllBooks { get; set; } = new();
     private Book? SelectedBook { get; set; }
+    private DateTime Deadline { get; set; } = DateTime.Now.AddDays(14);
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        AllReaders = DbApi.GetAllReaders();
-        AllBooks = DbApi.GetAllBooks();
+        AllReaders = await dbApi.GetAllReaders();
+        AllBooks = await dbApi.GetAllBooks();
 
-        if (AllReaders == null || AllBooks == null)
-        {
-            AlertService.ShowWarning("Failed to load data from the database. Please try again later.");
-            AllReaders = new();
-            AllBooks = new();
-        }
-        
-        return base.OnInitializedAsync();
+        if (AllReaders != null && AllBooks != null) return;
+
+        alertService.ShowWarning("Failed to load data from the database. Please try again later.");
+        AllReaders = [];
+        AllBooks = [];
     }
 
     private async Task<IEnumerable<User>> GetReadersLocal(string searchText)
@@ -86,28 +96,18 @@
         return await Task.FromResult(AllBooks!.Where(book => book.Title!.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
-    private void TryBorrowBook()
+    private async Task TryBorrowBook()
     {
         if (SelectedPerson == null || SelectedBook == null)
         {
-            AlertService.ShowInfo("Please select a person and a book");
+            alertService.ShowInfo("Please select a person and a book");
             return;
         }
 
-        var reservedBook = DbApi.GetReservedBook(SelectedPerson, SelectedBook);
-
-        EOperationResult result;
-        if (reservedBook != null)
-        {
-            result = DbApi.ChangeReservedToBorrowed(SelectedPerson, reservedBook);
-
-            AlertService.ShowOperationResult(result);
-            
-            return;
-        }
-
-        result = DbApi.BorrowBook(SelectedPerson, SelectedBook);
+        var result = await dbApi.BorrowBook(SelectedPerson, SelectedBook, Deadline);
+        var message = result == EOperationResult.Success ? "Book borrowed successfully" : result.GetMessage();
         
-        AlertService.ShowOperationResult(result);
+        alertService.ShowOperationResult(result, message);
     }
+
 }
