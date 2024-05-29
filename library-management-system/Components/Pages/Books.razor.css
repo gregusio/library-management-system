@@ -4,3 +4,8 @@
     font-size: 3rem;
     cursor: pointer;
 }
+
+.selected {
+    border: 1px solid red;
+    border-radius: 5px;
+}

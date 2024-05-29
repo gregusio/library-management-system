@@ -45,6 +45,21 @@
                                     <Icon Name="IconName.Cart" @onclick="ReserveBook"></Icon>
                                 </Tooltip>
                             </div>
+                            
+                            @if (IsBookDeadlinePassed())
+                            {
+                                <div class="action">
+                                    <Tooltip Title="Postpone" Placement="TooltipPlacement.Top">
+                                        <Icon Name="IconName.FastForward" @onclick="PostponeBook"></Icon>
+                                    </Tooltip>
+                                </div>   
+                            }
+                            else if (IsBookDeadlineNotPassed())
+                            {
+                                <div class="action">
+                                    @BorrowedBook!.Deadline.ToShortDateString()
+                                </div>
+                            }
 
                             <AuthorizeView Roles="admin,librarian">
                                 @if (_editMode)
@@ -90,6 +105,7 @@
 @code {
     [Parameter] public required EventCallback OnSaveEdit { get; set; }
     [Parameter] public required User User { get; set; }
+    [Parameter] public required string CurrState { get; set; }
 
     private bool _editMode = false;
 
@@ -100,14 +116,21 @@
     private bool IsFav { get; set; }
     private int UserRating { get; set; }
     private double AverageRating { get; set; }
+    private string _borrowedState = "borrowed";
+    private string _reservedState = "reserved";
+    
+    private BorrowedBook? BorrowedBook { get; set; }
+    private ReservedBook? ReservedBook { get; set; }
 
     private BookDetailsAccordion _bookDetailsAccordion = default!;
 
-    public async Task Show(Book book)
+    public async Task Show(Book book, BorrowedBook? borrowedBook, ReservedBook? reservedBook)
     {
         Book = book;
         IsFav = await dbApi.IsBookFavorite(User, Book!);
         UserRating = await dbApi.GetBookUserRating(User, Book!);
+        BorrowedBook = borrowedBook;
+        ReservedBook = reservedBook;
 
         _editMode = false;
         await _modal.ShowAsync();
@@ -152,6 +175,25 @@
         var message = result == EOperationResult.Success ? "Book reserved" : result.GetMessage();
         alertService.ShowOperationResult(result, message);
 
+        await OnSaveEdit.InvokeAsync();
+    }
+    
+    private bool IsBookDeadlinePassed()
+    {
+        return CurrState == _borrowedState && BorrowedBook!.Deadline < DateTime.Now;
+    }
+    
+    private bool IsBookDeadlineNotPassed()
+    {
+        return CurrState == _borrowedState && BorrowedBook!.Deadline >= DateTime.Now;
+    }
+
+    private async Task PostponeBook()
+    {
+        var result = await dbApi.PostponeBorrowedBook(BorrowedBook!);
+        var message = result == EOperationResult.Success ? "Book postponed" : result.GetMessage();
+        alertService.ShowOperationResult(result, message);
+        
         await OnSaveEdit.InvokeAsync();
     }
 
