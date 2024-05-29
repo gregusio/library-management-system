@@ -48,7 +48,7 @@
                                     </Tooltip>
                                 </div>
                             }
-                            else if (IsReserved)
+                            else if (IsBookReserved())
                             {
                                 <div class="action">
                                     <Tooltip Title="Remove reservation" Placement="TooltipPlacement.Top">
@@ -131,6 +131,7 @@
     private string _borrowedState = "borrowed";
     private string _reservedState = "reserved";
     private string _allState = "all";
+    private string _favState = "favorites";
     
     private BorrowedBook? BorrowedBook { get; set; }
     private ReservedBook? ReservedBook { get; set; }
@@ -182,9 +183,14 @@
         await OnSaveEdit.InvokeAsync();
     }
     
+    private bool IsBookReserved()
+    {
+        return CurrState == _reservedState && IsReserved;
+    }
+    
     private bool IsBookNotReserved()
     {
-        return CurrState == _allState && !IsReserved;
+        return (CurrState == _allState || CurrState == _favState) && !IsReserved;
     }
 
     private async Task ReserveBook()
