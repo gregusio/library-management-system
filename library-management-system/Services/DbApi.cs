@@ -34,9 +34,14 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
         return searchService.GetReservedBooks(reader);
     }
 
-    public Task<ReservedBook?> GetReservedBook(User reader, Book book)
+    public Task<ReservedBook?> GetReservedBook(User user, Book book)
     {
-        return searchService.GetReservedBook(reader, book);
+        return searchService.GetReservedBook(user, book);
+    }
+    
+    public Task<bool> IsBookReserved(User reader, Book book)
+    {
+        return searchService.IsBookReserved(reader, book);
     }
     
     public Task<List<(string?, DateTime?)>?> GetUserActivityHistory(User user)
