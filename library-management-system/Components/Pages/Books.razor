@@ -19,39 +19,43 @@
     <Authorized Context="authorized">
         <div class="common-page-styles">
             <div class="button-and-input">
-                <AuthorizeView Roles="admin,librarian">
+                <div class="buttons">
+                    <AuthorizeView Roles="admin,librarian">
+                        <div class="button-placement">
+                            <Tooltip Title="Add book" Placement="TooltipPlacement.Top">
+                                <Icon Name="IconName.PlusSquareFill" Color="IconColor.Primary" @onclick="OnAddBookClick"></Icon>
+                            </Tooltip>
+                        </div>
+                    </AuthorizeView>
+
                     <div class="button-placement">
-                        <Tooltip Title="Add book" Placement="TooltipPlacement.Top">
-                            <Icon Name="IconName.PlusSquareFill" Color="IconColor.Primary" @onclick="OnAddBookClick"></Icon>
+                        <Tooltip Title="All books" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.Book" Color="@(CurrState == AllState ? ActiveIconColor : InactiveIconColor)" @onclick="OnAllBooksClick"></Icon>
                         </Tooltip>
                     </div>
-                </AuthorizeView>
 
-                <div class="button-placement">
-                    <Tooltip Title="All books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.Book" Color="@(CurrState == AllState ? ActiveIconColor : InactiveIconColor)" @onclick="OnAllBooksClick"></Icon>
-                    </Tooltip>
+                    <div class="button-placement">
+                        <Tooltip Title="Borrowed books" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.BookFill" Color="@(CurrState == BorrowedState ? ActiveIconColor : InactiveIconColor)" @onclick="OnBorrowedBooksClick"></Icon>
+                        </Tooltip>
+                    </div>
+
+                    <div class="button-placement">
+                        <Tooltip Title="Reserved books" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.BookHalf" Color="@(CurrState == ReservedState ? ActiveIconColor : InactiveIconColor)" @onclick="OnReservedBooksClick"></Icon>
+                        </Tooltip>
+                    </div>
+
+                    <div class="button-placement">
+                        <Tooltip Title="Favorites books" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.HeartFill" Color="@(CurrState == FavoritesState ? ActiveIconColor : InactiveIconColor)" @onclick="OnFavoritesBookClick"></Icon>
+                        </Tooltip>
+                    </div>
                 </div>
 
-                <div class="button-placement">
-                    <Tooltip Title="Borrowed books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.BookFill" Color="@(CurrState == BorrowedState ? ActiveIconColor : InactiveIconColor)" @onclick="OnBorrowedBooksClick"></Icon>
-                    </Tooltip>
+                <div class="search">
+                    <InputText class="form-control" placeholder="Search for a book..." style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
                 </div>
-
-                <div class="button-placement">
-                    <Tooltip Title="Reserved books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.BookHalf" Color="@(CurrState == ReservedState ? ActiveIconColor : InactiveIconColor)" @onclick="OnReservedBooksClick"></Icon>
-                    </Tooltip>
-                </div>
-
-                <div class="button-placement">
-                    <Tooltip Title="Favorites books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.HeartFill" Color="@(CurrState == FavoritesState ? ActiveIconColor : InactiveIconColor)" @onclick="OnFavoritesBookClick"></Icon>
-                    </Tooltip>
-                </div>
-
-                <InputText class="form-control" placeholder="Search for a book..." style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
             </div>
 
             <div class="cards">
