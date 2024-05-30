@@ -1,4 +1,5 @@
-﻿@page "/books/{CurrState}"
+﻿@page "/books"
+@page "/books/{CurrState}"
 @rendermode InteractiveServer
 
 @using library_management_system.Model
@@ -28,25 +29,25 @@
 
                 <div class="button-placement">
                     <Tooltip Title="All books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.Book" Color="IconColor.Primary" @onclick="OnAllBooksClick"></Icon>
+                        <Icon Name="IconName.Book" Color="@(CurrState == AllState ? ActiveIconColor : InactiveIconColor)" @onclick="OnAllBooksClick"></Icon>
                     </Tooltip>
                 </div>
 
                 <div class="button-placement">
                     <Tooltip Title="Borrowed books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.BookFill" Color="IconColor.Primary" @onclick="OnBorrowedBooksClick"></Icon>
+                        <Icon Name="IconName.BookFill" Color="@(CurrState == BorrowedState ? ActiveIconColor : InactiveIconColor)" @onclick="OnBorrowedBooksClick"></Icon>
                     </Tooltip>
                 </div>
 
                 <div class="button-placement">
                     <Tooltip Title="Reserved books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.BookHalf" Color="IconColor.Primary" @onclick="OnReservedBooksClick"></Icon>
+                        <Icon Name="IconName.BookHalf" Color="@(CurrState == ReservedState ? ActiveIconColor : InactiveIconColor)" @onclick="OnReservedBooksClick"></Icon>
                     </Tooltip>
                 </div>
 
                 <div class="button-placement">
                     <Tooltip Title="Favorites books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.HeartFill" Color="IconColor.Danger" @onclick="OnFavoritesBookClick"></Icon>
+                        <Icon Name="IconName.HeartFill" Color="@(CurrState == FavoritesState ? ActiveIconColor : InactiveIconColor)" @onclick="OnFavoritesBookClick"></Icon>
                     </Tooltip>
                 </div>
 
@@ -84,12 +85,20 @@
 
 
 @code {
-    [Parameter] public string CurrState { get; set; } = "all";
+    [Parameter] public string? CurrState { get; set; } = "";
 
     private const int BooksPerPage = 4;
 
     private int _currentPageNumber = 1;
     private string _searchString = "";
+
+    private const IconColor ActiveIconColor = IconColor.Primary;
+    private const IconColor InactiveIconColor = IconColor.Secondary;
+
+    private const string? AllState = null;
+    private const string BorrowedState = "borrowed";
+    private const string ReservedState = "reserved";
+    private const string FavoritesState = "favorites";
 
     private int FirstIdOnCurrentPage => BooksPerPage * (_currentPageNumber - 1);
     private int FirstIdOnNextPage => BooksPerPage * _currentPageNumber;
@@ -123,7 +132,7 @@
 
         SelectedBooks = CurrState switch
         {
-            "all" => AllBooks,
+            null => AllBooks,
             "borrowed" => BorrowedBooks!.Select(b => b.Book).ToList()!,
             "reserved" => ReservedBooks!.Select(b => b.Book).ToList()!,
             "favorites" => FavBooks,
@@ -185,7 +194,7 @@
 
     private void OnAllBooksClick()
     {
-        navigationManager.NavigateTo("/books/all");
+        navigationManager.NavigateTo("/books");
     }
 
     private void OnBorrowedBooksClick()

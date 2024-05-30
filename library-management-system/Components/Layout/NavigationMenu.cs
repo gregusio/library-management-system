@@ -8,7 +8,7 @@ public class NavigationMenu
     {
         return
         [
-            ("books/all", "Books", IconName.Book),
+            ("books", "Books", IconName.Book),
             ("activity-history", "History", IconName.Activity)
         ];
     }
@@ -17,7 +17,7 @@ public class NavigationMenu
     {
         return
         [
-            ("books/all", "Books", IconName.Book),
+            ("books", "Books", IconName.Book),
             ("readers", "Readers", IconName.People),
             ("borrow-book", "Borrow", IconName.Book)
         ];
