@@ -7,7 +7,7 @@ public class UsersBookRating
     [Key] public int Id { get; set; }
     
     [Required] 
-    [StringLength(30)]
+    [StringLength(450)]
     public string? UserId { get; set; }
     
     [Required] public User? User { get; set; }

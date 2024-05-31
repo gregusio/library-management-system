@@ -6,7 +6,7 @@ public class UserActivityHistory
 {
     [Key] public int Id { get; init; }
 
-    [Required] [StringLength(30)] public string? UserId { get; init; }
+    [Required] [StringLength(450)] public string? UserId { get; init; }
 
     [Required] public User? User { get; init; }
 
