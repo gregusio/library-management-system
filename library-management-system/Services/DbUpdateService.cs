@@ -66,11 +66,13 @@ public class DbUpdateService(DataDbContext db, IDbContextFactory<DataDbContext> 
             if (trackedBook == null) return EOperationResult.DatabaseError;
             
             trackedBook.Title = book.Title;
+            trackedBook.ISBN = book.ISBN;
             trackedBook.Author = book.Author;
             trackedBook.Publisher = book.Publisher;
             trackedBook.PublishDate = book.PublishDate;
             trackedBook.Description = book.Description;
             trackedBook.BookCover = book.BookCover;
+            trackedBook.Category = book.Category;
             
             var trackedBookInventory = await dbContext.BookInventories.FirstOrDefaultAsync(b => b.BookId == book.Id);
             
