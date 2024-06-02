@@ -10,7 +10,7 @@ public class UserActivityHistory
 
     [Required] public User? User { get; init; }
 
-    [Required] [StringLength(50)] public string? Activity { get; init; }
+    [Required] [StringLength(450)] public string? Activity { get; init; }
 
     [Required] public DateTime? ActivityTime { get; init; }
 }

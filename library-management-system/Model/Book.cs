@@ -22,6 +22,6 @@ public class Book
 
     [Required] public BookCover? BookCover { get; set; }
     
-    [StringLength(100)]
+    [StringLength(450)]
     public string? Description { get; set; }
 }
