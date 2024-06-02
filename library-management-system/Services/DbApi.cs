@@ -138,4 +138,19 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
     {
         return updateService.PostponeBorrowedBook(borrowedBook);
     }
+    
+    public Task<EOperationResult> UpdateBookInfo(Book book, BookInventory bookInventory)
+    {
+        return updateService.UpdateBookInfo(book, bookInventory);
+    }
+    
+    public Task<EOperationResult> UpdateUserInfo(User user)
+    {
+        return updateService.UpdateUserInfo(user);
+    }
+    
+    public Task<EOperationResult> UpdateUserAvatar(User user, Avatar avatar)
+    {
+        return updateService.UpdateUserAvatar(user, avatar);
+    }
 }
