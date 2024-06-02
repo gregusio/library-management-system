@@ -38,8 +38,8 @@
 @code {
     [Parameter] public required User User { get; set; }
 
-    private List<BorrowedBook> BorrowedBooks { get; set; } = null!;
-    private List<ReservedBook> ReservedBooks { get; set; } = null!;
+    private List<BorrowedBook> BorrowedBooks { get; set; } = [];
+    private List<ReservedBook> ReservedBooks { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
     {
