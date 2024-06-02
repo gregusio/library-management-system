@@ -68,7 +68,7 @@
 
         User.Avatar = SelectedAvatar;
         
-        var result = await dbApi.SaveChanges();
+        var result = await dbApi.UpdateUserAvatar(User, SelectedAvatar);
         var message = result == EOperationResult.Success ? "Avatar changed successfully." : result.GetMessage();
         alertService.ShowOperationResult(result, message);
         
