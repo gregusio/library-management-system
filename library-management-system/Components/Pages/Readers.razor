@@ -17,7 +17,7 @@
             <div class="button-and-input">
                 <Button Size="Size.ExtraLarge" Color="ButtonColor.Primary" @onclick="OnAddReaderClick">Add Reader</Button>
                 
-                <InputText class="form-control" style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
+                <InputText class="form-control" placeholder="Search for a reader..." style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
             </div>
             
             <div class="cards">
