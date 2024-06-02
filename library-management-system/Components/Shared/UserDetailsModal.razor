@@ -98,7 +98,7 @@
     {
         _editMode = false;
         
-        var result = await dbApi.SaveChanges();
+        var result = await dbApi.UpdateUserInfo(User!);
         var message = result == EOperationResult.Success ? "User info changed successfully" : result.GetMessage();
         alertService.ShowOperationResult(result, message);
         

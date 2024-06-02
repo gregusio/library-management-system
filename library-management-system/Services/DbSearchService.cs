@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Services;
 
-public class DbSearchService(DataDbContext db)
+public class DbSearchService(IDbContextFactory<DataDbContext> dbContextFactory)
 {
     public async Task<List<User>?> GetAllReaders()
     {
         try
         {
-            return await db.Users
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.Users
                 .Include(user => user.Avatar)
                 .Where(user => user.Role == ERole.Reader)
                 .ToListAsync();
@@ -25,7 +26,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return await db.Users
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.Users
                 .Include(user => user.Avatar)
                 .Where(user => user.Role == ERole.Librarian)
                 .ToListAsync();
@@ -41,7 +43,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return await db.Books
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.Books
                 .Include(b => b.BookCover)
                 .ToListAsync();
         }
@@ -56,7 +59,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return await db.BookInventories
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.BookInventories
                 .FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
         }
         catch (Exception e)
@@ -70,8 +74,10 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return await db.BorrowedBooks
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.BorrowedBooks
                 .Include(b => b.Book)
+                .ThenInclude(b => b!.BookCover)
                 .Where(borrowedBook => borrowedBook.UserId == reader.Id)
                 .ToListAsync();
         }
@@ -86,8 +92,10 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return await db.ReservedBooks
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.ReservedBooks
                 .Include(b => b.Book)
+                .ThenInclude(b => b!.BookCover)
                 .Where(reservedBook => reservedBook.UserId == reader.Id)
                 .ToListAsync();
         }
@@ -102,7 +110,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return await db.ReservedBooks
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.ReservedBooks
                 .FirstOrDefaultAsync(reservedBook =>
                     reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
         }
@@ -113,9 +122,10 @@ public class DbSearchService(DataDbContext db)
         }
     }
     
-    public Task<bool> IsBookReserved(User user, Book book)
+    public async Task<bool> IsBookReserved(User user, Book book)
     {
-        return db.ReservedBooks
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        return await dbContext.ReservedBooks
             .AnyAsync(reservedBook => reservedBook.UserId == user.Id && reservedBook.BookId == book.Id);
     }
 
@@ -123,7 +133,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            var activities = await db.UserActivityHistories
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var activities = await dbContext.UserActivityHistories
                 .Where(activity => activity.UserId == user.Id)
                 .Select(activity => new { activity.Activity, activity.ActivityTime })
                 .ToListAsync();
@@ -143,7 +154,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return await db.Avatars.ToListAsync();
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.Avatars.ToListAsync();
         }
         catch (Exception e)
         {
@@ -156,8 +168,10 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return (await db.FavoriteBooks
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return (await dbContext.FavoriteBooks
                 .Include(favoriteBook => favoriteBook.Book)
+                .ThenInclude(b => b!.BookCover)
                 .Where(favoriteBook => favoriteBook.UserId == user.Id)
                 .Select(favoriteBook => favoriteBook.Book)
                 .ToListAsync())!;
@@ -173,7 +187,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            return await db.FavoriteBooks
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            return await dbContext.FavoriteBooks
                 .AnyAsync(favoriteBook => favoriteBook.UserId == user.Id && favoriteBook.BookId == book.Id);
         }
         catch (Exception e)
@@ -187,7 +202,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            var reviews = await db.UsersBookRatings
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var reviews = await dbContext.UsersBookRatings
                 .Where(review => review.BookId == book.Id)
                 .Select(review => review.Rating)
                 .ToListAsync();
@@ -205,7 +221,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            var list = await db.UsersBookRatings
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var list = await dbContext.UsersBookRatings
                 .Where(review => review.BookId == book.Id)
                 .Select(review => new { review.User!.Name, review.Rating })
                 .ToListAsync();
@@ -224,7 +241,8 @@ public class DbSearchService(DataDbContext db)
     {
         try
         {
-            var review = await db.UsersBookRatings
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var review = await dbContext.UsersBookRatings
                 .FirstOrDefaultAsync(review => review.UserId == user.Id && review.BookId == book.Id);
 
             return review?.Rating ?? 0;

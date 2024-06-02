@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Services;
 
-public class DbInsertService(DataDbContext db, DbRemoveService removeService)
+public class DbInsertService(IDbContextFactory<DataDbContext> dbContextFactory, DbRemoveService removeService)
 {
     private async Task<(EOperationResult, ReservedBook?)> IsBookReserved(User user, Book book)
     {
         try
         {
-            var reservedBook = await db.ReservedBooks.FirstOrDefaultAsync(reservedBook =>
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var reservedBook = await dbContext.ReservedBooks.FirstOrDefaultAsync(reservedBook =>
                 reservedBook.UserId == user.Id && reservedBook.BookId == book.Id);
 
             if (reservedBook == null) return (EOperationResult.BookNotReserved, null);
@@ -32,7 +33,8 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
                 Image = input.Image
             };
             
-            await db.BookCovers.AddAsync(bookCover);
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            await dbContext.BookCovers.AddAsync(bookCover);
             
             var book = new Book
             {
@@ -46,7 +48,7 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
                 Description = input.Description
             };
             
-            await db.Books.AddAsync(book);
+            await dbContext.Books.AddAsync(book);
             
             var bookInventory = new BookInventory
             {
@@ -56,9 +58,9 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
                 ReservedCopies = 0
             };
             
-            await db.BookInventories.AddAsync(bookInventory);
+            await dbContext.BookInventories.AddAsync(bookInventory);
             
-            await db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
             
             return EOperationResult.Success;
         }
@@ -82,8 +84,9 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
                 if (result != EOperationResult.Success) return result;
             }
             
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var bookInventory =
-                await db.BookInventories.FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
+                await dbContext.BookInventories.FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
 
             if (bookInventory == null) return EOperationResult.UnexpectedError;
 
@@ -92,28 +95,25 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
             var borrowedBook = new BorrowedBook
             {
                 UserId = user.Id,
-                User = user,
                 BookId = book.Id,
-                Book = book,
                 Deadline = deadline,
                 RenewalCount = 0
             };
 
-            await db.BorrowedBooks.AddAsync(borrowedBook);
+            await dbContext.BorrowedBooks.AddAsync(borrowedBook);
 
             bookInventory.AvailableCopies--;
             bookInventory.BorrowedCopies++;
             user.BorrowedBooksCount++;
 
-            await db.UserActivityHistories.AddAsync(new UserActivityHistory
+            await dbContext.UserActivityHistories.AddAsync(new UserActivityHistory
             {
                 UserId = user.Id,
-                User = user,
                 Activity = $"Borrowed a book - title: {book.Title}, author: {book.Author}",
                 ActivityTime = DateTime.Now
             });
 
-            await db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             return EOperationResult.Success;
         }
@@ -132,8 +132,9 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
             
             if (user.ReservedBooksCount >= 5) return EOperationResult.ReservedBookLimitExceeded;
 
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var bookInventory =
-                await db.BookInventories.FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
+                await dbContext.BookInventories.FirstOrDefaultAsync(bookInventory => bookInventory.BookId == book.Id);
             if (bookInventory == null) return EOperationResult.UnexpectedError;
 
             if (bookInventory.AvailableCopies == 0) return EOperationResult.NoAvailableCopies;
@@ -141,26 +142,23 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
             var reservedBook = new ReservedBook
             {
                 UserId = user.Id,
-                User = user,
-                BookId = book.Id,
-                Book = book
+                BookId = book.Id
             };
 
-            await db.ReservedBooks.AddAsync(reservedBook);
+            await dbContext.ReservedBooks.AddAsync(reservedBook);
 
             bookInventory.AvailableCopies--;
             bookInventory.ReservedCopies++;
             user.ReservedBooksCount++;
 
-            await db.UserActivityHistories.AddAsync(new UserActivityHistory
+            await dbContext.UserActivityHistories.AddAsync(new UserActivityHistory
             {
                 UserId = user.Id,
-                User = user,
                 Activity = $"Reserved a book - title: {book.Title}, author: {book.Author}",
                 ActivityTime = DateTime.Now
             });
 
-            await db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             return EOperationResult.Success;
         }
@@ -177,14 +175,13 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
             var favoriteBook = new FavoriteBook
             {
                 UserId = user.Id,
-                User = user,
-                BookId = book.Id,
-                Book = book
+                BookId = book.Id
             };
 
-            await db.FavoriteBooks.AddAsync(favoriteBook);
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            await dbContext.FavoriteBooks.AddAsync(favoriteBook);
 
-            await db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             return EOperationResult.Success;
         }
@@ -199,20 +196,20 @@ public class DbInsertService(DataDbContext db, DbRemoveService removeService)
     {
         try
         {
-            if(await db.UsersBookRatings.AnyAsync(review => review.UserId == user.Id && review.BookId == book.Id))
-                db.UsersBookRatings.RemoveRange(db.UsersBookRatings.Where(review => review.UserId == user.Id && review.BookId == book.Id));
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            if(await dbContext.UsersBookRatings.AnyAsync(review => review.UserId == user.Id && review.BookId == book.Id))
+                dbContext.UsersBookRatings.RemoveRange(dbContext.UsersBookRatings.Where(review => review.UserId == user.Id && review.BookId == book.Id));
             
             var review = new UsersBookRating
             {
                 UserId = user.Id,
-                User = user,
                 BookId = book.Id,
                 Rating = rating
             };
 
-            await db.UsersBookRatings.AddAsync(review);
+            await dbContext.UsersBookRatings.AddAsync(review);
 
-            await db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             return EOperationResult.Success;
         }

@@ -167,9 +167,10 @@
     {
         try
         {
+            var avatar = Input.Avatar;
             return new User
             {
-                Avatar = Input.Avatar,
+                AvatarId = avatar.Id,
                 Name = Input.Name,
                 Surname = Input.Surname,
                 Address = Input.Address,

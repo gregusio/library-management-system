@@ -45,7 +45,7 @@ builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<DataDbContext>(options =>
+builder.Services.AddDbContextFactory<DataDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<DbInitializer>();

@@ -1,3 +1,5 @@
+@rendermode InteractiveAuto
+
 @using library_management_system.Model
 @using library_management_system.Services
 
@@ -93,28 +95,10 @@
 
 @code {
     [Parameter] public required Book Book { get; set; }
+    [Parameter] public required BookInventory BookInventory { get; set; }
     [Parameter] public bool EditMode { get; set; }
     [Parameter] public required bool ShowBookCover { get; set; }
 
-    private BookInventory? BookInventory { get; set; }
     private BookCover? BookCover => Book.BookCover;
-
-    protected override async Task OnInitializedAsync()
-    {
-        BookInventory = await dbApi.GetBookInventory(Book);
-
-        if (BookInventory != null) return;
-
-        BookInventory = new BookInventory
-        {
-            BookId = Book.Id,
-            Book = Book,
-            AvailableCopies = 0,
-            BorrowedCopies = 0,
-            ReservedCopies = 0
-        };
-
-        alertService.ShowInfo("Book Inventory not found, something went wrong.");
-    }
 
 }
