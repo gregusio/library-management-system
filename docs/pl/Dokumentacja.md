@@ -4,7 +4,7 @@
 * Grzegorz Dynak
 
 ### Data wykonania
-* 29.12.23 - 04.06.24
+* 29.12.23 - 03.06.24
 
 ### Opis
 Projekt ma na celu dostarczenie aplikacji webowej przeznaczonej do zarządzania biblioteką. Aplikacja dostarcza podstawowe funcjonalności zarówno dla bibliotekarzy jak i czytelników.
