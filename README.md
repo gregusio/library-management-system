@@ -25,6 +25,7 @@ It is a simple system that allows you to manage a library, keep all the books, r
 ```
 dotnet tool install --global dotnet-ef
 ```
+- SQL Server database (remember to set your connection string in appsettings.json file)
 
 ### Installing
 
