@@ -19,3 +19,8 @@
     border-bottom: 1px solid #ccc;
     padding: 1rem;
 }
+
+.rating-and-amount {
+    display: flex;
+    gap: 10px;
+}
