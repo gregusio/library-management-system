@@ -22,4 +22,8 @@
     <Folder Include="Images\BookCovers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\library.jpg" />
+  </ItemGroup>
+
 </Project>
