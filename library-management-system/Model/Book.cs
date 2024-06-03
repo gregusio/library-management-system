@@ -8,11 +8,11 @@ public class Book
 
     [Required] [StringLength(13)] public string? ISBN { get; set; }
 
-    [StringLength(30)] public string? Title { get; set; }
+    [StringLength(100)] public string? Title { get; set; }
 
-    [StringLength(30)] public string? Author { get; set; }
+    [StringLength(100)] public string? Author { get; set; }
 
-    [StringLength(30)] public string? Publisher { get; set; }
+    [StringLength(100)] public string? Publisher { get; set; }
 
     public DateTime PublishDate { get; set; }
 
