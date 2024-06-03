@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-library-management-system-f5140e1d-3ce9-4c2f-b66d-c6ebcf118173</UserSecretsId>
     <RootNamespace>library-management-system</RootNamespace>
     <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +19,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\BookCovers\" />
+    <None Include="wwwroot\images\avatars\cat.jpg" />
+    <None Include="wwwroot\images\avatars\dog.jpg" />
+    <None Include="wwwroot\images\avatars\panda.jpg" />
+    <None Include="wwwroot\images\book-covers\default-cover.jpg" />
+    <None Include="wwwroot\library.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
