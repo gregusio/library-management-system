@@ -17,16 +17,13 @@ It is a simple system that allows you to manage a library, keep all the books, r
   - Create borrowings and reservations.
   - Handle the resource return process.
 
-## Class diagram
-![classDiagram](https://github.com/gregusio/library-management-system/assets/77176069/068a620e-5040-4f42-8744-58961be32e24)
-
 ## Getting started
 
 ### Prerequisites
 - [.NET 8.0](https://dotnet.microsoft.com/en-us/download)
 - dotnet ef
 ```
-dotnet tool install --global --version 8.0.0 dotnet-ef
+dotnet tool install --global dotnet-ef
 ```
 
 ### Installing
@@ -59,7 +56,7 @@ dotnet test
 - Blazor
 
 - **Database:**
-  - SQLite
+  - SQL Server
   - Entity Framework Core
 
 - **Backend:**
