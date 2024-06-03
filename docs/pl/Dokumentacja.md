@@ -35,8 +35,7 @@ Projekt ma na celu dostarczenie aplikacji webowej przeznaczonej do zarządzania 
  Entity Framework Core pozwala na prostą obsługę bazy danych.
 
  ### Projekt architektury
-![architecture-project drawio](https://github.com/gregusio/library-management-system/assets/77176069/44115e9d-9c2f-47fa-88d0-52cbd5b75221)
-
+![architecture-project drawio](https://github.com/gregusio/library-management-system/assets/77176069/20353236-2126-464f-9a83-01166298bba7)
 
 ### Projekt bazy danych
 ![database-diagram](https://github.com/gregusio/library-management-system/assets/77176069/398a99c7-fffe-4660-84d9-31addd705bfd)
