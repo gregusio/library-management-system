@@ -19,11 +19,11 @@ Projekt ma na celu dostarczenie aplikacji webowej przeznaczonej do zarządzania 
 * sprawdzać swoją historię aktywności
 
 ## Projekt architektury
-...
+![architecture-project drawio](https://github.com/gregusio/library-management-system/assets/77176069/44115e9d-9c2f-47fa-88d0-52cbd5b75221)
 
 ## Użyte technologie
 * Baza danych:
-  * SQLite
+  * SQL Server
   * Entity Framework Core
 * Backend:
   * ASP.NET Core
@@ -39,4 +39,5 @@ Projekt ma na celu dostarczenie aplikacji webowej przeznaczonej do zarządzania 
  Entity Framework Core pozwala na prostą obsługę bazy danych.
 
 ## Projekt bazy danych
-![library-diagram](https://github.com/gregusio/library-management-system/assets/77176069/178e5615-9167-4b94-bd7b-aa3f58734499)
+![database-diagram](https://github.com/gregusio/library-management-system/assets/77176069/398a99c7-fffe-4660-84d9-31addd705bfd)
+
