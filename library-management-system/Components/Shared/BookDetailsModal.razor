@@ -102,7 +102,7 @@
                             <RatingComponent User="User" Book="Book" Rating="UserRating" IsInteractive="true" RatingChanged="UpdateFields"/>
                         </div>
 
-                        <BookInfoCard Book="Book" EditMode="_editMode" ShowBookCover="false"/>
+                        <BookInfoCard Book="Book" BookInventory="BookInventory" EditMode="_editMode" ShowBookCover="false"/>
 
                         <BookDetailsAccordion @ref="_bookDetailsAccordion" Book="Book" EditMode="_editMode"/>
                     </div>
@@ -124,13 +124,14 @@
 
     private Book? Book { get; set; }
     private BookCover BookCover => Book!.BookCover ?? new BookCover();
+    private BookInventory? BookInventory { get; set; }
     private bool IsFav { get; set; }
     private bool IsReserved { get; set; }
     private int UserRating { get; set; }
     private double AverageRating { get; set; }
     private string _borrowedState = "borrowed";
     private string _reservedState = "reserved";
-    private string _allState = "all";
+    private string? _allState = null;
     private string _favState = "favorites";
     
     private BorrowedBook? BorrowedBook { get; set; }
@@ -144,6 +145,7 @@
         IsFav = await dbApi.IsBookFavorite(User, Book!);
         IsReserved = await dbApi.IsBookReserved(User, Book);
         UserRating = await dbApi.GetBookUserRating(User, Book!);
+        BookInventory = await dbApi.GetBookInventory(Book);
         BorrowedBook = borrowedBook;
         ReservedBook = reservedBook;
 
@@ -261,7 +263,7 @@
     {
         _editMode = false;
 
-        var result = await dbApi.SaveChanges();
+        var result = await dbApi.UpdateBookInfo(Book!, BookInventory!);
         var message = result == EOperationResult.Success ? "Info saved" : result.GetMessage();
         alertService.ShowOperationResult(result, message);
 

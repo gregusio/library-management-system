@@ -43,21 +43,10 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
 
 builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
-// var pass = builder.Configuration["password"]!;
-//
-// var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!.Replace("{password}", pass);
-//
-// builder.Services.AddDbContext<Data>(options =>
-//     options.UseSqlServer(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// var folder = Environment.SpecialFolder.LocalApplicationData;
-// var path = Environment.GetFolderPath(folder);
-
-const string dbPath = "./tmp/library.db";
-
-builder.Services.AddDbContext<DataDbContext>(options =>
-    options.UseSqlite($"Data Source={dbPath}"));
-
+builder.Services.AddDbContextFactory<DataDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<DbInitializer>();
 

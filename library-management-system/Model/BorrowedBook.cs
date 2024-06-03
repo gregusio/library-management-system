@@ -8,7 +8,7 @@ public class BorrowedBook
     [Key] public int Id { get; init; }
 
     [ForeignKey("User")]
-    [StringLength(30)]
+    [StringLength(450)]
     public string? UserId { get; init; }
 
     public User? User { get; init; }

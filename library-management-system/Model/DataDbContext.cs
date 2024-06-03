@@ -1,9 +1,11 @@
+using library_management_system.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Model;
 
-public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDbContext<User>(options)
+public class DataDbContext(DbContextOptions<DataDbContext> options, IWebHostEnvironment env) : IdentityDbContext<User>(options)
 {
     public new required DbSet<User> Users { get; init; }
     public required DbSet<Book> Books { get; init; }
@@ -23,10 +25,10 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDb
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        var folder = Path.Join("Images/Avatars");
+        var folder = env.WebRootPath + "/images/avatars/";
         var files = Directory.GetFiles(folder);
         var id = 1;
-
+    
         foreach (var file in files)
         {
             var image = File.ReadAllBytes(file);
@@ -37,7 +39,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDb
             };
             builder.Entity<Avatar>().HasData(avatar);
         }
-
+    
         base.OnModelCreating(builder);
     }
 }

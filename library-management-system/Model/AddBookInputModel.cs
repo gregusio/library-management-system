@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace library_management_system.Model;
 
-public class AddBookInputModel
+public class AddBookInputModel(IWebHostEnvironment env)
 {
     [Required]
     [Display(Name = "ISBN")]
@@ -25,8 +25,8 @@ public class AddBookInputModel
 
     [Required]
     [Display(Name = "Image")]
-    public byte[] Image { get; set; } = File.ReadAllBytes("Images/BookCovers/default-cover.jpg");
-    
+    public byte[] Image { get; set; } = File.ReadAllBytes(env.WebRootPath + "/images/book-covers/default-cover.jpg");
+
     [Display(Name = "Description")]
     public string Description { get; set; } = "";
 }

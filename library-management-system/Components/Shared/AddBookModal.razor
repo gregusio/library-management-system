@@ -3,6 +3,7 @@
 
 @inject AlertService alertService
 @inject DbApi dbApi
+@inject IWebHostEnvironment webHostEnvironment
 
 
 <Modal @ref="_modal" title="Add book" IsVerticallyCentered="true" Size="ModalSize.Large" OnHiding="OnHideModal">
@@ -97,17 +98,11 @@
     [Parameter] public required EventCallback OnAdd { get; set; }
 
     private Modal _modal = default!;
-    private AddBookInputModel Input { get; set; } = new();
-    
-    private const string DefaultImagePath = "Images/BookCovers/default-cover.jpg";
-    private static byte[] DefaultImage { get; set; } = File.ReadAllBytes(DefaultImagePath);
+    private AddBookInputModel Input { get; set; } = default!;
 
     protected override Task OnInitializedAsync()
     {
-        Input = new AddBookInputModel
-        {
-            Image = DefaultImage
-        };
+        Input = new AddBookInputModel(webHostEnvironment);
 
         return base.OnInitializedAsync();
     }
@@ -131,7 +126,7 @@
 
         if (result == EOperationResult.Success)
         {
-            Input = new AddBookInputModel();
+            Input = new AddBookInputModel(webHostEnvironment);
         }
 
         await OnAdd.InvokeAsync();

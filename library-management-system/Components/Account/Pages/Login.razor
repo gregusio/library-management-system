@@ -84,7 +84,7 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            NavigationManager.NavigateTo("/books/all");
+            NavigationManager.NavigateTo("/books");
         }
         else if (result.RequiresTwoFactor)
         {

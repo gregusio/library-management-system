@@ -1,0 +1,74 @@
+.home-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-image: url('library.jpg');
+    filter: hue-rotate(270deg) saturate(1.5);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.welcome-container {
+    background-color: rgba(4, 4, 69, 0.8);
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.5em;
+}
+
+.footer {
+    right: 0;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    background-color: #f8f9fa;
+    padding: 10px 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.footer .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer .text-muted {
+    margin-right: 10px;
+}
+
+.footer a {
+    color: #343a40;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #007bff;
+}
+
+/*!* Responsive Design *!*/
+/*@media (max-width: 600px) {*/
+/*    .welcome-container {*/
+/*        padding: 20px;*/
+/*        margin: 10px;*/
+/*    }*/
+
+/*    h1 {*/
+/*        font-size: 2em;*/
+/*    }*/
+
+/*    p {*/
+/*        font-size: 1.2em;*/
+/*    }*/
+/*}*/

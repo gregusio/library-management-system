@@ -1,11 +1,30 @@
 .button-placement {
     display: flex;
+    flex-direction: row;
     align-items: end;
     font-size: 3rem;
     cursor: pointer;
 }
 
+.buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.search {
+    display: flex;
+    flex-grow: 1;
+}
+
 .selected {
     border: 1px solid red;
     border-radius: 5px;
+}
+
+@media (max-width: 1200px) {
+    .button-and-input {
+        flex-direction: column;
+    }
 }

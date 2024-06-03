@@ -1,4 +1,5 @@
-﻿@page "/books/{CurrState}"
+﻿@page "/books"
+@page "/books/{CurrState}"
 @rendermode InteractiveServer
 
 @using library_management_system.Model
@@ -18,39 +19,43 @@
     <Authorized Context="authorized">
         <div class="common-page-styles">
             <div class="button-and-input">
-                <AuthorizeView Roles="admin,librarian">
+                <div class="buttons">
+                    <AuthorizeView Roles="admin,librarian">
+                        <div class="button-placement">
+                            <Tooltip Title="Add book" Placement="TooltipPlacement.Top">
+                                <Icon Name="IconName.PlusSquareFill" Color="IconColor.Primary" @onclick="OnAddBookClick"></Icon>
+                            </Tooltip>
+                        </div>
+                    </AuthorizeView>
+
                     <div class="button-placement">
-                        <Tooltip Title="Add book" Placement="TooltipPlacement.Top">
-                            <Icon Name="IconName.PlusSquareFill" Color="IconColor.Primary" @onclick="OnAddBookClick"></Icon>
+                        <Tooltip Title="All books" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.Book" Color="@(CurrState == AllState ? ActiveIconColor : InactiveIconColor)" @onclick="OnAllBooksClick"></Icon>
                         </Tooltip>
                     </div>
-                </AuthorizeView>
 
-                <div class="button-placement">
-                    <Tooltip Title="All books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.Book" Color="IconColor.Primary" @onclick="OnAllBooksClick"></Icon>
-                    </Tooltip>
+                    <div class="button-placement">
+                        <Tooltip Title="Borrowed books" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.BookFill" Color="@(CurrState == BorrowedState ? ActiveIconColor : InactiveIconColor)" @onclick="OnBorrowedBooksClick"></Icon>
+                        </Tooltip>
+                    </div>
+
+                    <div class="button-placement">
+                        <Tooltip Title="Reserved books" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.BookHalf" Color="@(CurrState == ReservedState ? ActiveIconColor : InactiveIconColor)" @onclick="OnReservedBooksClick"></Icon>
+                        </Tooltip>
+                    </div>
+
+                    <div class="button-placement">
+                        <Tooltip Title="Favorites books" Placement="TooltipPlacement.Top">
+                            <Icon Name="IconName.HeartFill" Color="@(CurrState == FavoritesState ? ActiveIconColor : InactiveIconColor)" @onclick="OnFavoritesBookClick"></Icon>
+                        </Tooltip>
+                    </div>
                 </div>
 
-                <div class="button-placement">
-                    <Tooltip Title="Borrowed books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.BookFill" Color="IconColor.Primary" @onclick="OnBorrowedBooksClick"></Icon>
-                    </Tooltip>
+                <div class="search">
+                    <InputText class="form-control" placeholder="Search for a book..." style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
                 </div>
-
-                <div class="button-placement">
-                    <Tooltip Title="Reserved books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.BookHalf" Color="IconColor.Primary" @onclick="OnReservedBooksClick"></Icon>
-                    </Tooltip>
-                </div>
-
-                <div class="button-placement">
-                    <Tooltip Title="Favorites books" Placement="TooltipPlacement.Top">
-                        <Icon Name="IconName.HeartFill" Color="IconColor.Danger" @onclick="OnFavoritesBookClick"></Icon>
-                    </Tooltip>
-                </div>
-
-                <InputText class="form-control" placeholder="Search for a book..." style="font-size: 3rem" @bind-Value="_searchString" @oninput="@(Search)"></InputText>
             </div>
 
             <div class="cards">
@@ -60,7 +65,8 @@
 
                     <div class="@(IsBorrowedBookDelayed(i1) ? "selected" : "")">
                         <div class="single-card" @onclick="@(() => OnShowDetails(SelectedBooks[i1], i1))">
-                            <BookInfoCard Book="SelectedBooks[i1]" ShowBookCover="true" />
+
+                            <BookInfoCard Book="SelectedBooks[i1]" BookInventory="BookInventories[SelectedBooks[i1].Id]" ShowBookCover="true"/>
                         </div>
                     </div>
                 }
@@ -84,12 +90,20 @@
 
 
 @code {
-    [Parameter] public string CurrState { get; set; } = "all";
+    [Parameter] public string? CurrState { get; set; } = "";
 
     private const int BooksPerPage = 4;
 
     private int _currentPageNumber = 1;
     private string _searchString = "";
+
+    private const IconColor ActiveIconColor = IconColor.Primary;
+    private const IconColor InactiveIconColor = IconColor.Secondary;
+
+    private const string? AllState = null;
+    private const string BorrowedState = "borrowed";
+    private const string ReservedState = "reserved";
+    private const string FavoritesState = "favorites";
 
     private int FirstIdOnCurrentPage => BooksPerPage * (_currentPageNumber - 1);
     private int FirstIdOnNextPage => BooksPerPage * _currentPageNumber;
@@ -106,10 +120,11 @@
     private List<Book> FavBooks { get; set; } = [];
     private List<ReservedBook>? ReservedBooks { get; set; } = [];
     private List<BorrowedBook>? BorrowedBooks { get; set; } = [];
+    private Dictionary<int, BookInventory> BookInventories { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        User = authService.GetUser(authenticationStateProvider).Result;
+        User = await authService.GetUser(authenticationStateProvider);
         AllBooks = await dbApi.GetAllBooks();
         FavBooks = await dbApi.GetFavoriteBooks(User!) ?? [];
         ReservedBooks = await dbApi.GetReservedBooks(User!) ?? [];
@@ -123,12 +138,18 @@
 
         SelectedBooks = CurrState switch
         {
-            "all" => AllBooks,
+            null => AllBooks,
             "borrowed" => BorrowedBooks!.Select(b => b.Book).ToList()!,
             "reserved" => ReservedBooks!.Select(b => b.Book).ToList()!,
             "favorites" => FavBooks,
             _ => AllBooks
         };
+
+        foreach (var book in SelectedBooks)
+        {
+            var inventory = await GetBookInventory(book);
+            BookInventories[book.Id] = inventory!;
+        }
     }
 
     private async Task OnPageChangedAsync(int newPageNumber)
@@ -142,19 +163,39 @@
 
         if (string.IsNullOrEmpty(search))
         {
-            SelectedBooks = AllBooks!;
+           SelectedBooks = CurrState switch
+            {
+                null => AllBooks!,
+                "borrowed" => BorrowedBooks!.Select(b => b.Book).ToList()!,
+                "reserved" => ReservedBooks!.Select(b => b.Book).ToList()!,
+                "favorites" => FavBooks,
+                _ => AllBooks!
+            };
             return;
         }
 
-        SelectedBooks = SelectedBooks.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
-        if (CurrState == "borrowed")
+        switch (CurrState)
         {
-            BorrowedBooks = BorrowedBooks!.Where(b => b.Book!.Title!.ToLower().Contains(search) || b.Book!.Author!.ToLower().Contains(search)).ToList();
+            case AllState:
+                SelectedBooks = AllBooks!.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
+                break;
+            case BorrowedState:
+                SelectedBooks = BorrowedBooks!.Select(b => b.Book!).Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
+                BorrowedBooks = BorrowedBooks!.Where(b => b.Book!.Title!.ToLower().Contains(search) || b.Book!.Author!.ToLower().Contains(search)).ToList();
+                break;
+            case ReservedState:
+                SelectedBooks = ReservedBooks!.Select(b => b.Book!).Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
+                ReservedBooks = ReservedBooks!.Where(b => b.Book!.Title!.ToLower().Contains(search) || b.Book!.Author!.ToLower().Contains(search)).ToList();
+                break;
+            case FavoritesState:
+                SelectedBooks = FavBooks.Where(b => b.Title!.ToLower().Contains(search) || b.Author!.ToLower().Contains(search)).ToList();
+                break;
         }
-        else if (CurrState == "reserved")
-        {
-            ReservedBooks = ReservedBooks!.Where(b => b.Book!.Title!.ToLower().Contains(search) || b.Book!.Author!.ToLower().Contains(search)).ToList();
-        }
+    }
+
+    private async Task<BookInventory?> GetBookInventory(Book book)
+    {
+        return await dbApi.GetBookInventory(book);
     }
 
     private bool IsBorrowedBookDelayed(int index)
@@ -185,7 +226,7 @@
 
     private void OnAllBooksClick()
     {
-        navigationManager.NavigateTo("/books/all");
+        navigationManager.NavigateTo("/books");
     }
 
     private void OnBorrowedBooksClick()
