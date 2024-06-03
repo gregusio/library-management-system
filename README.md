@@ -56,7 +56,7 @@ dotnet test
 - Blazor
 
 - **Database:**
-  - SQLite
+  - SQL Server
   - Entity Framework Core
 
 - **Backend:**
