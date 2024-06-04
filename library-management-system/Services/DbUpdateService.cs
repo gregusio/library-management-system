@@ -3,23 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace library_management_system.Services;
 
-public class DbUpdateService(DataDbContext db, IDbContextFactory<DataDbContext> dbContextFactory)
+public class DbUpdateService(IDbContextFactory<DataDbContext> dbContextFactory)
 {
-    public async Task<EOperationResult> SaveChanges()
-    {
-        try
-        {
-            await db.SaveChangesAsync();
-
-            return EOperationResult.Success;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return EOperationResult.DatabaseError;
-        }
-    }
-
     public async Task<EOperationResult> PostponeBorrowedBook(BorrowedBook borrowedBook)
     {
         try

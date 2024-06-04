@@ -33,11 +33,6 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
     {
         return searchService.GetReservedBooks(reader);
     }
-
-    public Task<ReservedBook?> GetReservedBook(User user, Book book)
-    {
-        return searchService.GetReservedBook(user, book);
-    }
     
     public Task<bool> IsBookReserved(User reader, Book book)
     {
@@ -127,11 +122,6 @@ public class DbApi(DbSearchService searchService, DbInsertService insertService,
     public Task<EOperationResult> RemoveFavoriteBook(User user, Book book)
     {
         return removeService.RemoveFavoriteBook(user, book);
-    }
-
-    public Task<EOperationResult> SaveChanges()
-    {
-        return updateService.SaveChanges();
     }
 
     public Task<EOperationResult> PostponeBorrowedBook(BorrowedBook borrowedBook)

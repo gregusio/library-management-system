@@ -73,7 +73,7 @@
                     </div>
 
                     <div class="form-floating">
-                        <InputNumber @bind-Value="@BookInventory!.AvailableCopies" class="form-control"
+                        <InputNumber @bind-Value="@BookInventory.AvailableCopies" class="form-control"
                                      aria-required="true"/>
                         <label>Available</label>
                     </div>
@@ -85,7 +85,7 @@
                     <span>Publisher: @Book.Publisher</span>
                     <span>Publish Date: @Book.PublishDate</span>
                     <span>Category: @Book.Category</span>
-                    <span>Available: @BookInventory!.AvailableCopies</span>
+                    <span>Available: @BookInventory.AvailableCopies</span>
                 }
             </div>
         </CardText>

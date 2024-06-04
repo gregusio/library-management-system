@@ -105,22 +105,6 @@ public class DbSearchService(IDbContextFactory<DataDbContext> dbContextFactory)
             return null;
         }
     }
-
-    public async Task<ReservedBook?> GetReservedBook(User reader, Book book)
-    {
-        try
-        {
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-            return await dbContext.ReservedBooks
-                .FirstOrDefaultAsync(reservedBook =>
-                    reservedBook.UserId == reader.Id && reservedBook.BookId == book.Id);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return null;
-        }
-    }
     
     public async Task<bool> IsBookReserved(User user, Book book)
     {
